@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthProvider/useAuth";
-import styles from "./styles"
-
+import styles from "./styles";
 
 export const Login = () => {
+  const [active, setActive] = useState(false);
   const auth = useAuth();
   const navigate = useNavigate();
 
@@ -13,11 +13,15 @@ export const Login = () => {
     const email = event.target.elements.email.value;
     const password = event.target.elements.password.value;
 
+    setActive(true); // Show spinner
+
     try {
       await auth.authenticate(email, password);
       navigate("/Home");
     } catch (error) {
       alert("Email ou senha inválidos");
+    } finally {
+      setActive(false); // Hide spinner
     }
   }
 
@@ -28,7 +32,9 @@ export const Login = () => {
         <p style={styles.subtitle}>Por favor coloque seu email e senha</p>
 
         <div style={styles.inputGroup}>
-          <label htmlFor="email" style={styles.label}>Email</label>
+          <label htmlFor="email" style={styles.label}>
+            Email
+          </label>
           <input
             type="email"
             id="email"
@@ -39,7 +45,9 @@ export const Login = () => {
         </div>
 
         <div style={styles.inputGroup}>
-          <label htmlFor="password" style={styles.label}>Senha</label>
+          <label htmlFor="password" style={styles.label}>
+            Senha
+          </label>
           <input
             type="password"
             id="password"
@@ -56,25 +64,43 @@ export const Login = () => {
             name="remember"
             style={styles.checkbox}
           />
-          <label htmlFor="remember" style={styles.checkboxLabel}>Lembrar Senha</label>
+          <label htmlFor="remember" style={styles.checkboxLabel}>
+            Lembrar Senha
+          </label>
         </div>
 
-        <button type="submit" style={styles.button}>Login</button>
+        <button type="submit" style={styles.button} disabled={active}>
+          Login
+        </button>
 
         <hr style={styles.divider} />
 
-        <button type="button" style={{ ...styles.socialButton, ...styles.googleButton }}>
+        <button
+          type="button"
+          style={{ ...styles.socialButton, ...styles.googleButton }}
+        >
           <span style={styles.icon}>G</span> Entrar com o Google
         </button>
 
-        <button type="button" style={{ ...styles.socialButton, ...styles.facebookButton }}>
+        <button
+          type="button"
+          style={{ ...styles.socialButton, ...styles.facebookButton }}
+        >
           <span style={styles.icon}>f</span> Entrar com o Facebook
         </button>
+      </div>
+
+      <div style={active ? { ...styles.spinnerContainer, ...styles.spinnerContainerActive } : styles.spinnerContainer}>
+        <div
+          className="spinner-border"
+          style={{ width: "4rem", height: "4rem" }}
+          role="status"
+        >
+          <span className="visually-hidden">Loading...</span>
+        </div>
       </div>
     </form>
   );
 };
-
-
 
 export default Login;

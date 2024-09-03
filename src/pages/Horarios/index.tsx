@@ -10,7 +10,11 @@ export const  Horarios=()=>{
     <BG></BG>
     <Header></Header>
     <Sidebar></Sidebar>
-      
+    <div className="d-flex flex-column justify-content-center align-items-center" style={{}}>
+        <div className="mt-5" style={{width:"90%"}}>
+        
+        </div>
+      </div> 
     </>
   )
 }
