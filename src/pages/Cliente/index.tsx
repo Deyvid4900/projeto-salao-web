@@ -1,9 +1,10 @@
 import React from "react"
 import Header from "../../components/Header/Header"
 import Sidebar from "../../components/Sidebar/Sidebar"
+import "../../App"
 import BG from "../../components/background/background"
 
-function Home() {
+export const Cliente=()=>{
 
   return (
     <>
@@ -15,4 +16,4 @@ function Home() {
   )
 }
 
-export default Home
+export default Cliente

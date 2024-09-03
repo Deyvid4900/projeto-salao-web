@@ -8,4 +8,11 @@ a{
     cursor: pointer;
     color: #737074;
     list-style: none !important;
+    padding: 0.5rem;
+    border-radius: 6px;
+}
+.active{
+    color: white !important;
+    background-color: rgba(0, 0, 0, 0.26);
+    
 }

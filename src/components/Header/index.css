@@ -1,0 +1,4 @@
+.no-outline:focus {
+    outline: none !important;
+    box-shadow: none !important; /* Também remove o efeito de sombra do Bootstrap */
+  }

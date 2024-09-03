@@ -1,10 +1,9 @@
 import React from "react"
 import Header from "../../components/Header/Header"
 import Sidebar from "../../components/Sidebar/Sidebar"
-import "../../App"
 import BG from "../../components/background/background"
 
-function Cliente() {
+export const  Horarios=()=>{
 
   return (
     <>
@@ -16,4 +15,4 @@ function Cliente() {
   )
 }
 
-export default Cliente
+export default Horarios

@@ -3,7 +3,7 @@ import Header from "../../components/Header/Header"
 import Sidebar from "../../components/Sidebar/Sidebar"
 import BG from "../../components/background/background"
 
-function Colaborador() {
+export const Servicos=()=>{
 
   return (
     <>
@@ -15,4 +15,4 @@ function Colaborador() {
   )
 }
 
-export default Colaborador
+export default Servicos

@@ -3,7 +3,7 @@ import Header from "../../components/Header/Header"
 import Sidebar from "../../components/Sidebar/Sidebar"
 import BG from "../../components/background/background"
 
-function Horarios() {
+export const  Colaborador=()=>{
 
   return (
     <>
@@ -15,4 +15,4 @@ function Horarios() {
   )
 }
 
-export default Horarios
+export default Colaborador
