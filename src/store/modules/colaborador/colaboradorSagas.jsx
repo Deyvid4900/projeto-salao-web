@@ -20,8 +20,13 @@ function* fetchAllSaga() {
 }
 
 function* fetchOneSaga(action) {
+  const filter = {
+    filters: {
+      _id: action.payload,
+    },
+  }
   try {
-    const response = yield call(() => axios.get(`https://api.example.com/data/${action.payload}`));
+    const response = yield call(() => axios.post(`http://localhost:8000/colaborador/filter`,filter));
     yield put(fetchOneSuccess(response.data));
   } catch (error) {
     yield put(fetchOneFailure(error.message));

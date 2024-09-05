@@ -27,7 +27,7 @@ const colaboradorSlice = createSlice({
     },
     fetchOneSuccess(state, action) {
       state.loading = false;
-      state.data.push(action.payload); // ajuste conforme necessário
+      state.data.colaborador = action.payload; // ajuste conforme necessário
     },
     fetchOneFailure(state, action) {
       state.loading = false;
