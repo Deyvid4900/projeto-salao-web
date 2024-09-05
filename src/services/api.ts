@@ -15,3 +15,7 @@ Api.interceptors.request.use(
         return Promise.reject(error)
     }
 )
+
+export const fetchColaboradores = axios.create({
+    baseURL:'http://localhost:8000/colaborador/salao/66d1fc606938c910b08d0b20'
+})

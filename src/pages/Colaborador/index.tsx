@@ -1,22 +1,22 @@
-import React from "react"
-import Header from "../../components/Header/Header"
-import Sidebar from "../../components/Sidebar/Sidebar"
-import BG from "../../components/background/background"
+import React, { useEffect } from "react";
+import Header from "../../components/Header/Header";
+import Sidebar from "../../components/Sidebar/Sidebar";
+import BG from "../../components/background/background";
+import CardColaborador from "../../components/colaboradoresCard/colaboradoresCard";
 
-export const  Colaborador=()=>{
+export const Colaborador = () => {
+  
 
   return (
-    <>
-    <BG></BG>
-    <Header></Header>
-    <Sidebar></Sidebar>
-    <div className="d-flex flex-column justify-content-center align-items-center" style={{}}>
-        <div className="mt-5" style={{width:"90%"}}>
-        
-        </div>
+    <div className="colaborador-container">
+      <BG />
+      <Header />
+      <Sidebar />
+      <div className="colaborador-content">
+        <CardColaborador></CardColaborador>
       </div>
-    </>
-  )
-}
+    </div>
+  );
+};
 
-export default Colaborador
+export default Colaborador;
