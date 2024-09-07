@@ -12,6 +12,7 @@ export const Colaborador = () => {
       <Sidebar />
       <div
         className="d-flex flex-column justify-content-center align-items-center "
+        style={{maxHeight:'calc(100vh - 95px)',overflowY:'auto'}}
       >
         <div className="mt-5" style={{ width: "95%" }}>
           <CardColaborador></CardColaborador>

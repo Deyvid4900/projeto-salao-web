@@ -1,0 +1,10 @@
+.btnNovoColaborador:hover{
+    background-color: #e44554 !important;
+}
+.bgOpaco{
+    width: 100vw !important;
+    height: 100vh !important;
+    background-color: rgba(0, 0, 0, 0.534);
+    position: fixed;
+    z-index: 11;
+}

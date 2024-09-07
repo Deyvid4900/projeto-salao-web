@@ -4,7 +4,7 @@ function Header() {
   return (
     <div
       className="container-fluid p-3 d-flex flex-row justify-content-between align-items-center text-white"
-      style={{ backgroundColor: "#FF5B5B", zIndex: 3, position: "relative" }}
+      style={{ backgroundColor: "#FF5B5B", zIndex: 10, position: "relative" }}
     >
       <img src="/src/assets/Group 3.png" alt="" />
       <div className="d-flex flex-row align-items-center gap-4 ">

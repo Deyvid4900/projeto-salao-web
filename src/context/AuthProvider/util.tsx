@@ -1,4 +1,4 @@
-import { Api } from "../../services/api";
+import { Api } from "../../services/api.tsx";
 import { IUser } from "./types";
 
 export function setUserLocalStorage(user: IUser | null) {
@@ -25,3 +25,6 @@ export async function logingRequest(email: string, password: string) {
     return null;
   }
 }
+
+
+

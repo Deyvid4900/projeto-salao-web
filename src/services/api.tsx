@@ -1,6 +1,12 @@
 import axios  from "axios";
 import { getUserLocalStorage } from "../context/AuthProvider/util";
 
+
+export const api = axios.create({
+    baseURL:'http://localhost:8000',
+})
+
+
 export const Api = axios.create({
     baseURL:"https://reqres.in/api/",
 })
@@ -16,6 +22,9 @@ Api.interceptors.request.use(
     }
 )
 
+
+const id_salao = localStorage.getItem("_dSlun");
+
 export const fetchColaboradores = axios.create({
-    baseURL:'http://localhost:8000/colaborador/salao/66d1fc606938c910b08d0b20'
+    baseURL:`http://localhost:8000/colaborador/salao/${id_salao}`
 })

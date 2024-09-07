@@ -1,5 +1,5 @@
 // sagas/colaboradorSagas.js
-import { call, put, takeEvery, all } from 'redux-saga/effects';
+import { call, put, takeEvery, all, takeLatest } from 'redux-saga/effects';
 import axios from 'axios';
 import {
   fetchAllRequest,
@@ -34,11 +34,11 @@ function* fetchOneSaga(action) {
 }
 
 function* watchFetchAll() {
-  yield takeEvery(fetchAllRequest.type, fetchAllSaga);
+  yield takeLatest(fetchAllRequest.type, fetchAllSaga);
 }
 
 function* watchFetchOne() {
-  yield takeEvery(fetchOneRequest.type, fetchOneSaga);
+  yield takeLatest(fetchOneRequest.type, fetchOneSaga);
 }
 
 export default function* rootSaga() {

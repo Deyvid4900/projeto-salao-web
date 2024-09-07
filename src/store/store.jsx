@@ -10,6 +10,7 @@ const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
+      sagaMiddleware:true,
       thunk: false, // Desativa o thunk se você estiver usando o saga
       serializableCheck: false, // Opcional: pode ser necessário para algumas configurações
     }).concat(sagaMiddleware),

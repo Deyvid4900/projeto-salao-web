@@ -18,6 +18,7 @@ export const Login = () => {
     try {
       await auth.authenticate(email, password);
       navigate("/Home");
+      localStorage.setItem("_dSlun", '66d1fc606938c910b08d0b20');
     } catch (error) {
       alert("Email ou senha inválidos");
     } finally {
