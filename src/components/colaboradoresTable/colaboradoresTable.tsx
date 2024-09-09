@@ -4,7 +4,6 @@ import {
   fetchAllRequest,
   fetchOneRequest,
 } from "../../store/modules/colaborador/colaboradorSlice";
-// import 'bootstrap/dist/css/bootstrap.min.css';
 import { Modal, Button } from "react-bootstrap";
 import "./styles.css";
 

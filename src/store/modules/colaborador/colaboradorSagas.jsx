@@ -12,7 +12,7 @@ import {
 
 function* fetchAllSaga() {
   try {
-    const response = yield call(() => axios.get('http://localhost:8000/colaborador/salao/66d1fc606938c910b08d0b20'));
+    const response = yield call(() => axios.get('https://api-production-cc80.up.railway.app/colaborador/salao/66d1fc606938c910b08d0b20'));
     yield put(fetchAllSuccess(response.data));
   } catch (error) {
     yield put(fetchAllFailure(error.message));
@@ -26,7 +26,7 @@ function* fetchOneSaga(action) {
     },
   }
   try {
-    const response = yield call(() => axios.post(`http://localhost:8000/colaborador/filter`,filter));
+    const response = yield call(() => axios.post(`https://api-production-cc80.up.railway.app/colaborador/filter`,filter));
     yield put(fetchOneSuccess(response.data));
   } catch (error) {
     yield put(fetchOneFailure(error.message));
