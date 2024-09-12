@@ -1,14 +1,13 @@
 // slices/colaboradorSlice.js
 import { createSlice } from '@reduxjs/toolkit';
 
-const colaboradorSlice = createSlice({
-  name: 'colaborador',
+const servicosSlice = createSlice({
+  name: 'servicos',
   initialState: {
     data: [],
     loading: false,
     error: null,
   },
-
   reducers: {
     fetchAllRequest(state) {
       state.loading = true;
@@ -22,22 +21,6 @@ const colaboradorSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-
-
-
-    
-    fetchOneRequest(state) {
-      state.loading = true;
-      state.error = null;
-    },
-    fetchOneSuccess(state, action) {
-      state.loading = false;
-      state.data.colaborador = action.payload; // ajuste conforme necessário
-    },
-    fetchOneFailure(state, action) {
-      state.loading = false;
-      state.error = action.payload;
-    },
   },
 });
 
@@ -45,9 +28,6 @@ export const {
   fetchAllRequest,
   fetchAllSuccess,
   fetchAllFailure,
-  fetchOneRequest,
-  fetchOneSuccess,
-  fetchOneFailure,
-} = colaboradorSlice.actions;
+} = servicosSlice.actions;
 
-export default colaboradorSlice.reducer;
+export default servicosSlice.reducer;

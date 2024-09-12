@@ -11,3 +11,7 @@ Currently, two official plugins are available:
     "email": "eve.holt@reqres.in",
     "password": "cityslicka"
 }
+
+eve.holt@reqres.in
+
+cityslicka

@@ -1,36 +1,30 @@
 import { call, put, all, takeLatest } from "redux-saga/effects";
 import { api } from "../../../services/api";
+import {filterAgendamentoRequest,filterAgendamentoFailure,filterAgendamentoSuccess} from "../agendamento/agendamentoSlice"
 
 const salaoId = localStorage.getItem("_dSlun");
 
 export function* filterAgendamento(action) {
   try {
-    const { start, end } = action.payload; // Pegue `start` e `end` do payload da ação
-
-    // Faz a requisição à API com `call` sem `.then`
-    const response = yield call(api.post, "/agendamento/filter", {
-      salaoId,
+    const response = yield call(api.post, "/agendamento/filter/",{
+      salaoId: salaoId,
       range: {
-        inicio: start,
-        final: end,
+        start: action.payload.start,
+        end: action.payload.end,
       },
     });
 
-    // Coloca os dados de sucesso no estado com o `put`
-    yield put({ type: "filterAgendamentoSuccess", data: response.data });
+    
+    yield put(filterAgendamentoSuccess(response.data));
   } catch (error) {
-    // Em caso de erro, dispare uma ação de falha
-    yield put({ type: "filterAgendamentoFailure", error: error.message });
+    yield put(filterAgendamentoFailure(error.message));
   }
 }
 
-// Watcher Saga
 function* watchFilterAgendamento() {
-  // Aguarde por ações do tipo "agendamento/filterAgendamentoRequest"
-  yield takeLatest("agendamento/filterAgendamentoRequest", filterAgendamento);
+  yield takeLatest(filterAgendamentoRequest.type, filterAgendamento);
 }
 
-// Root Saga
 export default function* rootSaga() {
   yield all([watchFilterAgendamento()]);
 }

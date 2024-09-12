@@ -2,9 +2,14 @@ import axios  from "axios";
 import { getUserLocalStorage } from "../context/AuthProvider/util";
 
 
+
+
 export const api = axios.create({
-    baseURL:'https://api-production-cc80.up.railway.app/',
+    baseURL:'http://localhost:8000',
 })
+// export const api = axios.create({
+//     baseURL:'https://api-production-cc80.up.railway.app/',
+// })
 
 
 export const Api = axios.create({
@@ -26,5 +31,8 @@ Api.interceptors.request.use(
 const id_salao = localStorage.getItem("_dSlun");
 
 export const fetchColaboradores = axios.create({
-    baseURL:`https://api-production-cc80.up.railway.app/colaborador/salao/${id_salao}`
+    baseURL:`http://localhost:8000/colaborador/salao/${id_salao}`
 })
+// export const fetchColaboradores = axios.create({
+//     baseURL:`https://api-production-cc80.up.railway.app/colaborador/salao/${id_salao}`
+// })

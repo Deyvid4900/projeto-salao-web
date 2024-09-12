@@ -8,15 +8,16 @@ const agendamentoSlice = createSlice({
     error: null,
   },
   reducers: {
+
     filterAgendamentoRequest(state,payload){
       state.loading = true;
       state.error = null;
-      state.data = payload
+      state = payload
     },
-    filterAgendamentoSuccess(state,data) {
+    filterAgendamentoSuccess(state,action) {
       state.loading = false;
-      state.payload = data
-    //   state.data.agendamentos = data; // Corrigido para acessar `data`
+      state.error = null;
+      state.data = action.payload;
     },
     filterAgendamentoFailure(state, action) {
       state.loading = false;

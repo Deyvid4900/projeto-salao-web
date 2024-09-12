@@ -4,7 +4,7 @@ import {
   fetchAllRequest,
   fetchOneRequest,
 } from "../../store/modules/colaborador/colaboradorSlice";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, Spinner } from "react-bootstrap";
 import "./styles.css";
 
 export const CardColaborador = () => {
@@ -17,7 +17,6 @@ export const CardColaborador = () => {
   const [selectedColaborador, setSelectedColaborador] = useState<any>(null);
 
   useEffect(() => {
-    ("");
     dispatch(fetchAllRequest());
   }, [dispatch]);
 
@@ -28,19 +27,17 @@ export const CardColaborador = () => {
   }, [selectedColaborador]);
 
   const colaboradores = data.colaboradores || [];
-
-  const colaborador = data.colaborador || [];
+  const colaborador = data.colaborador || {};
 
   const handleShowMoreInformation = (id: any) => {
-    const colaborador = dispatch(fetchOneRequest(id));
-    setSelectedColaborador(colaborador); // Reset selected colaborador to show loading initially
+    dispatch(fetchOneRequest(id));
+    setSelectedColaborador(id); // Set selected colaborador id to trigger modal
   };
 
   const handleClose = () => {
     setShowModal(false);
+    setSelectedColaborador(null); // Clear selected colaborador when closing modal
   };
-
-  console.log(colaborador.colaboradores);
 
   return (
     <>
@@ -63,7 +60,6 @@ export const CardColaborador = () => {
           maxHeight: "75vh",
           backgroundColor: "rgb(255 255 255 / 50%)",
           boxShadow: "6px 6px 12px #d9d9d9,-6px -6px 12px #ffffff",
-          // overflowY:'scroll'
         }}
       >
         <div
@@ -71,7 +67,12 @@ export const CardColaborador = () => {
           style={{ maxHeight: "700px", overflowY: "scroll" }}
         >
           {error && <p>Error: {error}</p>}
-          {colaboradores.length > 0 ? (
+          {console.log(colaboradores.length)}
+          {colaboradores.length < 0  ? (
+            <div className="d-flex justify-content-center align-items-center" style={{ height: "100px" }}>
+              <Spinner animation="border" />
+            </div>
+          ) : colaboradores.length > 0 ? (
             <table
               className="table table-hover table-striped table-bordered"
               width={"100%"}
@@ -93,16 +94,13 @@ export const CardColaborador = () => {
                       <td>{item.telefone}</td>
                       <td
                         style={{ textAlign: "center" }}
-                        className="d-flex flex-colunm gap-5 justify-content-center"
+                        className="d-flex flex-row gap-2 justify-content-center"
                       >
                         <button className="btn btn-primary">Editar</button>
                         <button
-                          className=" btnNovoColaborador btn btn-danger"
+                          className="btn btn-danger"
                           key={item._id}
-                          style={{
-                            backgroundColor: "#FF5B5B",
-                            cursor: "pointer",
-                          }}
+                          style={{ backgroundColor: "#FF5B5B", cursor: "pointer" }}
                         >
                           Excluir
                         </button>
@@ -119,7 +117,9 @@ export const CardColaborador = () => {
               </tbody>
             </table>
           ) : (
-            <p>No data available</p>
+            <div className="d-flex justify-content-center align-items-center" style={{ height: "100px" }}>
+              <Spinner animation="border" />
+            </div>
           )}
         </div>
       </div>
@@ -130,14 +130,16 @@ export const CardColaborador = () => {
           <Modal.Title>Detalhes do Colaborador</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          {loading ? (
-            <p>Loading...</p>
+          {colaboradores.length < 0  ? (
+            <div className="d-flex justify-content-center align-items-center" style={{ height: "100px" }}>
+              <Spinner animation="border" />
+            </div>
           ) : (
-            colaborador.colaboradores && (
+            colaborador && colaborador.colaboradores && colaborador.colaboradores[0] && (
               <>
                 <img
                   src={colaborador.colaboradores[0].foto}
-                  alt=""
+                  alt="Foto do Colaborador"
                   className="container mb-3"
                 />
                 <p>
@@ -147,28 +149,24 @@ export const CardColaborador = () => {
                   <strong>Email:</strong> {colaborador.colaboradores[0].email}
                 </p>
                 <p>
-                  <strong>Telefone:</strong>{" "}
-                  {colaborador.colaboradores[0].telefone}
+                  <strong>Telefone:</strong> {colaborador.colaboradores[0].telefone}
                 </p>
                 <p>
-                  <strong>Data de Nascimento:</strong>{" "}
-                  {colaborador.colaboradores[0].dataNascimento}
+                  <strong>Data de Nascimento:</strong> {colaborador.colaboradores[0].dataNascimento}
                 </p>
                 <p>
                   <strong>Sexo:</strong> {colaborador.colaboradores[0].sexo}
                 </p>
                 <p>
-                  <strong>Data de Cadastro:</strong>{" "}
-                  {colaborador.colaboradores[0].dataCadastro}
+                  <strong>Data de Cadastro:</strong> {colaborador.colaboradores[0].dataCadastro}
                 </p>
-                {/* <p><strong>Telefone:</strong> {colaborador.colaboradores[0].servicos}</p> */}
                 {/* Add more details as needed */}
               </>
             )
           )}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" style={{backgroundColor: "#FF5B5B",}} onClick={handleClose}>
+          <Button variant="secondary" style={{ backgroundColor: "#FF5B5B" }} onClick={handleClose}>
             Close
           </Button>
         </Modal.Footer>
