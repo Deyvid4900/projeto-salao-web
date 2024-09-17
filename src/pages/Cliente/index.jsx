@@ -10,22 +10,26 @@ import {
   ButtonToolbar,
   Form,
   Input,
+  InputGroup,
+  InputNumber,
 } from "rsuite";
 import "rsuite/dist/rsuite-no-reset.min.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchAllRequest,
-  selectedColaborador,
-} from "../../store/modules/colaborador/colaboradorSlice";
+  fetchAllClientesRequest,
+  selectedCliente,
+} from "../../store/modules/clientes/clientesSlice";
 
-const Textarea = React.forwardRef((props, ref:any) => <Input {...props} as="textarea" ref={ref} />);
+const Textarea = React.forwardRef((props, ref) => (
+  <Input {...props} as="textarea" ref={ref} />
+));
 
-export const Colaborador = () => {
+export const Cliente = () => {
   const { Column, HeaderCell, Cell } = Table;
   const dispatch = useDispatch();
-  const { colaboradores, colaborador } = useSelector((state:any) => state.colaborador);
+  const { clientes, cliente } = useSelector((state) => state.cliente);
 
-  const [backdrop, setBackdrop] = useState(false);
+  const [backdrop, setBackdrop] = useState("static");
   const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     nome: "",
@@ -36,20 +40,20 @@ export const Colaborador = () => {
   });
 
   useEffect(() => {
-    dispatch(fetchAllRequest());
+    dispatch(fetchAllClientesRequest());
   }, [dispatch]);
 
   useEffect(() => {
-    if (colaborador) {
+    if (cliente) {
       setFormData({
-        nome: colaborador.nome || "",
-        sexo: colaborador.sexo || "",
-        dataNascimento: colaborador.dataNascimento || "",
-        email: colaborador.email || "",
-        telefone: colaborador.telefone || "",
+        nome: cliente.nome || "",
+        sexo: cliente.sexo || "",
+        dataNascimento: cliente.dataNascimento || "",
+        email: cliente.email || "",
+        telefone: cliente.telefone || "",
       });
     }
-  }, [colaborador]);
+  }, [cliente]);
 
   const handleInputChange = (value, name) => {
     setFormData({ ...formData, [name]: value });
@@ -65,12 +69,12 @@ export const Colaborador = () => {
         style={{ maxHeight: "calc(100vh - 95px)", overflowY: "auto" }}
       >
         <div className="mt-5" style={{ width: "95%" }}>
-          <h2 className="p-2">Colaboradores</h2>
+          <h2 className="p-2">Clientes</h2>
           <Table
             autoHeight
-            data={colaboradores.colaboradores}
+            data={clientes.clientes}
             onRowClick={(rowData) => {
-              dispatch(selectedColaborador(rowData));
+              dispatch(selectedCliente(rowData));
               setOpen(true);
             }}
           >
@@ -99,18 +103,18 @@ export const Colaborador = () => {
               <Cell dataKey="telefone" />
             </Column>
 
-            <Column width={80} fixed="right">
+            <Column width={"auto"} fixed="right">
               <HeaderCell>Ações</HeaderCell>
               <Cell style={{ padding: "6px" }}>
                 {(rowData) => (
                   <Button
                     appearance="link"
                     onClick={() => {
-                      dispatch(selectedColaborador(rowData));
+                      dispatch(selectedCliente(rowData));
                       setOpen(true);
                     }}
                   >
-                    Editar
+                    Mais Informações
                   </Button>
                 )}
               </Cell>
@@ -120,59 +124,49 @@ export const Colaborador = () => {
 
         <Drawer backdrop={backdrop} open={open} onClose={() => setOpen(false)}>
           <Drawer.Header>
-            <Drawer.Title>Editar Colaborador</Drawer.Title>
+            <Drawer.Title>Editar Cliente</Drawer.Title>
           </Drawer.Header>
           <Drawer.Body>
             <Form fluid>
               <Form.Group controlId="name-1">
-                <Form.ControlLabel>Nome</Form.ControlLabel>
-                <Form.Control
-                  name="nome"
-                  value={formData.nome}
-                  onChange={(value) => handleInputChange(value, "nome")}
-                />
-                <Form.HelpText>Required</Form.HelpText>
+                <Form.ControlLabel>Username</Form.ControlLabel>
+                <Form.Control disabled name="name" value={cliente.nome} />
+                <Form.HelpText></Form.HelpText>
+              </Form.Group>
+              <Form.Group controlId="Status">
+                <Form.ControlLabel>Status</Form.ControlLabel>
+                <Form.Control disabled name="status" value={cliente.status} />
+                <Form.HelpText></Form.HelpText>
+              </Form.Group>
+              <Form.Group controlId="Telefone">
+                <Form.ControlLabel>Telefone</Form.ControlLabel>
+                <Form.Control disabled name="Telefone" value={cliente.telefone} />
+                <Form.HelpText></Form.HelpText>
+              </Form.Group>
+              <Form.Group controlId="dataNascimento">
+                <Form.ControlLabel>Data de Nascimento</Form.ControlLabel>
+                <Form.Control disabled name="name" value={cliente.dataNascimento} />
+                <Form.HelpText></Form.HelpText>
+              </Form.Group>
+              <Form.Group controlId="Sexo">
+                <Form.ControlLabel>Sexo</Form.ControlLabel>
+                <Form.Control disabled name="Sexo" value={cliente.sexo} />
+                <Form.HelpText></Form.HelpText>
+              </Form.Group>
+              <Form.Group controlId="dataCadastro">
+                <Form.ControlLabel>Data de Cadastro</Form.ControlLabel>
+                <Form.Control disabled name="dataCadastro" value={cliente.dataCadastro} />
+                <Form.HelpText></Form.HelpText>
               </Form.Group>
               <Form.Group controlId="email-1">
                 <Form.ControlLabel>Email</Form.ControlLabel>
                 <Form.Control
+                  disabled
                   name="email"
                   type="email"
-                  value={formData.email}
-                  onChange={(value) => handleInputChange(value, "email")}
+                  value={cliente.email}
                 />
-                <Form.HelpText>Required</Form.HelpText>
-              </Form.Group>
-              <Form.Group controlId="sexo-1">
-                <Form.ControlLabel>Sexo</Form.ControlLabel>
-                <Form.Control
-                  name="sexo"
-                  value={formData.sexo}
-                  onChange={(value) => handleInputChange(value, "sexo")}
-                />
-              </Form.Group>
-              <Form.Group controlId="dataNascimento-1">
-                <Form.ControlLabel>Data de Nascimento</Form.ControlLabel>
-                <Form.Control
-                  name="dataNascimento"
-                  type="date"
-                  value={formData.dataNascimento}
-                  onChange={(value) => handleInputChange(value, "dataNascimento")}
-                />
-              </Form.Group>
-              <Form.Group controlId="telefone-1">
-                <Form.ControlLabel>Telefone</Form.ControlLabel>
-                <Form.Control
-                  name="telefone"
-                  value={formData.telefone}
-                  onChange={(value) => handleInputChange(value, "telefone")}
-                />
-              </Form.Group>
-              <Form.Group>
-                <ButtonToolbar>
-                  <Button appearance="primary">Salvar</Button>
-                  <Button appearance="default" onClick={() => setOpen(false)}>Cancelar</Button>
-                </ButtonToolbar>
+                <Form.HelpText></Form.HelpText>
               </Form.Group>
             </Form>
           </Drawer.Body>
@@ -182,4 +176,4 @@ export const Colaborador = () => {
   );
 };
 
-export default Colaborador;
+export default Cliente;

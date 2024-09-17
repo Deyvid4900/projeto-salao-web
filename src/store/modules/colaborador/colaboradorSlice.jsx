@@ -4,9 +4,27 @@ import { createSlice } from '@reduxjs/toolkit';
 const colaboradorSlice = createSlice({
   name: 'colaborador',
   initialState: {
-    data: [],
+    colaboradores: [],
     loading: false,
     error: null,
+    colaborador:{
+        foto: "",
+        status: "",
+        _id: "",
+        nome: "",
+        telefone: "",
+        email: "",
+        dataNascimento: "",
+        sexo: "",
+        dataCadastro: "",
+        __v: "",
+        vinculoId: "",
+        vinculo: "",
+        especialidades: [
+            "",
+        ]
+    
+    }
   },
 
   reducers: {
@@ -16,7 +34,7 @@ const colaboradorSlice = createSlice({
     },
     fetchAllSuccess(state, action) {
       state.loading = false;
-      state.data = action.payload;
+      state.colaboradores = action.payload;
     },
     fetchAllFailure(state, action) {
       state.loading = false;
@@ -32,11 +50,15 @@ const colaboradorSlice = createSlice({
     },
     fetchOneSuccess(state, action) {
       state.loading = false;
-      state.data.colaborador = action.payload; // ajuste conforme necessário
+      state = action.payload; // ajuste conforme necessário
     },
     fetchOneFailure(state, action) {
       state.loading = false;
       state.error = action.payload;
+    },
+
+    selectedColaborador(state, action) {
+      state.colaborador = { ...action.payload }; // Atualiza o estado com o cliente selecionado
     },
   },
 });
@@ -48,6 +70,7 @@ export const {
   fetchOneRequest,
   fetchOneSuccess,
   fetchOneFailure,
+  selectedColaborador
 } = colaboradorSlice.actions;
 
 export default colaboradorSlice.reducer;
