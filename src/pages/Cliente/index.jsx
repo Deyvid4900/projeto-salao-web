@@ -31,33 +31,13 @@ export const Cliente = () => {
 
   const [backdrop, setBackdrop] = useState("static");
   const [open, setOpen] = useState(false);
-  const [formData, setFormData] = useState({
-    nome: "",
-    sexo: "",
-    dataNascimento: "",
-    email: "",
-    telefone: "",
-  });
+
 
   useEffect(() => {
     dispatch(fetchAllClientesRequest());
   }, [dispatch]);
 
-  useEffect(() => {
-    if (cliente) {
-      setFormData({
-        nome: cliente.nome || "",
-        sexo: cliente.sexo || "",
-        dataNascimento: cliente.dataNascimento || "",
-        email: cliente.email || "",
-        telefone: cliente.telefone || "",
-      });
-    }
-  }, [cliente]);
-
-  const handleInputChange = (value, name) => {
-    setFormData({ ...formData, [name]: value });
-  };
+  
 
   return (
     <>
@@ -69,8 +49,9 @@ export const Cliente = () => {
         style={{ maxHeight: "calc(100vh - 95px)", overflowY: "auto" }}
       >
         <div className="mt-5" style={{ width: "95%" }}>
-          <h2 className="p-2">Clientes</h2>
+          <h2 className="pb-4">Clientes</h2>
           <Table
+            className="bg-white rounded"
             autoHeight
             data={clientes.clientes}
             onRowClick={(rowData) => {
@@ -78,32 +59,32 @@ export const Cliente = () => {
               setOpen(true);
             }}
           >
-            <Column>
+            <Column flexGrow={2}>
               <HeaderCell>Nome</HeaderCell>
               <Cell dataKey="nome" />
             </Column>
 
-            <Column width={100}>
+            <Column flexGrow={2}>
               <HeaderCell>Sexo</HeaderCell>
               <Cell dataKey="sexo" />
             </Column>
 
-            <Column width={150}>
+            <Column flexGrow={2}>
               <HeaderCell>Data de Nascimento</HeaderCell>
               <Cell dataKey="dataNascimento" />
             </Column>
 
-            <Column width={150}>
+            <Column flexGrow={2}>
               <HeaderCell>Email</HeaderCell>
               <Cell dataKey="email" />
             </Column>
 
-            <Column width={150}>
+            <Column flexGrow={2}>
               <HeaderCell>Telefone</HeaderCell>
               <Cell dataKey="telefone" />
             </Column>
 
-            <Column width={"auto"} fixed="right">
+            <Column flexGrow={2} align="center" fixed="right">
               <HeaderCell>Ações</HeaderCell>
               <Cell style={{ padding: "6px" }}>
                 {(rowData) => (
@@ -124,7 +105,7 @@ export const Cliente = () => {
 
         <Drawer backdrop={backdrop} open={open} onClose={() => setOpen(false)}>
           <Drawer.Header>
-            <Drawer.Title>Editar Cliente</Drawer.Title>
+            <Drawer.Title>{cliente.nome}</Drawer.Title>
           </Drawer.Header>
           <Drawer.Body>
             <Form fluid>
@@ -140,12 +121,20 @@ export const Cliente = () => {
               </Form.Group>
               <Form.Group controlId="Telefone">
                 <Form.ControlLabel>Telefone</Form.ControlLabel>
-                <Form.Control disabled name="Telefone" value={cliente.telefone} />
+                <Form.Control
+                  disabled
+                  name="Telefone"
+                  value={cliente.telefone}
+                />
                 <Form.HelpText></Form.HelpText>
               </Form.Group>
               <Form.Group controlId="dataNascimento">
                 <Form.ControlLabel>Data de Nascimento</Form.ControlLabel>
-                <Form.Control disabled name="name" value={cliente.dataNascimento} />
+                <Form.Control
+                  disabled
+                  name="name"
+                  value={cliente.dataNascimento}
+                />
                 <Form.HelpText></Form.HelpText>
               </Form.Group>
               <Form.Group controlId="Sexo">
@@ -155,7 +144,11 @@ export const Cliente = () => {
               </Form.Group>
               <Form.Group controlId="dataCadastro">
                 <Form.ControlLabel>Data de Cadastro</Form.ControlLabel>
-                <Form.Control disabled name="dataCadastro" value={cliente.dataCadastro} />
+                <Form.Control
+                  disabled
+                  name="dataCadastro"
+                  value={cliente.dataCadastro}
+                />
                 <Form.HelpText></Form.HelpText>
               </Form.Group>
               <Form.Group controlId="email-1">

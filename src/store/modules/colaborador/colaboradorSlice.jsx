@@ -24,19 +24,21 @@ const colaboradorSlice = createSlice({
             "",
         ]
     
+    },especialidades:{
+
     }
   },
 
   reducers: {
-    fetchAllRequest(state) {
+    fetchAllColaboradoresRequest(state) {
       state.loading = true;
       state.error = null;
     },
-    fetchAllSuccess(state, action) {
+    fetchAllColaboradoresSuccess(state, action) {
       state.loading = false;
       state.colaboradores = action.payload;
     },
-    fetchAllFailure(state, action) {
+    fetchAllColaboradoresFailure(state, action) {
       state.loading = false;
       state.error = action.payload;
     },
@@ -44,15 +46,15 @@ const colaboradorSlice = createSlice({
 
 
     
-    fetchOneRequest(state) {
+    fetchOneColaboradorRequest(state) {
       state.loading = true;
       state.error = null;
     },
-    fetchOneSuccess(state, action) {
+    fetchOneColaboradorSuccess(state, action) {
       state.loading = false;
       state = action.payload; // ajuste conforme necessário
     },
-    fetchOneFailure(state, action) {
+    fetchOneColaboradorFailure(state, action) {
       state.loading = false;
       state.error = action.payload;
     },
@@ -60,16 +62,20 @@ const colaboradorSlice = createSlice({
     selectedColaborador(state, action) {
       state.colaborador = { ...action.payload }; // Atualiza o estado com o cliente selecionado
     },
+
+    catchEspecialidades(){
+      state.especialidades
+    }
   },
 });
 
 export const {
-  fetchAllRequest,
-  fetchAllSuccess,
-  fetchAllFailure,
-  fetchOneRequest,
-  fetchOneSuccess,
-  fetchOneFailure,
+  fetchAllColaboradoresRequest,
+  fetchAllColaboradoresSuccess,
+  fetchAllColaboradoresFailure,
+  fetchOneColaboradorRequest,
+  fetchOneColaboradorSuccess,
+  fetchOneColaboradorFailure,
   selectedColaborador
 } = colaboradorSlice.actions;
 

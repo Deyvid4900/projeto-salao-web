@@ -12,7 +12,7 @@ function Sidebar() {
         style={{
           backgroundColor: "#2F3243",
           width: "250px",
-          height: "calc(100vh - 94px)",
+          height: "calc(100vh - 92px)",
           zIndex: 2,
           position: "relative",
           float: "left",
