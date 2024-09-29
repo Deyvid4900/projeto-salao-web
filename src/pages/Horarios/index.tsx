@@ -4,8 +4,6 @@ import Sidebar from "../../components/Sidebar/Sidebar"
 import BG from "../../components/background/background"
 
 export const  Horarios=()=>{
-
-
   
   return (
     <>
@@ -21,7 +19,7 @@ export const  Horarios=()=>{
   )
 }
 
-// // export default Horarios
+export default Horarios
 // import { useEffect } from 'react';
 // import { useDispatch, useSelector } from 'react-redux';
 // import { Calendar, momentLocalizer } from 'react-big-calendar';
