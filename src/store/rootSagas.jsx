@@ -4,7 +4,7 @@ import agendamentoSaga from './modules/agendamento/agendamentoSagas';
 import servicosSaga from './modules/servicos/servicosSagas'; 
 import clienteSaga from './modules/clientes/clientesSagas';
 import salaoSaga from './modules/salao/salaoSagas';
-import horarioSaga from './modules/horarios/horariosSagas';
+// import horarioSaga from './modules/horarios/horariosSagas';
 
 
 export default function* rootSaga() {
