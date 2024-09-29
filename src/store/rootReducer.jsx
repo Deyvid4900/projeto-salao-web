@@ -13,7 +13,7 @@ const rootReducer = combineReducers({
   servicos:servicosReducer,
   cliente:clienteReducer,
   salao:salaoReducer,
-  horarios:horariosReducer
+  // horarios:horariosReducer
 });
 
 export default rootReducer;

@@ -14,6 +14,6 @@ export default function* rootSaga() {
     fork(servicosSaga),
     fork(clienteSaga),
     fork(salaoSaga),
-    fork(horarioSaga) // Certifique-se de incluir o saga do agendamento corretamente
+    // fork(horarioSaga) // Certifique-se de incluir o saga do agendamento corretamente
   ]);
 }
