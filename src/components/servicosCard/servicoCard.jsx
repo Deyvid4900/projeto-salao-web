@@ -42,7 +42,7 @@ export const CardServico = () => {
           <div className="row">
             {servicos.map((servico) => (
               <div key={servico._id} className="col-md-4 mb-3">
-                <div className="card">
+                <div className="card" style={{alignItems:"normal"}}>
                   <div className="card-body">
                     <h5 className="card-title " style={{}}>{servico.titulo}</h5>
                     <button

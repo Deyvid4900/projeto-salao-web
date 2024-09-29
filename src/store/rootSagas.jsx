@@ -3,6 +3,8 @@ import colaboradorSaga from './modules/colaborador/colaboradorSagas';
 import agendamentoSaga from './modules/agendamento/agendamentoSagas';
 import servicosSaga from './modules/servicos/servicosSagas'; 
 import clienteSaga from './modules/clientes/clientesSagas';
+import salaoSaga from './modules/salao/salaoSagas';
+import horarioSaga from './modules/horarios/horariosSagas';
 
 
 export default function* rootSaga() {
@@ -10,6 +12,8 @@ export default function* rootSaga() {
     fork(colaboradorSaga),
     fork(agendamentoSaga),
     fork(servicosSaga),
-    fork(clienteSaga) // Certifique-se de incluir o saga do agendamento corretamente
+    fork(clienteSaga),
+    fork(salaoSaga),
+    fork(horarioSaga) // Certifique-se de incluir o saga do agendamento corretamente
   ]);
 }

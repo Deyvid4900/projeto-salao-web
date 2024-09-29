@@ -1,0 +1,180 @@
+
+.agendamento-container {
+    padding: 20px;
+    background-color: #F1F1F1;
+    height: 100vh;
+  }
+  
+  .agendamento-header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .agendamento-header h4 {
+    background: linear-gradient(to right, #2F3243, #FF5B5B);
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+  }
+  
+  .servico-selecionado {
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .servico-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .servico-img-placeholder {
+    width: 60px;
+    height: 60px;
+    background-color: #C4C4C4;
+    border-radius: 10px;
+    margin-right: 10px;
+  }
+  
+  .servico-detalhes {
+    flex-grow: 1;
+  }
+  
+  .preco {
+    color: green;
+  }
+  
+  .datas {
+    margin-bottom: 20px;
+  }
+  
+  .dias-semana-scroll {
+    overflow-x: scroll;
+  }
+  
+  .dias-semana {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .btn-dia {
+    min-width: 60px;
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: white;
+  }
+  
+  .btn-dia.ativo {
+    background-color: #FF5B5B;
+    color: white;
+  }
+  
+  .horarios {
+    margin-bottom: 20px;
+  }
+  
+  .horas-disponiveis-scroll {
+    overflow-x: scroll;
+  }
+  
+  .horas-disponiveis {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .btn-hora {
+    min-width: 60px;
+    padding: 10px;
+    background-color: #ddd;
+    border-radius: 5px;
+    border: none;
+  }
+  
+  .btn-hora.ativo {
+    background-color: #FF5B5B;
+    color: white;
+  }
+  
+  .especialista-selecao {
+    margin-bottom: 20px;
+  }
+  
+  .especialista-opcoes-scroll {
+    overflow-x: scroll;
+  }
+  
+  .especialista-opcoes {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .especialista-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+  }
+  
+  .especialista-img-placeholder {
+    width: 50px;
+    height: 50px;
+    background-color: #C4C4C4;
+    border-radius: 50%;
+    margin-bottom: 10px;
+  }
+  
+  .btn-especialista {
+    background-color: #ddd;
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+  }
+  
+  .btn-confirmar {
+    width: 100%;
+    padding: 15px;
+    background-color: #FF5B5B;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+  }
+  
+  /* Continuando do estilo anterior */
+.btn-dia.ativo, .btn-hora.ativo, .btn-especialista.ativo {
+  background-color: #FF9C9C;
+  color: white;
+  border-color: #FF6B6B;
+}
+
+.btn-dia:hover, .btn-hora:hover, .btn-especialista:hover {
+  background-color: #FF6B6B;
+  color: white;
+}
+
+.btn-dia, .btn-hora, .btn-especialista {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Estilo adicional para botões */
+.btn-confirmar {
+  width: 100%;
+  padding: 15px;
+  background-color: #FF6B6B;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.btn-confirmar:hover {
+  background-color: #FF4C4C;
+}

@@ -1,5 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
+
+import HomeCliente from "./pagesCliente/Home/Home";
+import AgendamentoPage from "./pagesCliente/Agendamentos/Agendamento";
+
 import Home from "./pages/Home";
 import { ProtectedLayout } from "./components/ProtectedLayout";
 import { AuthProvider } from "./context/AuthProvider";
@@ -18,6 +22,11 @@ function App() {
         <AuthProvider>
           <BrowserRouter>
             <Routes>
+              <Route path="Salao/:nome" element={<HomeCliente></HomeCliente>} />
+              <Route
+                path="Agendamento"
+                element={<AgendamentoPage></AgendamentoPage>}
+              />
               <Route path="/" element={<Login />} />
               <Route
                 path="/Home"

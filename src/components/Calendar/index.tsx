@@ -89,7 +89,7 @@ const MyCalendar = () => {
         // onRangeChange={((range) => handleRangeChange(range))} // Dispara o dispatch na mudança de range
         localizer={localizer}
         events={events}
-        defaultView="agenda"
+        defaultView="month"
         popup
         selectable
         />
