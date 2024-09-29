@@ -8,7 +8,7 @@ import {
   closeDrawer,
 } from './horariosSlice';
 import api from '../../../services/api';
-import { notification } from '../../../services/rsuite';
+import { notification } from 'rsuite';
 
 export function* addHorario() {
   try {
