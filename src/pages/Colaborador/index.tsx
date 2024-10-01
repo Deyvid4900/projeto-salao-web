@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import "../../App";
-import moment from "moment";
+import moment, { duration } from "moment";
 import BG from "../../components/background/background";
 import {
   Table,
@@ -12,35 +12,37 @@ import {
   Form,
   Input,
   Modal,
-  Placeholder,
+  Notification,
+  useToaster,
 } from "rsuite";
 import "rsuite/dist/rsuite-no-reset.min.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchAllColaboradoresRequest,
-  selectedColaborador,
+  setColaboradores,
+  fetchAllColaboradores,
+  setColaborador,
+  saveColaborador,
+  filterColaborador,
 } from "../../store/modules/colaborador/colaboradorSlice";
-
 
 const Textarea = React.forwardRef((props, ref: any) => (
   <Input {...props} as="textarea" ref={ref} />
 ));
 
 export const Colaborador = () => {
-
-  const { Column, HeaderCell, Cell } = Table;
-  const dispatch = useDispatch();
-  const { colaboradores, colaborador } = useSelector(
+  const { colaboradores, colaborador, components } = useSelector(
     (state: any) => state.colaborador
   );
-  
-  
+  const { Column, HeaderCell, Cell } = Table;
+  const dispatch = useDispatch();
 
   const [overflow, setOverflow] = useState(true);
   const [open, setOpen] = useState(false);
   const [openInformation, setOpenInformation] = useState(false);
-
+  const [type, setType] = useState("info");
+  const toaster = useToaster();
   const [formData, setFormData] = useState({
+    _id: undefined,
     nome: "",
     sexo: "",
     dataNascimento: "",
@@ -50,18 +52,42 @@ export const Colaborador = () => {
   });
 
   useEffect(() => {
-    dispatch(fetchAllColaboradoresRequest());
+    dispatch(fetchAllColaboradores());
   }, [dispatch]);
+
+  useEffect(() => {
+    const { type, description } = components.notification;
+
+    // Verifica se a notificação contém um tipo e descrição
+    if (type && description) {
+      toaster.push(
+        <Notification
+          type={type}
+          header={type === "error" ? "Erro" : "Sucesso"}
+          duration={5000} // Duração em milissegundos
+          closable
+        >
+          {description}
+        </Notification>,
+        
+        {
+          placement: "bottomEnd",
+          duration: 2000 // Ajuste a posição da notificação conforme necessário
+        }
+      );
+    }
+  }, [components.notification, toaster]);
 
   useEffect(() => {
     if (colaborador) {
       setFormData({
+        _id: colaborador._id,
         nome: colaborador.nome || "",
         sexo: colaborador.sexo || "",
-        dataNascimento:
-          moment(colaborador.dataNascimento).format("YYYY-MM-DD") || "",
-        dataCadastro:
-          moment(colaborador.dataCadastro).format("YYYY-MM-DD") || "",
+        dataNascimento: colaborador.dataNascimento
+          ? colaborador.dataNascimento
+          : "",
+        dataCadastro: colaborador.dataCadastro ? colaborador.dataCadastro : "",
         email: colaborador.email || "",
         telefone: colaborador.telefone || "",
       });
@@ -69,16 +95,23 @@ export const Colaborador = () => {
   }, [colaborador]);
 
   const handleInputChange = (value, name) => {
+    console.log(value);
     setFormData({ ...formData, [name]: value });
   };
 
   const handleRowClick = (rowData) => {
-    dispatch(selectedColaborador(rowData));
+    dispatch(setColaborador(rowData));
     setOpenInformation(true);
-    
-
   };
- 
+  const handleSubmit = () => {
+    const colaboradorData: any = {
+      ...formData,
+    };
+    console.log(colaboradorData);
+    dispatch(saveColaborador(colaboradorData));
+    setOpen(false);
+  };
+
   return (
     <>
       <BG />
@@ -94,7 +127,7 @@ export const Colaborador = () => {
             <Table
               className="bg-white rounded"
               autoHeight
-              data={colaboradores.colaboradores}
+              data={colaboradores} // Ajustado para acessar a lista de colaboradores
             >
               <Column flexGrow={2}>
                 <HeaderCell align="space-between">Nome</HeaderCell>
@@ -164,7 +197,8 @@ export const Colaborador = () => {
                       appearance="primary"
                       onClick={(e) => {
                         e.stopPropagation(); // Prevent the event from bubbling up
-                        dispatch(selectedColaborador(rowData));
+                        dispatch(setColaborador(rowData)); // Usando a action de seleção
+                        // Usando a action de seleção
                         setOpen(true);
                         setOpenInformation(false);
                       }}
@@ -231,8 +265,10 @@ export const Colaborador = () => {
                 />
               </Form.Group>
               <Form.Group>
-                <ButtonToolbar style={{float:'right'}}>
-                  <Button appearance="primary">Salvar</Button>
+                <ButtonToolbar style={{ float: "right" }}>
+                  <Button appearance="primary" onClick={handleSubmit}>
+                    Salvar
+                  </Button>
                   <Button appearance="default" onClick={() => setOpen(false)}>
                     Cancelar
                   </Button>
@@ -250,14 +286,13 @@ export const Colaborador = () => {
         >
           <Modal.Header>
             <Modal.Title>Informações do Colaborador</Modal.Title>
-            {/* <Modal.CloseButton /> */}
           </Modal.Header>
           <Modal.Body>
             <div className="text-center mb-4">
               <img
                 className="rounded-circle"
                 style={{ width: "200px", height: "200px", objectFit: "cover" }}
-                src={colaborador.foto || "default-image-url.jpg"} // Adicione uma URL de imagem padrão
+                src={colaborador.foto || "default-image-url.jpg"}
                 alt={`${colaborador.nome} Foto`}
               />
               <h4 className="mt-3">{colaborador.nome}</h4>
@@ -340,7 +375,6 @@ export const Colaborador = () => {
                   style={{ fontSize: "14pt" }}
                 />
               </Form.Group>
-              
             </Form>
           </Modal.Body>
           <Modal.Footer>

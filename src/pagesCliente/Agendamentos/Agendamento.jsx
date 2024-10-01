@@ -3,7 +3,7 @@ import { useLocation } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
 
-import { fetchAllColaboradoresRequest } from "../../store/modules/colaborador/colaboradorSlice";
+import { setColaboradores } from "../../store/modules/colaborador/colaboradorSlice";
 
 import "./Agendamento.css"; // Estilização personalizada
 
@@ -19,7 +19,7 @@ const AgendamentoPage = () => {
 
   const dispatch = useDispatch();
   useEffect(() => {
-      dispatch(fetchAllColaboradoresRequest())
+      dispatch(setColaboradores())
   }, []);
 
   const colaboradoesArray = colaboradores.colaboradores || []

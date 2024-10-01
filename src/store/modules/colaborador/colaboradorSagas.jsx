@@ -1,51 +1,139 @@
-// sagas/colaboradorSagas.js
-import { call, put, all, takeLatest } from 'redux-saga/effects';
-import axios from 'axios';
+import { takeLatest, all, call, put, select } from "redux-saga/effects";
 import {
-  fetchAllColaboradoresRequest,
-  fetchAllColaboradoresSuccess,
-  fetchAllColaboradoresFailure,
-  fetchOneColaboradorRequest,
-  fetchOneColaboradorSuccess,
-  fetchOneColaboradorFailure,
-} from './colaboradorSlice';
+  updateColaborador,
+  resetColaborador,
+  setColaboradores,
+  setColaborador,
+  setServicos,
+  fetchAllColaboradores,
+  saveColaborador,setNotification
+} from "./colaboradorSlice"; // novo arquivo
+import { api } from "../../../services/api";
+import { notification } from "../../../services/rsuite";
 
-function* fetchAllSaga() {
+
+function* saveColaboradorSaga(action) {
   try {
-    const response = yield call(() => axios.get(`http://localhost:8000/colaborador/salao/${localStorage.getItem('_dSlun')}`));
-    // const response = yield call(() => axios.get('https://api-production-cc80.up.railway.app/colaborador/salao/66d1fc606938c910b08d0b20'));
-    yield put(fetchAllColaboradoresSuccess(response.data));
-  } catch (error) {
-    yield put(fetchAllColaboradoresFailure(error.message));
+    const { payload } = action; // Obtém os dados do colaborador
+    const colaboradorId =payload._id;
+
+    // Chamada à API
+    const { data: response } = yield call(api.put, `/colaborador/${colaboradorId}`, payload);
+    console.log(response);
+
+    // Verifica se há erro na resposta
+    if (response.error) {
+      // Dispara uma ação para definir a notificação de erro
+      yield put(setNotification({
+        type: "error",
+        description: response.error,
+      }));
+    } else {
+      // Atualiza a lista de colaboradores
+      yield put(fetchAllColaboradores()); // Atualiza o estado com os colaboradores
+
+      // Dispara uma ação para definir a notificação de sucesso
+      yield put(setNotification({
+        type: "success",
+        description: "Colaborador salvo com sucesso!",
+      }));
+    }
+  } catch (err) {
+    // Dispara uma ação para definir a notificação de erro
+    yield put(setNotification({
+      type: "error",
+      description: err.message || "Erro ao salvar colaborador",
+    }));
   }
 }
 
-function* fetchOneSaga(action) {
-  const filter = {
-    filters: {
-      _id: action.payload,
-    },
-  }
+
+
+export function* filterColaborador({ payload }) {
+  const { form } = yield select((state) => state.colaborador);
+
   try {
-    // const response = yield call(() => axios.post(`https://api-production-cc80.up.railway.app/colaborador/filter`,filter));
-    const response = yield call(() => axios.post(`http://localhost:8000/colaborador/filter`,filter));
-    yield put(fetchOneColaboradorSuccess(response.data));
-  } catch (error) {
-    yield put(fetchOneColaboradorFailure(error.message));
+    yield put(updateColaborador({ form: { ...form, filtering: true } }));
+    const { data: res } = yield call(api.post, "/colaborador/filter", payload);
+
+    yield put(updateColaborador({ form: { ...form, filtering: false } }));
+
+    if (res.error) {
+      notification("error", {
+        placement: "topStart",
+        title: "Ops...",
+        description: res.message,
+      });
+      return;
+    }
+
+    if (res.colaboradores.length > 0) {
+      yield put(
+        updateColaborador({
+          colaborador: res.colaboradores[0],
+          form: { ...form, filtering: false, disabled: true },
+        })
+      );
+    } else {
+      yield put(
+        updateColaborador({
+          form: { ...form, filtering: false, disabled: false },
+        })
+      );
+    }
+  } catch (err) {
+    yield put(updateColaborador({ form: { ...form, filtering: false } }));
+    notification("error", {
+      placement: "topStart",
+      title: "Ops...",
+      description: err.message,
+    });
   }
 }
 
-function* watchFetchAll() {
-  yield takeLatest(fetchAllColaboradoresRequest.type, fetchAllSaga);
+export function* allColaboradores() {
+  try {
+    const { form } = yield select((state) => state.colaborador);
+    yield put(updateColaborador({ form: { ...form, filtering: true } }));
+
+    const { data: res } = yield call(
+      api.get,
+      `/colaborador/salao/${localStorage.getItem("_dSlun")}`
+    );
+
+    yield put(updateColaborador({ form: { ...form, filtering: false } }));
+
+    if (res.error) {
+      notification("error", {
+        placement: "topStart",
+        title: "Ops...",
+        description: res.message,
+      });
+      return;
+    }
+
+    yield put(setColaboradores(res.colaboradores));
+  } catch (err) {
+    yield put(updateColaborador({ form: { ...form, filtering: false } }));
+    notification("error", {
+      placement: "topStart",
+      title: "Ops...",
+      description: err.message,
+    });
+  }
 }
 
-function* watchFetchOne() {
-  yield takeLatest(fetchOneColaboradorRequest.type, fetchOneSaga);
+
+function* watcherAllColaborador() {
+  yield takeLatest(fetchAllColaboradores.type, allColaboradores);
+}
+function* watchersaveColaborador() {
+  yield takeLatest(saveColaborador.type, saveColaboradorSaga);
 }
 
 export default function* rootSaga() {
   yield all([
-    watchFetchAll(),
-    watchFetchOne(),
+    watcherAllColaborador(),
+    watchersaveColaborador()
   ]);
 }

@@ -1,6 +1,8 @@
 import React from "react";
-import './index.css'
+import { Link, useLocation } from "react-router-dom";
+import "./index.css";
 function Header() {
+  const location = useLocation();
   return (
     <div
       className="container-fluid p-3 d-flex flex-row justify-content-between align-items-center text-white"
@@ -25,7 +27,13 @@ function Header() {
             aria-expanded="false"
           ></button>
           <ul className="dropdown-menu">
-            <li className="dropdown-item">Action</li>
+            <li className="dropdown-item">
+              <Link className="" to={"/Salao/Deyvid-Barber"}>
+                {/* <a className={location.pathname === "/Salao/Deyvid-Barber" ? "active" : ""}> */}
+                  Agendamentos
+                {/* </a> */}
+              </Link>
+            </li>
             <li className="dropdown-item">Another action</li>
             <li className="dropdown-item">Something else here</li>
           </ul>

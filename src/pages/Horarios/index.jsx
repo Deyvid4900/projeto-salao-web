@@ -1,5 +1,6 @@
+// indexHorarios
 import { useEffect } from "react";
-import moment from "moment-timezone";
+import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import "rsuite/dist/rsuite-no-reset.min.css";
@@ -35,6 +36,7 @@ moment.locale("pt-br");
 
 const HorariosAtendimento = () => {
   const dispatch = useDispatch();
+  const firstDay = getFirstDayOfWeek()
   const {
     horario,
     horarios,
@@ -43,8 +45,6 @@ const HorariosAtendimento = () => {
     behavior,
     servicos,
     colaboradores,
-    inicio,
-    fim,
   } = useSelector((state) => state.horarios); // Atualizado para utilizar o slice
 
   const diasDaSemana = [
@@ -59,8 +59,13 @@ const HorariosAtendimento = () => {
 
   const diasSemanaData = Array.from({ length: 7 }, (v, i) => {
     const today = new Date(); // Obtém a data atual
-    const dayOffset = i; // Offset para cada dia da semana
-    return new Date(
+    const currentDayOfWeek = today.getDay(); // Índice do dia da semana atual (0 para domingo, 1 para segunda, etc.)
+    
+    // Calcula a diferença entre o dia atual e o próximo domingo
+    const dayOffset = i - currentDayOfWeek;
+  
+    // Cria a nova data com o offset para alinhar com o domingo como primeiro dia
+    const date = new Date(
       today.getFullYear(),
       today.getMonth(),
       today.getDate() + dayOffset,
@@ -69,7 +74,17 @@ const HorariosAtendimento = () => {
       0,
       0
     );
+  
+    return date; // Retorna a data ajustada
   });
+  
+
+  function getFirstDayOfWeek() {
+    return moment().startOf('isoWeek').toDate(); // ISO week começa na segunda-feira
+  }
+  
+  console.log(getFirstDayOfWeek());
+  
 
   const setHorario = (key, value) => {
     dispatch(
@@ -172,7 +187,7 @@ const HorariosAtendimento = () => {
 
     return listaEventos;
   };
-  const horarinicio = horario.inicio
+  const horarinicio = horario.inicio;
   useEffect(() => {
     dispatch({ type: "horarios/allHorarios" }); // Chama o Saga responsável por obter todos os horários
     dispatch({ type: "horarios/allServicos" }); // Chama o Saga responsável por obter todos os serviços
@@ -199,7 +214,11 @@ const HorariosAtendimento = () => {
               onClose={() => setComponents("drawer", false)}
             >
               <Drawer.Body>
-                <h3>{behavior == 'create'?"Criar novo Horário":"Atualizar Horário"}</h3>
+                <h3>
+                  {behavior == "create"
+                    ? "Criar novo Horário"
+                    : "Atualizar Horário"}
+                </h3>
                 <div className="row mt-3">
                   {/* Dias da semana */}
                   <div className="col-12">
@@ -241,10 +260,7 @@ const HorariosAtendimento = () => {
                       block
                       format="HH:mm"
                       hideMinutes={(min) => ![0, 30].includes(min)}
-                      value={
-                     
-                        new Date(horarinicio).toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', timeZone: 'UTC' })
-                      }
+                      value={horario.inicio ? new Date(horario.inicio) : null}
                       onChange={(date) => {
                         const selectedDate = new Date(date);
                         selectedDate.setSeconds(0, 0); // Reseta segundos e milissegundos
@@ -428,8 +444,7 @@ const HorariosAtendimento = () => {
                     setComponents("drawer", true);
                   }}
                   events={formatEventos()} // Certifique-se de que os eventos estejam formatados corretamente
-                  defaultView={components.view} // Use defaultView se for imutável
-                  defaultDate={moment(diasSemanaData[moment().day()])} // Ajuste para o fuso horário
+                  defaultView={components.view} // Use defaultView se for imutável// Ajuste para o fuso horário
                   selectable={true}
                   popup={true}
                   toolbar={false}
