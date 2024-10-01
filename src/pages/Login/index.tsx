@@ -79,19 +79,6 @@ export const Login = () => {
 
         <hr style={styles.divider} />
 
-        <button
-          type="button"
-          style={{ ...styles.socialButton, ...styles.googleButton }}
-        >
-          <span style={styles.icon}>G</span> Entrar com o Google
-        </button>
-
-        <button
-          type="button"
-          style={{ ...styles.socialButton, ...styles.facebookButton }}
-        >
-          <span style={styles.icon}>f</span> Entrar com o Facebook
-        </button>
       </div>
 
       <div style={active ? { ...styles.spinnerContainer, ...styles.spinnerContainerActive } : styles.spinnerContainer}>
