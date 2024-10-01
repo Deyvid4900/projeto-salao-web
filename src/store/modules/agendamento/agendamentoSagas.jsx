@@ -1,30 +1,34 @@
-import { call, put, all, takeLatest } from "redux-saga/effects";
-import { api } from "../../../services/api";
-import {filterAgendamentoRequest,filterAgendamentoFailure,filterAgendamentoSuccess} from "../agendamento/agendamentoSlice"
+import { takeLatest, all, call, put } from 'redux-saga/effects';
+import { updateAgendamento } from './agendamentoSlice';
+import {api} from '../../../services/api';
+import { notification } from '../../../services/rsuite';
 
-const salaoId = localStorage.getItem("_dSlun");
-
-export function* filterAgendamento(action) {
+function* filterAgendamentos({ range }) {
   try {
-    const response = yield call(api.post, "/agendamento/filter/",{
-      salaoId: salaoId,
-      range: {
-        start: action.payload.start,
-        end: action.payload.end,
-      },
+    const { data: res } = yield call(api.post, '/agendamento/filter', {
+      salaoId: localStorage.getItem('_dSlun'),
+      range,
     });
 
-    
-    yield put(filterAgendamentoSuccess(response.data));
-  } catch (error) {
-    yield put(filterAgendamentoFailure(error.message));
+    if (res.error) {
+      notification('error', {
+        placement: 'topStart',
+        title: 'Ops...',
+        description: res.message,
+      });
+      return false;
+    }
+
+    yield put(updateAgendamento({ agendamentos: res.agendamentos }));
+  } catch (err) {
+    notification('error', {
+      placement: 'topStart',
+      title: 'Ops...',
+      description: err.message,
+    });
   }
 }
 
-function* watchFilterAgendamento() {
-  yield takeLatest(filterAgendamentoRequest.type, filterAgendamento);
-}
-
-export default function* rootSaga() {
-  yield all([watchFilterAgendamento()]);
+export default function* agendamentoSagas() {
+  yield all([takeLatest('agendamento/filterAgendamentos', filterAgendamentos)]);
 }

@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
-import { filterAgendamentoRequest } from "../../store/modules/agendamento/agendamentoSlice";
+import { filterAgendamentos } from "../../store/modules/agendamento/agendamentoActions"; // Action correta para chamar a saga
 import { Spinner } from "react-bootstrap";
 
 // Configura o localizador de datas com Moment.js
@@ -10,7 +10,7 @@ const localizer = momentLocalizer(moment);
 
 const MyCalendar = () => {
   const dispatch = useDispatch();
-  const { data, loading } = useSelector((state: any) => state.agendamento);
+  const { agendamentos, loading } = useSelector((state: any) => state.agendamento); // Ajustando nome correto no slice
 
   const [events, setEvents] = useState([]);
 
@@ -20,13 +20,13 @@ const MyCalendar = () => {
       start: moment().startOf("M").format("YYYY-MM-DD"),
       end: moment().endOf("M").format("YYYY-MM-DD"),
     };
-    dispatch(filterAgendamentoRequest(periodo));
+    dispatch(filterAgendamentos(periodo)); // Usando a action correta para disparar a saga
   }, [dispatch]);
 
   // Mapeia agendamentos para eventos do calendário
   useEffect(() => {
-    if (data?.agendamentos) {
-      const mappedEvents = data.agendamentos.map((e: any) => {
+    if (agendamentos) {
+      const mappedEvents = agendamentos.map((e: any) => {
         const dataInicio = moment(e.data).toDate(); // Usa moment para garantir o formato correto da data
         const duracao = e.servicoId?.duracao || 0; // duração em minutos ou 0 se não definido
         const dataFim = moment(dataInicio).add(duracao, 'minutes').toDate(); // Adiciona a duração à data de início
@@ -39,7 +39,7 @@ const MyCalendar = () => {
       });
       setEvents(mappedEvents);
     }
-  }, [data]);
+  }, [agendamentos]);
 
   // Formata o intervalo de datas
   const formatRange = (periodo: any) => {
@@ -61,11 +61,11 @@ const MyCalendar = () => {
   // Dispara a ação de filtro ao mudar o range, mas só se for um range relevante
   const handleRangeChange = (periodo: any) => {
     const range = formatRange(periodo);
-    console.log(events)
+    console.log(events);
     // Verifica se o range realmente mudou
     if (periodo.start && periodo.end) {
       console.log('Range alterado:', range);
-      dispatch(filterAgendamentoRequest(range)); // Dispara a action com o novo intervalo de datas
+      dispatch(filterAgendamentos(range)); // Dispara a action com o novo intervalo de datas
     }
   };
 
@@ -85,14 +85,16 @@ const MyCalendar = () => {
         backgroundColor: "rgb(255 255 255 / 68%)",
       }}
     >
+       <h2 className="mb-4 mt-0">Agendamentos</h2>
       <Calendar
-        // onRangeChange={((range) => handleRangeChange(range))} // Dispara o dispatch na mudança de range
+        onRangeChange={((range) => handleRangeChange(range))} // Dispara o dispatch na mudança de range
         localizer={localizer}
         events={events}
         defaultView="month"
         popup
         selectable
-        />
+        style={{height:"90%"}}
+      />
     </div>
   );
 };

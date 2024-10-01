@@ -37,7 +37,6 @@ export const Colaborador = () => {
   
 
   const [overflow, setOverflow] = useState(true);
-  const [backdrop, setBackdrop] = useState(false);
   const [open, setOpen] = useState(false);
   const [openInformation, setOpenInformation] = useState(false);
 
@@ -179,7 +178,7 @@ export const Colaborador = () => {
           </div>
         </div>
 
-        <Drawer backdrop={backdrop} open={open} onClose={() => setOpen(false)}>
+        <Drawer backdrop={"static"} open={open} onClose={() => setOpen(false)}>
           <Drawer.Header>
             <Drawer.Title>Editar Colaborador</Drawer.Title>
           </Drawer.Header>
@@ -232,7 +231,7 @@ export const Colaborador = () => {
                 />
               </Form.Group>
               <Form.Group>
-                <ButtonToolbar>
+                <ButtonToolbar style={{float:'right'}}>
                   <Button appearance="primary">Salvar</Button>
                   <Button appearance="default" onClick={() => setOpen(false)}>
                     Cancelar

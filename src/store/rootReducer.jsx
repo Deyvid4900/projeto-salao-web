@@ -5,7 +5,7 @@ import agendamentosReducer from "./modules/agendamento/agendamentoSlice";
 import servicosReducer from "./modules/servicos/servicosSlice";
 import clienteReducer from "./modules/clientes/clientesSlice";
 import salaoReducer from "./modules/salao/salaoSlice";
-// import horariosReducer from "./modules/horarios/horariosSlice";
+import horariosReducer from "./modules/horarios/horariosSlice";
 
 const rootReducer = combineReducers({
   colaborador: colaboradorReducer,
@@ -13,7 +13,7 @@ const rootReducer = combineReducers({
   servicos:servicosReducer,
   cliente:clienteReducer,
   salao:salaoReducer,
-  // horarios:horariosReducer
+  horarios:horariosReducer
 });
 
 export default rootReducer;

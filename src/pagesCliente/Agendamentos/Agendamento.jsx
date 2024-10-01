@@ -1,5 +1,10 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 import { useLocation } from "react-router-dom";
+
+import { useDispatch, useSelector } from "react-redux";
+
+import { fetchAllColaboradoresRequest } from "../../store/modules/colaborador/colaboradorSlice";
+
 import "./Agendamento.css"; // Estilização personalizada
 
 const AgendamentoPage = () => {
@@ -7,9 +12,17 @@ const AgendamentoPage = () => {
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedHour, setSelectedHour] = useState(null);
   const [selectedSpecialist, setSelectedSpecialist] = useState(null);
+  const { colaboradores } = useSelector((state) => state.colaborador);
 
   const location = useLocation();
   const { servico } = location.state || {};
+
+  const dispatch = useDispatch();
+  useEffect(() => {
+      dispatch(fetchAllColaboradoresRequest())
+  }, []);
+
+  const colaboradoesArray = colaboradores.colaboradores || []
 
   // Função para gerar os dias da semana atual e da próxima
   const generateDays = () => {
@@ -69,7 +82,7 @@ const AgendamentoPage = () => {
       {/* Seção de datas */}
       <div className="datas">
         <h4>Pra quando você gostaria de agendar?</h4>
-        <div className="dias-semana-scroll">
+        <div className="dias-semana-scroll mt-3">
           <div className="dias-semana">
             {days.map((day) => (
               <button
@@ -87,7 +100,7 @@ const AgendamentoPage = () => {
       {/* Seção de horas */}
       <div className="horarios">
         <h4>Que horas?</h4>
-        <div className="horas-disponiveis-scroll">
+        <div className="horas-disponiveis-scroll mt-3">
           <div className="horas-disponiveis">
             {hours.map((hour) => (
               <button
@@ -105,17 +118,17 @@ const AgendamentoPage = () => {
       {/* Escolher especialista */}
       <div className="especialista-selecao">
         <h4>Gostaria de escolher um especialista específico?</h4>
-        <div className="especialista-opcoes-scroll">
+        <div className="especialista-opcoes-scroll mt-3">
           <div className="especialista-opcoes">
-            {specialists.map((specialist) => (
-              <div key={specialist.id} className="especialista-card">
+            {colaboradoesArray.map((specialist) => (
+              <div key={specialist._id} className="especialista-card">
                 <div className="especialista-img-placeholder"></div>
-                <p>{specialist.name}</p>
+                <p>{specialist.nome}</p>
                 <button
                   className={`btn-especialista ${
-                    selectedSpecialist === specialist.id ? "ativo" : ""
+                    selectedSpecialist === specialist._id ? "ativo" : ""
                   }`}
-                  onClick={() => setSelectedSpecialist(specialist.id)}
+                  onClick={() => setSelectedSpecialist(specialist._id)}
                 >
                   Escolher Especialista
                 </button>

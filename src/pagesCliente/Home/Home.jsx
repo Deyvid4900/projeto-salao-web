@@ -1,4 +1,4 @@
-import { React, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import "./Home.css";
@@ -12,10 +12,6 @@ function HomeCliente() {
   const [searchQuery, setSearchQuery] = useState("");
   const [userCoordinates, setUserCoordinates] = useState(null);
 
-  const services = [
-    //... (mesmo array de serviços que você já tem)
-  ];
-
   const dispatch = useDispatch();
   const { saloes, loading, error } = useSelector((state) => state.salao);
   const { data } = useSelector((state) => state.servicos);
@@ -26,7 +22,7 @@ function HomeCliente() {
   };
 
   const formatarDistancia = (metros) => {
-    return (metros / 1000).toFixed(2);
+    return metros;
   };
 
   const handleLigar = (numero) => {
@@ -90,6 +86,7 @@ function HomeCliente() {
     try {
       const coordinates = await getUserCoordinates();
       setUserCoordinates(coordinates);
+      console.log(coordinates);
     } catch (error) {
       console.error("Erro ao obter coordenadas:", error);
     }
@@ -97,33 +94,36 @@ function HomeCliente() {
 
   useEffect(() => {
     dispatch(fetchAllRequest());
-
     fetchUserLocation();
   }, [dispatch]);
 
   const servicosArray = data.servicos || [];
 
   useEffect(() => {
-    const fetchData = async () => {
-      if (userCoordinates) {
-        dispatch(fetchSalaoRequest({ nome, coordinates: userCoordinates })); // Corrigido
-      }
-    };
-    fetchData();
+    if (userCoordinates) {
+      const fetchData = async () => {
+        dispatch(fetchSalaoRequest({ nome, coordinates: userCoordinates }));
+      };
+      fetchData();
+    }
   }, [userCoordinates, dispatch, nome]);
 
-  const filteredServices = services.filter((service) =>
-    service.title.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredServices = servicosArray.filter((service) =>
+    service.titulo.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   if (loading) {
-    return <div>Carregando...</div>; // Placeholder de carregamento
+    return <div>Carregando...</div>;
   }
 
   if (error) {
-    return <div>Erro: {error}</div>; // Exibição de erro
+    return <div>Erro: {error}</div>;
   }
-  const statusStyle = selectSalao.isOpened ? { color: "#75b798" } : { color: '#ea868f' };
+
+  const statusStyle = selectSalao.isOpened
+    ? { color: "#75b798" }
+    : { color: "#ea868f" };
+
   return (
     <>
       {/* Hero Section */}
@@ -144,17 +144,21 @@ function HomeCliente() {
             zIndex: 2,
           }}
         >
-          <div
-            className="btn btn-md btn-success"
-            
-          >
+          <div className="btn btn-md btn-success">
             <i className="fas fa-calendar-check me-2"></i> Reserve Agora
           </div>
           <h2 className="pt-2" style={{ fontWeight: 500 }}>
             {selectSalao.nome}
           </h2>
           <h6 style={{ fontWeight: 400, color: "rgba(248, 247, 255, 0.8)" }}>
-            Distância: {formatarDistancia(selectSalao.distance)} km  •  <span style={statusStyle}>{selectSalao.isOpened?"Aberto":"Fechado"}</span>
+            Distância:{" "}
+            {selectSalao.distance
+              ? formatarDistancia(selectSalao.distance)
+              : "Indisponível"}{" "}
+            km •{" "}
+            <span style={statusStyle}>
+              {selectSalao.isOpened ? "Aberto" : "Fechado"}
+            </span>
           </h6>
         </div>
       </div>
@@ -170,12 +174,12 @@ function HomeCliente() {
         •
         <div
           style={{ cursor: "pointer" }}
-          onClick={() => handleMap(selectSalao.geo.coordinates)}
+          onClick={() => handleMap(selectSalao.geo?.coordinates)}
         >
           <i className="fa-solid fa-map"></i> Visitar
         </div>
         •
-        <div style={{ cursor: "pointer" }} onClick={() => handleShare()}>
+        <div style={{ cursor: "pointer" }} onClick={handleShare}>
           <i className="fa-solid fa-share-nodes"></i> Compartilhar
         </div>
       </div>
@@ -203,7 +207,7 @@ function HomeCliente() {
           className="services-list"
           style={{ overflow: "auto", maxHeight: "43vh" }}
         >
-          {servicosArray.map((service, index) => (
+          {filteredServices.map((service, index) => (
             <div
               key={index}
               className="card mb-3 d-flex flex-row align-items-center justify-content-end p-3 flex-wrap"
@@ -229,12 +233,10 @@ function HomeCliente() {
                 >
                   {service.titulo}
                 </h5>
-                <p className="service-info text-muted ">
+                <p className="service-info text-muted">
                   R$ {Number(service.preco).toFixed(2)} • {service.duracao}min{" "}
-                  <br />{" "}
-                  <span className="" style={{ maxWidth: "" }}>
-                    {service.descricao}
-                    </span>
+                  <br />
+                  <span>{service.descricao}</span>
                 </p>
               </div>
 
