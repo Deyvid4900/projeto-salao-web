@@ -8,6 +8,8 @@ import {
   setSaving,
   setFiltering,
   closeDrawer,
+  setColaboradoresInfo,
+  setColaboradores,
 } from "./horariosSlice";
 import { api } from "../../../services/api";
 import { notification } from "../../../services/rsuite";
@@ -95,34 +97,15 @@ export function* allHorarios() {
     );
 
     yield put(setFiltering(false));
-
-    // if (res.error) {
-    //   notification('error', {
-    //     placement: 'topStart',
-    //     title: 'Ops...',
-    //     description: res.message,
-    //   });
-    //   return;
-    // }
-
     const horariosArray = res.horarios || [];
 
-    console.log(horariosArray);
-    const horariosComHoras = horariosArray.map((horario) => ({
-      ...horario,
-      start: moment(horario.inicio).format("HH:mm"), // Extrai apenas as horas
-      end: moment(horario.fim).format("HH:mm"), // Extrai apenas as horas
-    }));
-    console.log(horariosComHoras);
+    const horariosComHoras = horariosArray.map((horario) => ({...horario}));
+
+    // console.log(horariosComHoras);
 
     yield put(setHorarios(horariosComHoras));
   } catch (err) {
     yield put(setFiltering(false));
-    // notification('error', {
-    //   placement: 'topStart',
-    //   title: 'Ops...',
-    //   description: err.message,
-    // });
   }
 }
 
@@ -203,16 +186,53 @@ export function* removeHorario() {
   }
 }
 
+export function* fetchColaboradorSalao() {
+  try {
+    // Faz uma chamada para buscar os dados do colaborador usando o ID
+    const { data: res } = yield call(
+      api.get,
+      `/colaborador/salao/${localStorage.getItem("_dSlun")}`
+    );
+    console.log(res);
+    // Atualiza o estado com os colaboradores retornados
+    yield put(setColaboradores(res.colaboradores));
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+export function* fetchColaborador() {
+  // Obtém a lista de IDs de colaboradores do estado
+  const { colaboradores } = yield select((state) => state.horarios.horario);
+
+  // Verifica se há colaboradores para buscar
+  if (colaboradores && colaboradores.length > 0) {
+    // Usa um loop for...of para iterar sobre os colaboradores
+    for (let idColaborador of colaboradores) {
+      try {
+        // Faz uma chamada para buscar os dados do colaborador usando o ID
+        const { data: res } = yield call(api.post, `/colaborador/filter`, {
+          _id: idColaborador,
+        });
+
+        // Atualiza o estado com os colaboradores retornados
+        yield put(setColaboradoresInfo(res.colaboradores));
+      } catch (err) {
+        console.error(err);
+      }
+    }
+  }
+}
+
 export function* filterColaboradores() {
-  const { horarios } = yield select((state) => state);
+  const { horario } = yield select((state) => state.horarios);
 
   try {
     yield put(setFiltering(true));
 
     const { data: res } = yield call(api.post, `/horario/colaboradores/`, {
-      servicos: horarios.servicos,
+      servicos: horario.especialidades,
     });
-    // console.log(horarios.servicos)
     yield put(setFiltering(false));
 
     if (res.error) {
@@ -237,6 +257,12 @@ export function* filterColaboradores() {
 
 function* watchAllServicos() {
   yield takeLatest("horarios/allServicos", allServicos);
+}
+function* watchAllColaboradoresSalao() {
+  yield takeLatest("horarios/allColaboradoresSalao", fetchColaboradorSalao);
+}
+function* watchColaborador() {
+  yield takeLatest("horarios/allColaborador", fetchColaborador);
 }
 
 function* watchAddHorario() {
@@ -267,5 +293,7 @@ export default function* rootSaga() {
     watchSaveHorario(),
     watchRemoveHorario(),
     watchFilterColaboradores(),
+    watchColaborador(),
+    watchAllColaboradoresSalao(),
   ]);
 }

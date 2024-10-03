@@ -27,13 +27,13 @@ function Header() {
             aria-expanded="false"
           ></button>
           <ul className="dropdown-menu">
-            <li className="dropdown-item">
-              <Link className="" to={"/Salao/Deyvid-Barber"}>
+            <Link className="" to={"/Salao/Deyvid-Barber"}>
+              <li className="dropdown-item">
                 {/* <a className={location.pathname === "/Salao/Deyvid-Barber" ? "active" : ""}> */}
-                  Agendamentos
+                Salão
                 {/* </a> */}
-              </Link>
-            </li>
+              </li>
+            </Link>
             <li className="dropdown-item">Another action</li>
             <li className="dropdown-item">Something else here</li>
           </ul>

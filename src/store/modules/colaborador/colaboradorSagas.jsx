@@ -54,7 +54,10 @@ export function* filterColaborador({ payload }) {
 
   try {
     yield put(updateColaborador({ form: { ...form, filtering: true } }));
-    const { data: res } = yield call(api.post, "/colaborador/filter", payload);
+    console.log(payload)
+    const { data: res } = yield call(api.post, "/colaborador/filter", {
+      // "_id":
+    });
 
     yield put(updateColaborador({ form: { ...form, filtering: false } }));
 
@@ -123,17 +126,20 @@ export function* allColaboradores() {
   }
 }
 
-
 function* watcherAllColaborador() {
   yield takeLatest(fetchAllColaboradores.type, allColaboradores);
 }
 function* watchersaveColaborador() {
   yield takeLatest(saveColaborador.type, saveColaboradorSaga);
 }
+function* fetchColaboradores() {
+  yield takeLatest(setColaboradores.type, filterColaborador);
+}
 
 export default function* rootSaga() {
   yield all([
     watcherAllColaborador(),
-    watchersaveColaborador()
+    watchersaveColaborador(),
+    fetchColaboradores()
   ]);
 }

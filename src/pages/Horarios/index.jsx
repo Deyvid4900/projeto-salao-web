@@ -36,7 +36,7 @@ moment.locale("pt-br");
 
 const HorariosAtendimento = () => {
   const dispatch = useDispatch();
-  const firstDay = getFirstDayOfWeek()
+  const firstDay = getFirstDayOfWeek();
   const {
     horario,
     horarios,
@@ -45,7 +45,13 @@ const HorariosAtendimento = () => {
     behavior,
     servicos,
     colaboradores,
+    colaboradoresInfo,
   } = useSelector((state) => state.horarios); // Atualizado para utilizar o slice
+
+  const colaboradoresInfoArray = colaboradoresInfo || [];
+
+  const qtnServico = horario.especialidade || [];
+  const qtnColaborador = horario.colaboradores || [];
 
   const diasDaSemana = [
     "domingo",
@@ -60,10 +66,10 @@ const HorariosAtendimento = () => {
   const diasSemanaData = Array.from({ length: 7 }, (v, i) => {
     const today = new Date(); // Obtém a data atual
     const currentDayOfWeek = today.getDay(); // Índice do dia da semana atual (0 para domingo, 1 para segunda, etc.)
-    
+
     // Calcula a diferença entre o dia atual e o próximo domingo
     const dayOffset = i - currentDayOfWeek;
-  
+
     // Cria a nova data com o offset para alinhar com o domingo como primeiro dia
     const date = new Date(
       today.getFullYear(),
@@ -74,17 +80,13 @@ const HorariosAtendimento = () => {
       0,
       0
     );
-  
+
     return date; // Retorna a data ajustada
   });
-  
 
   function getFirstDayOfWeek() {
-    return moment().startOf('isoWeek').toDate(); // ISO week começa na segunda-feira
+    return moment().startOf("isoWeek").toDate(); // ISO week começa na segunda-feira
   }
-  
-  console.log(getFirstDayOfWeek());
-  
 
   const setHorario = (key, value) => {
     dispatch(
@@ -147,6 +149,10 @@ const HorariosAtendimento = () => {
     dispatch({ type: "horarios/removeHorario" }); // Chama o Saga responsável por remover horário
   };
 
+  const handleDate = () => {
+    console.log(horario.inicio)
+  }
+
   const formatEventos = () => {
     let listaEventos = [];
 
@@ -187,10 +193,10 @@ const HorariosAtendimento = () => {
 
     return listaEventos;
   };
-  const horarinicio = horario.inicio;
   useEffect(() => {
     dispatch({ type: "horarios/allHorarios" }); // Chama o Saga responsável por obter todos os horários
-    dispatch({ type: "horarios/allServicos" }); // Chama o Saga responsável por obter todos os serviços
+    dispatch({ type: "horarios/allServicos" });
+    // Chama o Saga responsável por obter todos os serviços
   }, []);
 
   useEffect(() => {
@@ -204,10 +210,10 @@ const HorariosAtendimento = () => {
       <Sidebar />
       <div
         className="d-flex flex-column justify-content-center align-items-center"
-        style={{ maxHeight: "calc(100vh - 95px)", overflowY: "auto" }}
+        style={{ maxHeight: "calc(100vh - 95px)",  }}
       >
-        <div className="mt-5" style={{ width: "90%" }}>
-          <div className="col p-5 overflow-auto h-100">
+        <div className="mt-5" style={{ width: "95%" }}>
+          <div className="col p-1 overflow-auto h-100">
             <Drawer
               open={components.drawer}
               size="sm"
@@ -254,20 +260,26 @@ const HorariosAtendimento = () => {
                     </Checkbox>
                   </div>
                   {/* Horário Inicial */}
+                  {/* {console.log("moment cru : " + horario.inicio)}
+                  {console.log("moment new Date: " + new Date(horario.inicio))}
+                  {console.log(
+                    "moment todate : " + moment(horario.inicio).toDate()
+                  )} */}
                   <div className="col-6 mt-3">
                     <b className="d-block">Horário Inicial</b>
                     <DatePicker
                       block
                       format="HH:mm"
                       hideMinutes={(min) => ![0, 30].includes(min)}
-                      value={horario.inicio ? new Date(horario.inicio) : null}
+                      value={moment(horario.inicio).toDate()} // Converte a string ISO para a hora local correta
                       onChange={(date) => {
                         const selectedDate = new Date(date);
                         selectedDate.setSeconds(0, 0); // Reseta segundos e milissegundos
-                        setHorario("inicio", selectedDate.toISOString());
+                        setHorario("inicio", selectedDate.toISOString()); // Salva em formato ISO
                       }}
                     />
                   </div>
+
                   {/* Horário Final */}
                   <div className="col-6 mt-3">
                     <b className="d-block">Horário Final</b>
@@ -275,10 +287,15 @@ const HorariosAtendimento = () => {
                       block
                       format="HH:mm"
                       hideMinutes={(min) => ![0, 30].includes(min)}
-                      value={horario.fim ? new Date(horario.fim) : null} // Converter para Date
-                      onChange={(e) => setHorario("fim", e)}
+                      value={horario.fim ? moment(horario.fim).toDate() : null} // Conversão correta
+                      onChange={(date) => {
+                        const selectedDate = new Date(date);
+                        selectedDate.setSeconds(0, 0); // Reseta segundos e milissegundos
+                        setHorario("fim", selectedDate.toISOString()); // Salva em formato ISO
+                      }}
                     />
                   </div>
+
                   {/* Especialidades */}
                   <div className="col-12 mt-3">
                     <b>Especialidades disponíveis</b>
@@ -295,16 +312,12 @@ const HorariosAtendimento = () => {
                     />
 
                     <Checkbox
-                      disabled={
-                        horario.especialidades.length === servicos.length
-                      } // Desativa se todos já estiverem selecionados
-                      checked={
-                        horario.especialidades.length === servicos.length
-                      } // Marca se todos estiverem selecionados
+                      disabled={qtnServico.length === servicos.length} // Desativa se todos já estiverem selecionados
+                      checked={qtnServico.length === servicos.length} // Marca se todos estiverem selecionados
                       onChange={(value, checked) => {
                         if (checked) {
                           setHorario(
-                            "especialidades",
+                            "especialidade",
                             servicos.map((s) => s._id) // Seleciona todas as especialidades (usando o _id como valor)
                           );
                         } else {
@@ -319,42 +332,23 @@ const HorariosAtendimento = () => {
                   {/* Colaboradores */}
                   <div className="col-12 mt-3">
                     <b>Colaboradores disponíveis</b>
+
+                    {/* Componente TagPicker para selecionar os colaboradores */}
                     <TagPicker
                       size="lg"
                       block
-                      data={horario.colaboradores}
-                      disabled={horario.especialidades.length === 0}
-                      value={horario.colaboradores}
-                      onChange={(e) => {
-                        setHorario("colaboradores", e);
-                      }}
+                      data={colaboradores}
+                      labelKey="nome" // Usa o 'titulo' como a label exibida
+                      valueKey="_id"
+                      onChange={(selected) =>
+                        setHorario("colaboradores", selected)
+                      } // Atualiza a seleção de colaboradores
                     />
-                    <Checkbox
-                      disabled={
-                        horario.colaboradores.length === colaboradores.length
-                      }
-                      checked={
-                        horario.colaboradores.length === colaboradores.length
-                      }
-                      onChange={(v, selected) => {
-                        if (selected) {
-                          setHorario(
-                            "colaboradores",
-                            colaboradores.map((s) => s.value)
-                          );
-                        } else {
-                          setHorario("colaboradores", []);
-                        }
-                      }}
-                    >
-                      {" "}
-                      Selecionar Todos
-                    </Checkbox>
                   </div>
                 </div>
                 <Button
                   loading={form.saving}
-                  color={behavior === "create" ? "green" : "cyan"}
+                  color={behavior === "create" ? "green" : "blue"}
                   size="lg"
                   block
                   onClick={() => save()}
@@ -409,7 +403,15 @@ const HorariosAtendimento = () => {
                   <h2 className="mb-4 mt-0">Horarios de Atendimento</h2>
                   <div>
                     <button
-                      onClick={() => setComponents("drawer", true)}
+                      onClick={() => {
+                        dispatch(resetHorario());
+                        setComponents("drawer", true);
+                        dispatch(
+                          updateHorario({
+                            behavior: "create",
+                          })
+                        );
+                      }}
                       className="btn btn-primary btn-lg"
                       style={{ position: "relative", zIndex: "20" }}
                     >
@@ -421,8 +423,11 @@ const HorariosAtendimento = () => {
                 <Calendar
                   localizer={localizer}
                   onSelectEvent={(e) => {
-                    console.log(e.resource.horario); // Log do horário no console
-                    onHorarioClick(e.resource.horario); // Chama a função para editar o horário
+                    // Log do horário no console
+                    onHorarioClick(e.resource.horario);
+                    dispatch({ type: "horarios/allColaborador" });
+                    dispatch({ type: "horarios/allColaboradoresSalao" });
+                    handleDate()
                   }}
                   onSelectSlot={(slotInfo) => {
                     const { start, end } = slotInfo;

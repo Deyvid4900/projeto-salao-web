@@ -3,9 +3,8 @@ import { useLocation } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
 
-import { setColaboradores } from "../../store/modules/colaborador/colaboradorSlice";
-
 import "./Agendamento.css"; // Estilização personalizada
+import { fetchAllColaboradores } from "../../store/modules/colaborador/colaboradorSlice";
 
 const AgendamentoPage = () => {
   // Estado para o dia, horário e especialista selecionados
@@ -19,10 +18,11 @@ const AgendamentoPage = () => {
 
   const dispatch = useDispatch();
   useEffect(() => {
-      dispatch(setColaboradores())
+    console.log(servico)
+      dispatch(fetchAllColaboradores())
   }, []);
 
-  const colaboradoesArray = colaboradores.colaboradores || []
+  const colaboradoesArray = colaboradores || []
 
   // Função para gerar os dias da semana atual e da próxima
   const generateDays = () => {

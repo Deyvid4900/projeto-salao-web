@@ -1,5 +1,6 @@
 // horariosSlice
 import { createSlice } from '@reduxjs/toolkit';
+import { setColaborador } from '../colaborador/colaboradorSlice';
 
 const initialState = {
   behavior: 'create',
@@ -22,7 +23,8 @@ const initialState = {
   },
   horarios: [],
   servicos: [],
-  colaboradores: [],
+  colaboradorInfo: [],
+  colaboradores:[],
   inicio:'',
   fim:''
 };
@@ -48,6 +50,9 @@ const horariosSlice = createSlice({
     setColaboradores(state, action) {
       state.colaboradores = action.payload;
     },
+    setColaboradoresInfo(state,action){
+      state.colaboradorInfo = action.payload;
+    },
     setSaving(state, action) {
       state.form.saving = action.payload;
     },
@@ -69,6 +74,7 @@ export const {
   setSaving,
   setFiltering,
   closeDrawer,
+  setColaboradoresInfo
 } = horariosSlice.actions;
 
 export default horariosSlice.reducer;

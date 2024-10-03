@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthProvider/useAuth";
 import styles from "./styles";
@@ -8,24 +8,28 @@ export const Login = () => {
   const auth = useAuth();
   const navigate = useNavigate();
 
-  async function onFinish(event) {
-    event.preventDefault();
-    const email = event.target.elements.email.value;
-    const password = event.target.elements.password.value;
 
-    setActive(true); // Show spinner
+  async function onFinish(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
+
+    setActive(true); // Mostra o spinner enquanto carrega
 
     try {
       await auth.authenticate(email, password);
-      navigate("/Home");
-      localStorage.setItem("_dSlun", '66e0507b48555f3e9898edfb');
-      
-
-
+      if (window.innerWidth < 700) {
+        navigate("/AgendamentosMobile"); // Redirecionar para outra rota
+      }
+      else{
+        navigate("/Home");
+        localStorage.setItem("_dSlun", "66e0507b48555f3e9898edfb");
+      }
     } catch (error) {
       alert("Email ou senha inválidos");
     } finally {
-      setActive(false); // Hide spinner
+      setActive(false); // Esconde o spinner após a finalização
     }
   }
 
@@ -78,18 +82,19 @@ export const Login = () => {
         </button>
 
         <hr style={styles.divider} />
-
       </div>
 
-      <div style={active ? { ...styles.spinnerContainer, ...styles.spinnerContainerActive } : styles.spinnerContainer}>
-        <div
-          className="spinner-border"
-          style={{ width: "4rem", height: "4rem" }}
-          role="status"
-        >
-          <span className="visually-hidden">Loading...</span>
+      {active && (
+        <div style={{ ...styles.spinnerContainer, ...styles.spinnerContainerActive }}>
+          <div
+            className="spinner-border"
+            style={{ width: "4rem", height: "4rem" }}
+            role="status"
+          >
+            <span className="visually-hidden">Loading...</span>
+          </div>
         </div>
-      </div>
+      )}
     </form>
   );
 };

@@ -14,6 +14,13 @@ import Colaborador from "./pages/Colaborador";
 import Horario from "./pages/Horarios/index";
 import { Provider } from "react-redux";
 import store from "./store/store";
+import HeaderMobile from "./components/HeaderMobile/HeaderMobile";
+import ClienteMobile from "./pagesMobile/ClienteMobile/ClienteMobile";
+import HomeMobile from "./pagesMobile/HomeMobile/HomeMobile";
+import ColaboradorMobile from "./pagesMobile/ColaboradorMobile/ColaboradorMobile";
+import HorariosAtendimento from "./pages/Horarios/index";
+import HorariosAtendimentoMobile from "./pagesMobile/HorarioMobile/HorarioMobile";
+import ServicosMobile from "./pagesMobile/ServicosMobile/ServicosMobile";
 
 function App() {
   return (
@@ -23,6 +30,27 @@ function App() {
           <BrowserRouter>
             <Routes>
               <Route path="Salao/:nome" element={<HomeCliente></HomeCliente>} />
+              <Route
+                path="ClientesMobile"
+                element={<ClienteMobile></ClienteMobile>}
+              />
+              <Route
+                path="AgendamentosMobile"
+                element={<HomeMobile></HomeMobile>}
+              />
+              <Route
+                path="ColaboradoresMobile"
+                element={<ColaboradorMobile></ColaboradorMobile>}
+              />
+              <Route
+                path="HorariosMobile"
+                element={<HorariosAtendimentoMobile></HorariosAtendimentoMobile>}
+              />
+              <Route
+                path="ServicosMobile"
+                element={<ServicosMobile></ServicosMobile>}
+              />
+
               <Route
                 path="Agendamento"
                 element={<AgendamentoPage></AgendamentoPage>}
