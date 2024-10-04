@@ -21,6 +21,7 @@ export const Login = () => {
       await auth.authenticate(email, password);
       if (window.innerWidth < 700) {
         navigate("/AgendamentosMobile"); // Redirecionar para outra rota
+        localStorage.setItem("_dSlun", "66e0507b48555f3e9898edfb");
       }
       else{
         navigate("/Home");

@@ -19,7 +19,7 @@ function* saveColaboradorSaga(action) {
 
     // Chamada à API
     const { data: response } = yield call(api.put, `/colaborador/${colaboradorId}`, payload);
-    console.log(response);
+    // console.log(response);
 
     // Verifica se há erro na resposta
     if (response.error) {

@@ -14,7 +14,7 @@ function HomeCliente() {
 
   const dispatch = useDispatch();
   const { saloes, loading, error } = useSelector((state) => state.salao);
-  const { data } = useSelector((state) => state.servicos);
+  const { data,servicos } = useSelector((state) => state.servicos);
   const selectSalao = saloes.salao || {};
 
   const handleAgendarClick = (servico) => {
@@ -93,11 +93,13 @@ function HomeCliente() {
   };
 
   useEffect(() => {
-    dispatch(fetchAllRequest());
+    dispatch({
+      type: "servicos/fetchAllServicos",
+    });
     fetchUserLocation();
   }, [dispatch]);
 
-  const servicosArray = data.servicos || [];
+  const servicosArray = servicos || [];
 
   useEffect(() => {
     if (userCoordinates) {
@@ -144,7 +146,7 @@ function HomeCliente() {
             zIndex: 2,
           }}
         >
-          <div className="btn btn-md btn-success">
+          <div className="btn btn-md btn-light " >
             <i className="fas fa-calendar-check me-2"></i> Reserve Agora
           </div>
           <h2 className="pt-2" style={{ fontWeight: 500 }}>

@@ -6,6 +6,7 @@ const salaoSlice = createSlice({
     saloes: [],
     loading: false,
     error: null,
+    currentSalao:{}
   },
   reducers: {
     fetchSalaoRequest(state) {

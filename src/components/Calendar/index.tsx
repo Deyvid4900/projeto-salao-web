@@ -10,7 +10,9 @@ const localizer = momentLocalizer(moment);
 
 const MyCalendar = () => {
   const dispatch = useDispatch();
-  const { agendamentos, loading } = useSelector((state: any) => state.agendamento); // Ajustando nome correto no slice
+  const { agendamentos, loading } = useSelector(
+    (state: any) => state.agendamento
+  ); // Ajustando nome correto no slice
 
   const [events, setEvents] = useState([]);
 
@@ -29,10 +31,12 @@ const MyCalendar = () => {
       const mappedEvents = agendamentos.map((e: any) => {
         const dataInicio = moment(e.data).toDate(); // Usa moment para garantir o formato correto da data
         const duracao = e.servicoId?.duracao || 0; // duração em minutos ou 0 se não definido
-        const dataFim = moment(dataInicio).add(duracao, 'minutes').toDate(); // Adiciona a duração à data de início
+        const dataFim = moment(dataInicio).add(duracao, "minutes").toDate(); // Adiciona a duração à data de início
 
         return {
-          title: `Agendamento ${e.servicoId?.titulo || 'Serviço'} com ${e.clienteId?.nome || 'Cliente'} - ${e.colaboradorId?.nome || 'Colaborador'}`,
+          title: `Agendamento ${e.servicoId?.titulo || "Serviço"} com ${
+            e.clienteId?.nome || "Cliente"
+          } - ${e.colaboradorId?.nome || "Colaborador"}`,
           start: dataInicio,
           end: dataFim,
         };
@@ -64,14 +68,21 @@ const MyCalendar = () => {
     console.log(events);
     // Verifica se o range realmente mudou
     if (periodo.start && periodo.end) {
-      console.log('Range alterado:', range);
+      console.log("Range alterado:", range);
       dispatch(filterAgendamentos(range)); // Dispara a action com o novo intervalo de datas
     }
   };
 
   // Exibe o Spinner enquanto carrega
   if (loading) {
-    return <div className="d-flex justify-content-center align-items-center" style={{ height: "80vh" }}><Spinner animation="border" /></div>;
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "80vh" }}
+      >
+        <Spinner animation="border" />
+      </div>
+    );
   }
 
   // Renderiza o calendário
@@ -85,15 +96,28 @@ const MyCalendar = () => {
         backgroundColor: "rgb(255 255 255 / 68%)",
       }}
     >
-       <h2 className="mb-4 mt-0">Agendamentos</h2>
+      <h2 className="mb-4 mt-0">Agendamentos</h2>
       <Calendar
-        onRangeChange={((range) => handleRangeChange(range))} // Dispara o dispatch na mudança de range
+        messages={{
+          next: "Próximo",
+          previous: "Anterior",
+          today: "Hoje",
+          month: "Mês",
+          week: "Semana",
+          day: "Dia",
+          agenda: "Agenda",
+          date: "Data",
+          time: "Hora",
+          event: "Evento",
+          noEventsInRange: "Nada agendado",
+        }}
+        onRangeChange={(range) => handleRangeChange(range)} // Dispara o dispatch na mudança de range
         localizer={localizer}
         events={events}
         defaultView="month"
         popup
         selectable
-        style={{height:"90%"}}
+        style={{ height: "90%" }}
       />
     </div>
   );
