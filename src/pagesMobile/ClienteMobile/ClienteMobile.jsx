@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import BG from "../../components/background/background";
-import { Table, Button, Drawer, Form, Input } from "rsuite";
+import { Table, Button, Drawer, Form, Input, Loader } from "rsuite"; // Adiciona Loader
 import "rsuite/dist/rsuite-no-reset.min.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -24,10 +24,25 @@ export const ClienteMobile = () => {
     dispatch(fetchAllClientesRequest());
   }, [dispatch]);
 
-  const { clientes, cliente } = useSelector((state) => state.cliente);
+  const { clientes, cliente, loading } = useSelector((state) => state.cliente); // Adiciona o loading do estado
+
+  if (loading) {
+    return (
+      <>
+        <HeaderMobile />
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "80vh" }}
+        >
+        <Loader size="lg" content="Carregando clientes..." /> {/* Loader do rsuite */}
+      </div>
+        </>
+    );
+  }
+
   return (
     <>
-      <HeaderMobile></HeaderMobile>
+      <HeaderMobile />
 
       <div>
         <div
@@ -39,7 +54,10 @@ export const ClienteMobile = () => {
           }}
         >
           <div className="mt-3" style={{ width: "100%" }}>
-            <h4 className="pb-4 " style={{ position: "relative", zIndex: 10,textAlign:"center" }}>
+            <h4
+              className="pb-4 "
+              style={{ position: "relative", zIndex: 10, textAlign: "center" }}
+            >
               Clientes
             </h4>
 
@@ -69,7 +87,7 @@ export const ClienteMobile = () => {
               </Column>
 
               {/* Colunas extras visíveis somente em telas maiores */}
-              <Column flexGrow={1} className=" d-md-table-cell">
+              <Column flexGrow={1} className="d-md-table-cell">
                 <HeaderCell>Telefone</HeaderCell>
                 <Cell dataKey="telefone" />
               </Column>

@@ -1,9 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Header from "../../components/Header/Header";
-import Sidebar from "../../components/Sidebar/Sidebar";
-import "../../App";
-import moment from "moment";
-import BG from "../../components/background/background";
+import HeaderMobile from "../../components/HeaderMobile/HeaderMobile";
 import {
   List,
   Button,
@@ -15,20 +11,18 @@ import {
   Notification,
   useToaster,
   FlexboxGrid,
+  Loader, // Adiciona o Loader
 } from "rsuite";
 import "rsuite/dist/rsuite-no-reset.min.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  setColaboradores,
   fetchAllColaboradores,
   setColaborador,
   saveColaborador,
-  filterColaborador,
   setNotification,
 } from "../../store/modules/colaborador/colaboradorSlice";
-import HeaderMobile from "../../components/HeaderMobile/HeaderMobile";
-import "./ColaboradorMobile.css";
 import { fetchAllRequest } from "../../store/modules/servicos/servicosSlice";
+import "./ColaboradorMobile.css";
 
 const Textarea = React.forwardRef((props, ref) => (
   <Input {...props} as="textarea" ref={ref} />
@@ -56,6 +50,7 @@ export const ColaboradoresMobile = () => {
 
   useEffect(() => {
     dispatch(fetchAllColaboradores());
+
   }, [dispatch]);
 
   useEffect(() => {
@@ -106,8 +101,6 @@ export const ColaboradoresMobile = () => {
     dispatch(setColaborador(rowData));
     dispatch(fetchAllRequest());
     setOpenInformation(true);
-
-
   };
 
   const handleSubmit = () => {
@@ -118,11 +111,27 @@ export const ColaboradoresMobile = () => {
     setOpen(false);
   };
 
+  // Exibe o Loader enquanto os colaboradores estão sendo carregados (quando o array está vazio)
+  if (colaboradores.length === 0) {
+    return (
+      <>
+        <HeaderMobile />
+        <div
+          className="d-flex justify-content-center align-items-center"
+          style={{ height: "80vh" }}
+        >
+          <Loader size="lg" content="Carregando colaboradores..." /> {/* Loader do rsuite */}
+        </div>
+      </>
+    );
+  }
+
   return (
     <>
-      <HeaderMobile></HeaderMobile>
+      <HeaderMobile />
       <div className="d-flex flex-column justify-content-center align-items-center p-3">
         <h4 className="pb-4">Colaboradores</h4>
+
         <List bordered hover style={{ width: "100%" }}>
           {colaboradores.map((colaborador) => (
             <List.Item
@@ -133,7 +142,6 @@ export const ColaboradoresMobile = () => {
               style={{ cursor: "pointer" }}
             >
               <FlexboxGrid
-                className=""
                 style={{
                   flexWrap: "nowrap",
                   display: "flex",
@@ -163,7 +171,7 @@ export const ColaboradoresMobile = () => {
                       color: "#FFF",
                       border: "none",
                       borderRadius: "4px",
-                    }} // Ajustes visuais no botão
+                    }}
                     type="button"
                   >
                     Editar
@@ -267,7 +275,7 @@ export const ColaboradoresMobile = () => {
                 <Form.ControlLabel>Nome</Form.ControlLabel>
                 <Form.Control
                   disabled
-                  name="nome" // Certifique-se que o atributo name está presente
+                  name="nome"
                   value={formData.nome}
                   onChange={(value) => handleInputChange(value, "nome")}
                 />
@@ -276,7 +284,7 @@ export const ColaboradoresMobile = () => {
                 <Form.ControlLabel>Email</Form.ControlLabel>
                 <Form.Control
                   disabled
-                  name="email" // Certifique-se que o atributo name está presente
+                  name="email"
                   type="email"
                   value={formData.email}
                   onChange={(value) => handleInputChange(value, "email")}
@@ -286,7 +294,7 @@ export const ColaboradoresMobile = () => {
                 <Form.ControlLabel>Sexo</Form.ControlLabel>
                 <Form.Control
                   disabled
-                  name="sexo" // Certifique-se que o atributo name está presente
+                  name="sexo"
                   value={formData.sexo}
                   onChange={(value) => handleInputChange(value, "sexo")}
                 />
@@ -295,7 +303,7 @@ export const ColaboradoresMobile = () => {
                 <Form.ControlLabel>Data de Nascimento</Form.ControlLabel>
                 <Form.Control
                   disabled
-                  name="dataNascimento" // Certifique-se que o atributo name está presente
+                  name="dataNascimento"
                   type="date"
                   value={formData.dataNascimento}
                   onChange={(value) =>
@@ -307,7 +315,7 @@ export const ColaboradoresMobile = () => {
                 <Form.ControlLabel>Telefone</Form.ControlLabel>
                 <Form.Control
                   disabled
-                  name="telefone" // Certifique-se que o atributo name está presente
+                  name="telefone"
                   value={formData.telefone}
                   onChange={(value) => handleInputChange(value, "telefone")}
                 />

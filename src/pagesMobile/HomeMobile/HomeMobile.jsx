@@ -23,14 +23,6 @@ const HomeMobile = () => {
       end: moment().endOf("M").format("YYYY-MM-DD"),
     };
     dispatch(filterAgendamentos(periodo));
-  }, []);
-
-  useEffect(() => {
-    const periodo = {
-      start: moment().startOf("M").format("YYYY-MM-DD"),
-      end: moment().endOf("M").format("YYYY-MM-DD"),
-    };
-    dispatch(filterAgendamentos(periodo));
   }, [dispatch]);
 
   useEffect(() => {
@@ -86,7 +78,7 @@ const HomeMobile = () => {
 
   return (
     <>
-     <HeaderMobile></HeaderMobile>
+      <HeaderMobile />
       <div
         className="myCustomHeight"
         style={{
@@ -97,9 +89,7 @@ const HomeMobile = () => {
           padding: "5px",
         }}
       >
-        <h4 className="mb-3 mt-3 text-center" >
-          Agendamentos
-        </h4>
+        <h4 className="mb-3 mt-3 text-center">Agendamentos</h4>
         <Calendar
           messages={{
             next: "Próximo",
@@ -118,7 +108,7 @@ const HomeMobile = () => {
           onRangeChange={(range) => handleRangeChange(range)}
           localizer={localizer}
           events={events}
-          defaultView="agenda"
+          defaultView="day"
           popup
           selectable
           style={{ height: "95%", fontSize: "0.8rem" }}

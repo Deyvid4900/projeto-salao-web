@@ -3,11 +3,11 @@ import { createSlice } from "@reduxjs/toolkit";
 const servicosSlice = createSlice({
   name: "servicos",
   initialState: {
-    behavior: 'create',
+    behavior: "create",
     components: {
       confirmDelete: false,
       drawer: false,
-      tab: 'servicos',
+      tab: "servicos",
     },
     form: {
       filtering: false,
@@ -15,13 +15,13 @@ const servicosSlice = createSlice({
       saving: false,
     },
     servico: {
-      titulo: '',
-      preco: '',
-      comissao: '',
-      duracao: '',
-      recorrencia: '',
-      descricao: '',
-      status: 'A',
+      titulo: "",
+      preco: "",
+      comissao: "",
+      duracao: "",
+      recorrencia: "",
+      descricao: "",
+      status: "A",
       arquivos: [],
     },
     servicos: [],
@@ -44,15 +44,18 @@ const servicosSlice = createSlice({
     updateServico: (state, action) => {
       state.servico = { ...state.servico, ...action.payload };
     },
+    setLoading: (state, action) => {
+      state.loading = action.payload;
+    },
     resetServico: (state) => {
       state.servico = {
-        titulo: '',
-        preco: '',
-        comissao: '',
-        duracao: '',
-        recorrencia: '',
-        descricao: '',
-        status: 'A',
+        titulo: "",
+        preco: "",
+        comissao: "",
+        duracao: "",
+        recorrencia: "",
+        descricao: "",
+        status: "A",
         arquivos: [],
       };
     },
@@ -61,9 +64,6 @@ const servicosSlice = createSlice({
     },
     setServico: (state, action) => {
       state.servico = action.payload;
-    },
-    setLoading: (state, action) => {
-      state.form.saving = action.payload;
     },
     setFiltering: (state, action) => {
       state.form.filtering = action.payload;

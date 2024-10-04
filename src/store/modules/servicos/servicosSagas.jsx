@@ -52,8 +52,8 @@ function* fetchAllServicos() {
     // Chamada à API
     const { data } = yield call(api.get, `/servico/salao/${salaoId}`);
     // console.log(data);
-
-    yield put(setLoading(false)); // Sinalizando que o loading terminou
+    yield put(setLoading(false)); 
+    // Sinalizando que o loading terminou
     yield put(setServicos(data.servicos)); // Atualizando a lista de serviços
 
   } catch (error) {

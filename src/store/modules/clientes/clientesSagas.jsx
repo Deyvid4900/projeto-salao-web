@@ -1,6 +1,5 @@
-// sagas/colaboradorSagas.js
 import { call, put, all, takeLatest } from 'redux-saga/effects';
-import axios from 'axios';
+import { api } from '../../../services/api'; // Utilize o serviço api já configurado
 import {
   fetchAllClientesRequest,
   fetchAllClientesSuccess,
@@ -9,22 +8,17 @@ import {
 
 function* fetchAllClientesSaga() {
   try {
-    const response = yield call(() => axios.get(`http://localhost:8000/cliente/salao/${localStorage.getItem('_dSlun')}`));
-    // const response = yield call(() => axios.get('https://api-production-cc80.up.railway.app/colaborador/salao/66d1fc606938c910b08d0b20'));
-    yield put(fetchAllClientesSuccess(response.data));
+    const { data } = yield call(api.get, `/cliente/salao/${localStorage.getItem('_dSlun')}`);
+    yield put(fetchAllClientesSuccess(data));
   } catch (error) {
     yield put(fetchAllClientesFailure(error.message));
   }
 }
 
-
 function* watchFetchAll() {
   yield takeLatest(fetchAllClientesRequest.type, fetchAllClientesSaga);
 }
 
-
 export default function* rootSaga() {
-  yield all([
-    watchFetchAll(),
-  ]);
+  yield all([watchFetchAll()]);
 }

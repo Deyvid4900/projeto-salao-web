@@ -3,12 +3,13 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   fetchAllRequest,
   setServico,
+  setLoading,
   updateServico,
 } from "../../store/modules/servicos/servicosSlice";
 import { Spinner } from "react-bootstrap";
 import moment from "moment";
 import "moment/locale/pt-br";
-import { Modal, Button, Drawer, Form } from "rsuite";
+import { Modal, Button, Drawer, Form, Loader } from "rsuite";
 import "rsuite/dist/rsuite.min.css";
 import HeaderMobile from "../../components/HeaderMobile/HeaderMobile";
 
@@ -19,6 +20,7 @@ export const ServicoMobile = () => {
   const [selectedServico, setSelectedServico] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
+  const [loadingSave, setLoadingSave] = useState(false); // Estado para controle do carregamento
 
   useEffect(() => {
     dispatch({
@@ -26,36 +28,32 @@ export const ServicoMobile = () => {
     });
   }, [dispatch]);
 
-  useEffect(() => {
-    if (selectedServico) {
-      // setShowModal(true);
-    }
-  }, [selectedServico]);
-
   const formatDate = (dateString) => {
     return moment(dateString).format("D [de] MMMM [de] YYYY [às] HH:mm:ss");
   };
 
-  // Função para fechar o modal
   const handleCloseModal = () => {
     setShowModal(false);
+    setSelectedServico(null); // Limpa a seleção ao fechar
   };
 
-  // Função para abrir o Drawer de edição
   const handleOpenDrawer = () => {
-    setShowModal(false); // Fecha o modal ao abrir o drawer
+    setShowModal(false);
     setShowDrawer(true);
   };
 
-  // Função para fechar o Drawer
   const handleCloseDrawer = () => {
     setShowDrawer(false);
+    setSelectedServico(null); // Limpa a seleção ao fechar
   };
 
-  // Função para salvar alterações
   const handleSaveChanges = () => {
     dispatch(updateServico(selectedServico));
-    setShowDrawer(false); // Fechar o drawer após salvar
+    dispatch(setLoading(false))
+    dispatch({
+      type: "servicos/fetchAllServicos",
+    });
+    handleCloseDrawer(); // Fecha o drawer após salvar
   };
 
   return (
@@ -65,15 +63,15 @@ export const ServicoMobile = () => {
         {loading && (
           <div
             className="d-flex justify-content-center align-items-center"
-            style={{ height: "100px" }}
+            style={{ height: "80vh" }}
           >
-            <Spinner animation="border" />
+            <Loader size="lg" content="Carregando serviços..." />
           </div>
         )}
         {error && <div className="alert alert-danger">Error: {error}</div>}
         {!loading && !error && (
           <div>
-            <h2 className="mb-4 text-center">Serviços</h2>
+            <h4 className="mb-4 text-center">Serviços</h4>
             <div className="row">
               {servicos.map((servico) => (
                 <div
@@ -126,13 +124,7 @@ export const ServicoMobile = () => {
                 <Button onClick={handleOpenDrawer} appearance="primary">
                   Editar
                 </Button>
-                <Button
-                  onClick={() => {
-                    handleCloseModal()
-                    dispatch(setServico(""));
-                  }}
-                  appearance="subtle"
-                >
+                <Button onClick={handleCloseModal} appearance="subtle">
                   Fechar
                 </Button>
               </Modal.Footer>
@@ -159,7 +151,7 @@ export const ServicoMobile = () => {
                     name="titulo"
                     value={selectedServico.titulo}
                     onChange={(value) =>
-                      setSelectedServico({ ...selectedServico, titulo: value })
+                      setSelectedServico((prev) => ({ ...prev, titulo: value }))
                     }
                   />
                 </Form.Group>
@@ -169,10 +161,10 @@ export const ServicoMobile = () => {
                     name="recorrencia"
                     value={selectedServico.recorrencia}
                     onChange={(value) =>
-                      setSelectedServico({
-                        ...selectedServico,
+                      setSelectedServico((prev) => ({
+                        ...prev,
                         recorrencia: value,
-                      })
+                      }))
                     }
                   />
                 </Form.Group>
@@ -182,7 +174,7 @@ export const ServicoMobile = () => {
                     name="status"
                     value={selectedServico.status}
                     onChange={(value) =>
-                      setSelectedServico({ ...selectedServico, status: value })
+                      setSelectedServico((prev) => ({ ...prev, status: value }))
                     }
                   />
                 </Form.Group>
@@ -192,10 +184,10 @@ export const ServicoMobile = () => {
                     name="descricao"
                     value={selectedServico.descricao}
                     onChange={(value) =>
-                      setSelectedServico({
-                        ...selectedServico,
+                      setSelectedServico((prev) => ({
+                        ...prev,
                         descricao: value,
-                      })
+                      }))
                     }
                   />
                 </Form.Group>
@@ -205,7 +197,7 @@ export const ServicoMobile = () => {
                     name="preco"
                     value={selectedServico.preco}
                     onChange={(value) =>
-                      setSelectedServico({ ...selectedServico, preco: value })
+                      setSelectedServico((prev) => ({ ...prev, preco: value }))
                     }
                   />
                 </Form.Group>
@@ -215,21 +207,20 @@ export const ServicoMobile = () => {
                     name="duracao"
                     value={selectedServico.duracao}
                     onChange={(value) =>
-                      setSelectedServico({ ...selectedServico, duracao: value })
+                      setSelectedServico((prev) => ({
+                        ...prev,
+                        duracao: value,
+                      }))
                     }
                   />
                 </Form.Group>
               </Form>
             )}
             <Drawer.Actions className="mt-5">
-              <Button onClick={()=>{
-                handleSaveChanges()
-                
-                dispatch({
-                  type: "servicos/fetchAllServicos",
-                });
-
-                }} appearance="primary">
+              <Button
+                onClick={handleSaveChanges}
+                appearance="primary"
+              >
                 Salvar
               </Button>
               <Button onClick={handleCloseDrawer} appearance="subtle">
