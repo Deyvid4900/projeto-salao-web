@@ -1,0 +1,19 @@
+{
+    "name": "MeuSalao",
+    "short_name": "Atalho",
+    "start_url": "/",
+    "display": "standalone",
+    "icons": [
+      {
+        "src": "./assets/SalaoIcon.png",
+        "sizes": "192x192",
+        "type": "image/png"
+      },
+      {
+        "src": "./assets/IconSalaoG.png",
+        "sizes": "512x512",
+        "type": "image/png"
+      }
+    ]
+  }
+  
