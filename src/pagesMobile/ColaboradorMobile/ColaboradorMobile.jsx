@@ -332,6 +332,31 @@ export const ColaboradoresMobile = () => {
           </Modal.Footer>
         </Modal>
       </div>
+      <button
+        onClick={() => {
+          dispatch(resetHorario());
+          setComponents("drawer", true);
+          dispatch(
+            updateHorario({
+              behavior: "create",
+            })
+          );
+        }}
+        className=""
+        style={{
+          bottom: 50,
+          right: 30,
+          position: "absolute",
+          zIndex: "20",
+          borderRadius: "50%",
+          width: 70,
+          height: 70,
+          backgroundColor: "rgb(255, 91, 91)",
+          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)", // Sombra adicionada
+        }}
+      >
+        <span className="material-symbols-outlined text-white">add</span>
+      </button>
     </>
   );
 };

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
+import 'moment/dist/locale/pt-br'
 import { useDispatch, useSelector } from "react-redux";
 import { filterAgendamentos } from "../../store/modules/agendamento/agendamentoActions"; // Action correta para chamar a saga
 import { Spinner } from "react-bootstrap";

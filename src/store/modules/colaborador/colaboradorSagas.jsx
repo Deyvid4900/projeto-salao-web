@@ -54,7 +54,7 @@ export function* filterColaborador({ payload }) {
 
   try {
     yield put(updateColaborador({ form: { ...form, filtering: true } }));
-    console.log(payload)
+    // console.log(payload)
     const { data: res } = yield call(api.post, "/colaborador/filter", {
       // "_id":
     });

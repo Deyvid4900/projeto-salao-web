@@ -10,7 +10,7 @@ function HeaderMobile() {
       className="container-fluid p-3 d-flex justify-content-between align-items-center text-white"
       style={{ backgroundColor: "#FF5B5B", zIndex: 50, position: "relative" }}
     >
-      <img src="/src/assets/Group 3.png" alt="" className="logo" />
+      <img src="/src/assets/Group3.png" alt="" className="logo" />
 
       {/* Mostrar apenas em telas grandes */}
       <div className="d-none d-md-flex flex-row align-items-center gap-4">

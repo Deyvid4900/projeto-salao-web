@@ -27,6 +27,7 @@ const servicosSlice = createSlice({
     servicos: [],
     loading: false,
     error: null,
+    selectedServico:[]
   },
   reducers: {
     fetchAllRequest: (state) => {
@@ -62,6 +63,9 @@ const servicosSlice = createSlice({
     setServicos: (state, action) => {
       state.servicos = action.payload;
     },
+    setSelectedServicos: (state, action) => {
+      state.selectedServico = action.payload;
+    },
     setServico: (state, action) => {
       state.servico = action.payload;
     },
@@ -74,9 +78,13 @@ const servicosSlice = createSlice({
     toggleConfirmDelete: (state, action) => {
       state.components.confirmDelete = action.payload;
     },
+    setColaboradorId: (state, action) => {
+      state._id = action.payload; // Armazena os serviços do colaborador
+    },
   },
 });
 
+// Exportação das ações
 export const {
   fetchAllRequest,
   fetchAllSuccess,
@@ -85,10 +93,12 @@ export const {
   resetServico,
   setServicos,
   setServico,
+  setSelectedServicos,
   setLoading,
   setFiltering,
   toggleDrawer,
   toggleConfirmDelete,
+  setColaboradorId, // Ação para armazenar serviços do colaborador
 } = servicosSlice.actions;
 
 export default servicosSlice.reducer;

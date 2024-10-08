@@ -5,6 +5,7 @@ import "./Home.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { fetchSalaoRequest } from "../../store/modules/salao/salaoSlice";
 import { fetchAllRequest } from "../../store/modules/servicos/servicosSlice";
+import { Divider, Placeholder } from 'rsuite';
 
 function HomeCliente() {
   const { nome } = useParams();
@@ -14,7 +15,7 @@ function HomeCliente() {
 
   const dispatch = useDispatch();
   const { saloes, loading, error } = useSelector((state) => state.salao);
-  const { data,servicos } = useSelector((state) => state.servicos);
+  const { data, servicos } = useSelector((state) => state.servicos);
   const selectSalao = saloes.salao || {};
 
   const handleAgendarClick = (servico) => {
@@ -115,7 +116,16 @@ function HomeCliente() {
   );
 
   if (loading) {
-    return <div>Carregando...</div>;
+    return (
+      <>
+        <Placeholder.Paragraph className="mt-5" type="media" />
+        <Placeholder.Paragraph type="media" />
+        <Placeholder.Paragraph className="mt-5" type="media" />
+        <Placeholder.Paragraph type="media" />
+        <Placeholder.Paragraph className="mt-5" type="media" />
+        <Placeholder.Paragraph type="media" />
+      </>
+    );
   }
 
   if (error) {
@@ -146,7 +156,7 @@ function HomeCliente() {
             zIndex: 2,
           }}
         >
-          <div className="btn btn-md btn-light " >
+          <div className="btn btn-md btn-light ">
             <i className="fas fa-calendar-check me-2"></i> Reserve Agora
           </div>
           <h2 className="pt-2" style={{ fontWeight: 500 }}>

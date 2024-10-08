@@ -207,6 +207,240 @@ const HorariosAtendimentoMobile = () => {
   return (
     <>
       <HeaderMobile></HeaderMobile>
+      <div
+        className="d-flex flex-column justify-content-center align-items-center"
+        style={{
+          maxHeight: "calc(100vh - 95px)",
+          padding: "0 10px", // Adiciona padding para telas pequenas
+        }}
+      >
+        <div className="mt-4" style={{ width: "100%", maxWidth: "1200px" }}>
+          <div className="col  h-100">
+            {/* Drawer Responsivo */}
+            <Drawer
+              open={components.drawer}
+              size={window.innerWidth < 768 ? "full" : "sm"} // Ajusta o tamanho do Drawer dependendo do tamanho da tela
+              onClose={() => setComponents("drawer", false)}
+            >
+              <Drawer.Body>
+                <h3>
+                  {behavior === "create"
+                    ? "Criar novo Horário"
+                    : "Atualizar Horário"}
+                </h3>
+                <div className=" mt-3">
+                  {/* Dias da semana */}
+                  <div className="col-12">
+                    <b>Dias da semana</b>
+                    <TagPicker
+                      size="lg"
+                      block
+                      value={horario.dias}
+                      data={diasDaSemana.map((label, value) => ({
+                        label,
+                        value,
+                      }))}
+                      onChange={(value) => {
+                        setHorario("dias", value);
+                      }}
+                    />
+                    <Checkbox
+                      disabled={horario.dias.length === diasDaSemana.length}
+                      checked={horario.dias.length === diasDaSemana.length}
+                      onChange={(v, selected) => {
+                        if (selected) {
+                          setHorario(
+                            "dias",
+                            diasDaSemana.map((label, value) => value)
+                          );
+                        } else {
+                          setHorario("dias", []);
+                        }
+                      }}
+                    >
+                      {" "}
+                      Selecionar Todos
+                    </Checkbox>
+                  </div>
+
+                  {/* Horário Inicial */}
+                  <div className="col-12 col-md-6 mt-3">
+                    <b className="d-block">Horário Inicial</b>
+                    <DatePicker
+                      block
+                      format="HH:mm"
+                      hideMinutes={(min) => ![0, 30].includes(min)}
+                      value={moment(horario.inicio).toDate()}
+                      onChange={(date) => {
+                        const selectedDate = new Date(date);
+                        selectedDate.setSeconds(0, 0);
+                        setHorario("inicio", selectedDate.toISOString());
+                      }}
+                    />
+                  </div>
+
+                  {/* Horário Final */}
+                  <div className="col-12 col-md-6 mt-3">
+                    <b className="d-block">Horário Final</b>
+                    <DatePicker
+                      block
+                      format="HH:mm"
+                      hideMinutes={(min) => ![0, 30].includes(min)}
+                      value={horario.fim ? moment(horario.fim).toDate() : null}
+                      onChange={(date) => {
+                        const selectedDate = new Date(date);
+                        selectedDate.setSeconds(0, 0);
+                        setHorario("fim", selectedDate.toISOString());
+                      }}
+                    />
+                  </div>
+
+                  {/* Especialidades */}
+                  <div className="col-12 mt-3">
+                    <b>Especialidades disponíveis</b>
+                    <TagPicker
+                      size="lg"
+                      block
+                      data={servicos}
+                      labelKey="titulo"
+                      valueKey="_id"
+                      value={horario.especialidade}
+                      onChange={(e) => {
+                        setHorario("especialidade", e);
+                      }}
+                    />
+
+                    <Checkbox
+                      disabled={qtnServico.length === servicos.length}
+                      checked={qtnServico.length === servicos.length}
+                      onChange={(value, checked) => {
+                        if (checked) {
+                          setHorario(
+                            "especialidade",
+                            servicos.map((s) => s._id)
+                          );
+                        } else {
+                          setHorario("especialidades", []);
+                        }
+                      }}
+                    >
+                      Selecionar Todas
+                    </Checkbox>
+                  </div>
+
+                  {/* Colaboradores */}
+                  <div className="col-12 mt-3">
+                    <b>Colaboradores disponíveis</b>
+                    <TagPicker
+                      size="lg"
+                      block
+                      data={colaboradores}
+                      labelKey="nome"
+                      valueKey="_id"
+                      onChange={(selected) =>
+                        setHorario("colaboradores", selected)
+                      }
+                    />
+                  </div>
+                </div>
+
+                <Button
+                  loading={form.saving}
+                  color={behavior === "create" ? "green" : "blue"}
+                  size="lg"
+                  block
+                  onClick={() => save()}
+                  className="mt-3"
+                >
+                  Salvar Horário de Atendimento
+                </Button>
+                {behavior === "update" && (
+                  <Button
+                    loading={form.saving}
+                    color="red"
+                    size="lg"
+                    block
+                    onClick={() => setComponents("confirmDelete", true)}
+                    className="mt-1"
+                  >
+                    Remover Horário de Atendimento
+                  </Button>
+                )}
+              </Drawer.Body>
+            </Drawer>
+
+            {/* Calendar Responsivo */}
+            <div>
+              <div className="col-12">
+                <div className="w-100 d-flex justify-content-center align-items-center">
+                  <h4 className="mb-4 mt-0">Horarios de Atendimento</h4>
+                </div>
+
+                <Calendar
+                  localizer={localizer}
+                  onSelectEvent={(e) => {
+                    onHorarioClick(e.resource.horario);
+                    dispatch({ type: "horarios/allColaborador" });
+                    dispatch({ type: "horarios/allColaboradoresSalao" });
+                  }}
+                  onSelectSlot={(slotInfo) => {
+                    const { start, end } = slotInfo;
+
+                    const startMoment = moment(start);
+                    const endMoment = moment(end);
+
+                    dispatch(
+                      updateHorario({
+                        horario: {
+                          ...horario,
+                          dias: [startMoment.day()],
+                          inicio: startMoment,
+                          fim: endMoment,
+                        },
+                      })
+                    );
+                    setComponents("drawer", true);
+                  }}
+                  events={formatEventos()}
+                  defaultView={components.view}
+                  selectable
+                  popup
+                  toolbar={false}
+                  style={{
+                    height: window.innerWidth < 768 ? 550 : 700,
+                    width: window.innerWidth < 768 ? "100%" : 600,
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <button
+        onClick={() => {
+          dispatch(resetHorario());
+          setComponents("drawer", true);
+          dispatch(
+            updateHorario({
+              behavior: "create",
+            })
+          );
+        }}
+        className=""
+        style={{
+          bottom: 50,
+          right: 30,
+          position: "absolute",
+          zIndex: "20",
+          borderRadius: "50%",
+          width: 70,
+          height: 70,
+          backgroundColor: "rgb(255, 91, 91)",
+          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)", // Sombra adicionada
+        }}
+      >
+        <span className="material-symbols-outlined text-white">add</span>
+      </button>
     </>
   );
 };
