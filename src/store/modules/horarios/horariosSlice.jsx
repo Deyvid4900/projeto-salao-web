@@ -62,6 +62,9 @@ const horariosSlice = createSlice({
     closeDrawer(state) {
       state.components.drawer = false;
     },
+    closeConfirm(state) {
+      state.components.confirmDelete = false;
+    },
   },
 });
 
@@ -74,6 +77,7 @@ export const {
   setSaving,
   setFiltering,
   closeDrawer,
+  closeConfirm,
   setColaboradoresInfo
 } = horariosSlice.actions;
 

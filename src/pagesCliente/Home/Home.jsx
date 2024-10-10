@@ -256,7 +256,13 @@ function HomeCliente() {
               <div className="mt-2 mt-md-0">
                 <button
                   className="btn btn-success"
-                  onClick={() => handleAgendarClick(service)}
+                  onClick={() => {
+                    handleAgendarClick(service)
+                    dispatch({
+                      type:"agendamento/filterDiasDisponiveis",
+                      action:service
+                    })
+                  }}
                 >
                   <i className="fas fa-calendar-check me-2"></i> Agendar
                 </button>

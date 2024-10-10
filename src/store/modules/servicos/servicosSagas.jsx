@@ -9,6 +9,29 @@ import {
   setSelectedServicos,// Importando a ação de notificação
 } from "./servicosSlice"; // Importando o slice correspondente
 import { api } from "../../../services/api"; // Importando a API
+import { setColaboradoresServico } from "../colaborador/colaboradorSlice";
+
+function* findColaboradoreByServico(action) {
+  console.log(action.payload)
+  const servicoId = action.payload;
+  try {
+    yield put(setLoading(true));
+    const {data} = yield call(api.get,`/servico/${servicoId}/colaboradores`);
+    yield put(setLoading(false));
+
+    console.log(data)
+    if (data.error) {
+      // Tratar erro se a resposta da API indicar erro
+      console.error(data.error);
+    } else {
+      yield put(setColaboradoresServico(data.colaboradores)); // Armazena os serviços do colaborador
+    }
+
+  } catch (error) {
+    yield put(setLoading(false)); // Para o loading em caso de erro
+    console.error('Error fetching colaborador servicos:', error);
+  }
+}
 
 
 function* fetchColaboradorServicos(action) {
@@ -90,6 +113,7 @@ function* fetchAllServicos() {
 // Função de watcher para as ações de serviço
 function* watchServicosActions() {
   yield takeLatest(setColaboradorId.type, fetchColaboradorServicos);
+  yield takeLatest("servicos/findColaboradoreByServico", findColaboradoreByServico);
   yield takeLatest("servicos/fetchAllServicos", fetchAllServicos);
   yield takeLatest(updateServico.type, saveServico); // Certifique-se de usar a ação correta
 }

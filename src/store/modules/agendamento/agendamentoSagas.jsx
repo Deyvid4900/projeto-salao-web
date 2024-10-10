@@ -1,6 +1,27 @@
 import { takeLatest, all, call, put } from "redux-saga/effects";
-import { getServicosById, updateAgendamento,addAgendamento,addAgendamentoFailure,addAgendamentoSuccess } from "./agendamentoSlice";
+import { getServicosById, updateAgendamento,addAgendamento,addAgendamentoFailure,addAgendamentoSuccess, updateAgenda } from "./agendamentoSlice";
 import { api } from "../../../services/api";
+import moment from "moment";
+
+function* filterDiasDisponiveis(payload){
+  console.log(payload.action)
+  const dia = moment().format('YYYY-MM-DDTHH:mm:ssZ') 
+  const {_id} = payload.action
+  try {
+    const { data } = yield call(api.post, "agendamento/dias-disponiveis", {
+      salaoId: localStorage.getItem("_dSlun"),
+      data:dia,
+      servicoId:_id
+    });
+
+    console.log(dia);
+
+   yield put(updateAgenda(data))
+  } catch (err) {
+    // Lidando com o erro se necessário
+    console.error("Erro ao filtrar dias disponiveis ", err);
+  }
+}
 
 function* filterAgendamentos({ range }) {
   // console.log(range);
@@ -34,6 +55,7 @@ function* handleAddAgendamento(action) {
 export default function* agendamentoSagas() {
   yield all([
     takeLatest("agendamento/filterAgendamentos", filterAgendamentos),
+    takeLatest("agendamento/filterDiasDisponiveis", filterDiasDisponiveis),
     takeLatest(addAgendamento.type, handleAddAgendamento)
   ]);
 }

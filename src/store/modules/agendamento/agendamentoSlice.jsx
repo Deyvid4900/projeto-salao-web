@@ -7,6 +7,9 @@ const initialState = {
   agendamento: {},
   agendamentos: [],
   newAgendamento: {},
+  agenda:{
+
+  }
 };
 
 const agendamentoSlice = createSlice({
@@ -15,6 +18,9 @@ const agendamentoSlice = createSlice({
   reducers: {
     updateAgendamento: (state, action) => {
       return { ...state, ...action.payload };
+    },
+    updateAgenda: (state, action) => {
+      state.agenda = action.payload ;
     },
     getServicosById: (state, action) => {
       return state;
@@ -40,5 +46,6 @@ export const {
   addAgendamento,
   addAgendamentoSuccess,
   addAgendamentoFailure,
+  updateAgenda
 } = agendamentoSlice.actions;
 export default agendamentoSlice.reducer;

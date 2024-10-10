@@ -26,6 +26,7 @@ const initialState = {
     especialidades: [],
   },
   colaboradores: [],
+  colaboradoresServico: [],
   servicos: [],
 };
 
@@ -48,6 +49,9 @@ const colaboradorSlice = createSlice({
     setColaboradores: (state, action) => {
       state.colaboradores = action.payload;
     },
+    setColaboradoresServico: (state, action) => {
+      state.colaboradoresServico = action.payload;
+    },
     setServicos: (state, action) => {
       state.servicos = action.payload;
     },
@@ -66,6 +70,7 @@ export const {
   filterColaborador,
   resetColaborador,
   setColaboradores,
+  setColaboradoresServico,
   setColaborador,
   setServicos,
   fetchAllColaboradores,

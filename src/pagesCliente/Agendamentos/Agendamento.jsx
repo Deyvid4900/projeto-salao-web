@@ -1,28 +1,33 @@
-import React, { useState ,useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
 
 import { useDispatch, useSelector } from "react-redux";
 
 import "./Agendamento.css"; // Estilização personalizada
 import { fetchAllColaboradores } from "../../store/modules/colaborador/colaboradorSlice";
+import { setColaboradorId } from "../../store/modules/servicos/servicosSlice";
 
 const AgendamentoPage = () => {
   // Estado para o dia, horário e especialista selecionados
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedHour, setSelectedHour] = useState(null);
   const [selectedSpecialist, setSelectedSpecialist] = useState(null);
-  const { colaboradores } = useSelector((state) => state.colaborador);
+  const { colaboradoresServico } = useSelector((state) => state.colaborador);
 
   const location = useLocation();
   const { servico } = location.state || {};
 
   const dispatch = useDispatch();
   useEffect(() => {
-    console.log(servico)
-      dispatch(fetchAllColaboradores())
+    console.log(servico);
+    dispatch(fetchAllColaboradores());
+    dispatch({
+      type: "servicos/findColaboradoreByServico",
+      payload: servico._id,
+    });
   }, []);
 
-  const colaboradoesArray = colaboradores || []
+  const colaboradoesArray = colaboradoresServico || [];
 
   // Função para gerar os dias da semana atual e da próxima
   const generateDays = () => {
@@ -34,7 +39,11 @@ const AgendamentoPage = () => {
     for (let i = 0; i < 7; i++) {
       const currentDay = new Date();
       currentDay.setDate(today.getDate() + i);
-      const dayLabel = `${daysOfWeek[currentDay.getDay()]} ${currentDay.getDate() < 9 ? '0' + currentDay.getDate() : currentDay.getDate() } ${currentDay.toLocaleString('default', { month: 'short' })}`;
+      const dayLabel = `${daysOfWeek[currentDay.getDay()]} ${
+        currentDay.getDate() < 9
+          ? "0" + currentDay.getDate()
+          : currentDay.getDate()
+      } ${currentDay.toLocaleString("default", { month: "short" })}`;
       days.push({ id: i, label: dayLabel });
     }
 
@@ -42,7 +51,11 @@ const AgendamentoPage = () => {
     for (let i = 7; i < 14; i++) {
       const currentDay = new Date();
       currentDay.setDate(today.getDate() + i);
-      const dayLabel = `${daysOfWeek[currentDay.getDay()]} ${currentDay.getDate() < 9 ? '0' + currentDay.getDate() : currentDay.getDate() } ${currentDay.toLocaleString('default', { month: 'short' })}`;
+      const dayLabel = `${daysOfWeek[currentDay.getDay()]} ${
+        currentDay.getDate() < 9
+          ? "0" + currentDay.getDate()
+          : currentDay.getDate()
+      } ${currentDay.toLocaleString("default", { month: "short" })}`;
       days.push({ id: i, label: dayLabel });
     }
 
@@ -78,7 +91,36 @@ const AgendamentoPage = () => {
           </div>
         </div>
       </div>
+      <div className="especialista-selecao">
+        {colaboradoesArray.length == 1 ? (
+          <h4>Especialista que faz o serviço</h4>
+        ) : (
+          <h4>Gostaria de escolher um especialista específico?</h4>
+        )}
 
+        <div className="especialista-opcoes-scroll mt-3">
+          <div
+            className={
+              colaboradoesArray.length == 1 ? "" : "especialista-opcoes"
+            }
+          >
+            {colaboradoesArray.map((specialist) => (
+              <div key={specialist._id} className="especialista-card">
+                <div className="especialista-img-placeholder"></div>
+                <p className="mb-1">{specialist.nome}</p>
+                <button
+                  className={colaboradoesArray.length == 1 ? "ativo btn-especialista":"" || `btn-especialista  ${colaboradoesArray.length > 1 && selectedSpecialist === specialist._id ? "ativo" : ""}`}
+                  onClick={() => {
+                    setSelectedSpecialist(specialist._id);
+                  }}
+                >
+                  Escolher Especialista
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
       {/* Seção de datas */}
       <div className="datas">
         <h4>Pra quando você gostaria de agendar?</h4>
@@ -116,27 +158,6 @@ const AgendamentoPage = () => {
       </div>
 
       {/* Escolher especialista */}
-      <div className="especialista-selecao">
-        <h4>Gostaria de escolher um especialista específico?</h4>
-        <div className="especialista-opcoes-scroll mt-3">
-          <div className="especialista-opcoes">
-            {colaboradoesArray.map((specialist) => (
-              <div key={specialist._id} className="especialista-card">
-                <div className="especialista-img-placeholder"></div>
-                <p>{specialist.nome}</p>
-                <button
-                  className={`btn-especialista ${
-                    selectedSpecialist === specialist._id ? "ativo" : ""
-                  }`}
-                  onClick={() => setSelectedSpecialist(specialist._id)}
-                >
-                  Escolher Especialista
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
 
       {/* Botão de confirmação */}
       <button

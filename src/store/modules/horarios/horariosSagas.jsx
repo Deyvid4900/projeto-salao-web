@@ -8,11 +8,11 @@ import {
   setSaving,
   setFiltering,
   closeDrawer,
+  closeConfirm,
   setColaboradoresInfo,
   setColaboradores,
 } from "./horariosSlice";
 import { api } from "../../../services/api";
-import { notification } from "../../../services/rsuite";
 
 import moment from "moment";
 
@@ -27,44 +27,35 @@ export function* allServicos() {
     yield put(setFiltering(false)); // Para o estado de carregamento
 
     if (res.error) {
-      notification("error", {
-        placement: "topStart",
-        title: "Ops...",
-        description: res.message,
-      });
-      return;
+      
+      console.log(error)
     }
 
     // Atualiza o estado com os serviços obtidos
     yield put(setServicos(res.servicos));
   } catch (err) {
     yield put(setFiltering(false));
-    notification("error", {
-      placement: "topStart",
-      title: "Ops...",
-      description: err.message,
-    });
+   
+    console.log(err)
   }
 }
 
 export function* addHorario() {
   try {
-    const { horario, form } = yield select((state) => state.horarios);
+    const { horario } = yield select((state) => state.horarios);
+    console.log(horario)
     yield put(setSaving(true));
 
     const { data: res } = yield call(api.post, "/horario", {
       ...horario,
-      salaoId: localStorage.getItem("_dSlun"), // Obter salaoId do localStorage
+      salaoId: localStorage.getItem("_dSlun"),
+      especialidades:horario.especialidade // Obter salaoId do localStorage
     });
 
     yield put(setSaving(false));
 
     if (res.error) {
-      notification("error", {
-        placement: "topStart",
-        title: "Ops...",
-        description: res.message,
-      });
+      console.log(error)
       return;
     }
 
@@ -72,18 +63,12 @@ export function* addHorario() {
     yield put(closeDrawer());
     yield put(resetHorario());
 
-    notification("success", {
-      placement: "topStart",
-      title: "Feito!",
-      description: "Horário salvo com sucesso!",
-    });
+
+    console.log("Horário salvo com sucesso!")
   } catch (err) {
     yield put(setSaving(false));
-    notification("error", {
-      placement: "topStart",
-      title: "Ops...",
-      description: err.message,
-    });
+    
+    console.log(err)
   }
 }
 
@@ -123,11 +108,7 @@ export function* saveHorario() {
     yield put(setSaving(false));
 
     if (res.error) {
-      notification("error", {
-        placement: "topStart",
-        title: "Ops...",
-        description: res.message,
-      });
+      console.log(error)
       return;
     }
 
@@ -135,18 +116,11 @@ export function* saveHorario() {
     yield put(closeDrawer());
     yield put(resetHorario());
 
-    notification("success", {
-      placement: "topStart",
-      title: "Feito!",
-      description: "Horário salvo com sucesso!",
-    });
+    
+    console.log("Horário salvo com sucesso!")
   } catch (err) {
     yield put(setSaving(false));
-    notification("error", {
-      placement: "topStart",
-      title: "Ops...",
-      description: err.message,
-    });
+    console.log(err)
   }
 }
 
@@ -159,30 +133,12 @@ export function* removeHorario() {
     const { data: res } = yield call(api.delete, `/horario/${horario._id}`);
     yield put(setSaving(false));
 
-    if (res.error) {
-      notification("error", {
-        placement: "topStart",
-        title: "Ops...",
-        description: res.message,
-      });
-      return;
-    }
-
     yield put({ type: "horarios/allHorarios" });
     yield put(closeDrawer());
+    yield put(closeConfirm());
 
-    notification("success", {
-      placement: "topStart",
-      title: "Feito!",
-      description: "Horário removido com sucesso!",
-    });
   } catch (err) {
-    yield put(setSaving(false));
-    notification("error", {
-      placement: "topStart",
-      title: "Ops...",
-      description: err.message,
-    });
+    console.error(err)
   }
 }
 
@@ -236,22 +192,14 @@ export function* filterColaboradores() {
     yield put(setFiltering(false));
 
     if (res.error) {
-      notification("error", {
-        placement: "topStart",
-        title: "Ops...",
-        description: res.message,
-      });
-      return;
+      
+      console.log(error)
     }
 
     yield put(updateHorario({ colaboradores: res.colaboradores }));
   } catch (err) {
-    yield put(setFiltering(false));
-    notification("error", {
-      placement: "topStart",
-      title: "Ops...",
-      description: err.message,
-    });
+   
+    console.log(err)
   }
 }
 

@@ -426,7 +426,7 @@ const HorariosAtendimentoMobile = () => {
             })
           );
         }}
-        className=""
+        className="d-flex align-items-center justify-content-center"
         style={{
           bottom: 50,
           right: 30,

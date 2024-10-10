@@ -30,6 +30,7 @@ import {
 } from "../../store/modules/horarios/horariosSlice";
 import util from "../../services/util";
 import colors from "../../data/colors.json";
+import { fetchAllColaboradores } from "../../store/modules/colaborador/colaboradorSlice";
 
 const localizer = momentLocalizer(moment);
 moment.locale("pt-br");
@@ -44,9 +45,9 @@ const HorariosAtendimento = () => {
     components,
     behavior,
     servicos,
-    colaboradores,
     colaboradoresInfo,
-  } = useSelector((state) => state.horarios); // Atualizado para utilizar o slice
+  } = useSelector((state) => state.horarios);
+  const { colaboradores } = useSelector((state) => state.colaborador); // Atualizado para utilizar o slice
 
   const colaboradoresInfoArray = colaboradoresInfo || [];
 
@@ -122,24 +123,18 @@ const HorariosAtendimento = () => {
 
   const save = () => {
     if (
-      !util.allFields(horario, [
-        "dias",
-        "inicio",
-        "fim",
-        "especialidades",
-        "colaboradores",
-      ])
+      horario.especialidade === "" ||
+      horario.colaboradores.length === 0 ||
+      horario.dias.length === 0 ||
+      horario.inicio === "" ||
+      horario.fim === ""
     ) {
-      Notification.error({
-        placement: "topStart",
-        title: "Calma lá!",
-        description: "Antes de prosseguir, preencha todos os campos!",
-      });
-      return false;
+      console.log("Preencha todos os campos");
+      return; // Adicionado para evitar continuar o processo se os campos não estiverem preenchidos
     }
 
     if (behavior === "create") {
-      dispatch({ type: "horarios/addHorario" }); // Chama o Saga responsável por adicionar horário
+      dispatch({ type: "horarios/setHorario" }); // Chama o Saga responsável por adicionar horário
     } else {
       dispatch({ type: "horarios/saveHorario" }); // Chama o Saga responsável por salvar o horário
     }
@@ -150,8 +145,8 @@ const HorariosAtendimento = () => {
   };
 
   const handleDate = () => {
-    console.log(horario.inicio)
-  }
+    console.log(horario.inicio);
+  };
 
   const formatEventos = () => {
     let listaEventos = [];
@@ -196,12 +191,8 @@ const HorariosAtendimento = () => {
   useEffect(() => {
     dispatch({ type: "horarios/allHorarios" }); // Chama o Saga responsável por obter todos os horários
     dispatch({ type: "horarios/allServicos" });
-    // Chama o Saga responsável por obter todos os serviços
+    dispatch(fetchAllColaboradores());
   }, []);
-
-  useEffect(() => {
-    dispatch({ type: "horarios/filterColaboradores" }); // Chama o Saga para filtrar colaboradores
-  }, [horarios.servicos]);
 
   return (
     <>
@@ -210,7 +201,7 @@ const HorariosAtendimento = () => {
       <Sidebar />
       <div
         className="d-flex flex-column justify-content-center align-items-center"
-        style={{ maxHeight: "calc(100vh - 95px)",  }}
+        style={{ maxHeight: "calc(100vh - 95px)" }}
       >
         <div className="mt-5" style={{ width: "95%" }}>
           <div className="col p-1 overflow-auto h-100">
@@ -307,7 +298,8 @@ const HorariosAtendimento = () => {
                       valueKey="_id" // Usa o '_id' como o identificador único
                       value={horario.especialidade} // Define os valores selecionados
                       onChange={(e) => {
-                        setHorario("especialidade", e); // Atualiza os valores selecionados
+                        setHorario("especialidade", e);
+                        // Atualiza os valores selecionados
                       }}
                     />
 
@@ -347,8 +339,9 @@ const HorariosAtendimento = () => {
                   </div>
                 </div>
                 <Button
+                appearance="primary"
                   loading={form.saving}
-                  color={behavior === "create" ? "green" : "blue"}
+                  color={behavior === "create" ? "blue" : "green"}
                   size="lg"
                   block
                   onClick={() => save()}
@@ -358,11 +351,15 @@ const HorariosAtendimento = () => {
                 </Button>
                 {behavior === "update" && (
                   <Button
+                  style={{backgroundColor:"rgb(255, 91, 91)"}}
+                  appearance="primary"
                     loading={form.saving}
-                    color="red"
+                    color=""
                     size="lg"
                     block
-                    onClick={() => setComponents("confirmDelete", true)}
+                    onClick={() => {
+                      setComponents('confirmDelete',true)
+                    }}
                     className="mt-1"
                   >
                     Remover Horário de Atendimento
@@ -372,9 +369,9 @@ const HorariosAtendimento = () => {
             </Drawer>
 
             <Modal
-              show={components.confirmDelete}
-              onHide={() => setComponents("confirmDelete", false)}
-              size="xs"
+              open={components.confirmDelete}
+              onClose={() => setComponents("confirmDelete", false)}
+              size="sm"
             >
               <Modal.Body>
                 {"  "} Tem certeza que deseja excluir? Essa ação será
@@ -390,7 +387,8 @@ const HorariosAtendimento = () => {
                 </Button>
                 <Button
                   onClick={() => setComponents("confirmDelete", false)}
-                  appearance="subtle"
+                  appearance="primary"
+                  color="blue"
                 >
                   Cancelar
                 </Button>
@@ -427,7 +425,7 @@ const HorariosAtendimento = () => {
                     onHorarioClick(e.resource.horario);
                     dispatch({ type: "horarios/allColaborador" });
                     dispatch({ type: "horarios/allColaboradoresSalao" });
-                    handleDate()
+                    handleDate();
                   }}
                   onSelectSlot={(slotInfo) => {
                     const { start, end } = slotInfo;
