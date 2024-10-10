@@ -5,7 +5,8 @@ import "./Home.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { fetchSalaoRequest } from "../../store/modules/salao/salaoSlice";
 import { fetchAllRequest } from "../../store/modules/servicos/servicosSlice";
-import { Divider, Placeholder } from 'rsuite';
+import { Divider, Placeholder, Nav } from "rsuite";
+import { Link } from 'react-router-dom';
 
 function HomeCliente() {
   const { nome } = useParams();
@@ -138,7 +139,20 @@ function HomeCliente() {
 
   return (
     <>
-      {/* Hero Section */}
+      <Nav
+        justified
+        appearance="pills"
+        defaultActiveKey="Home"
+        className="p-2 gap-2"
+        style={{ position: "absolute", zIndex: "30", width: "100vw" }}
+      >
+        <Nav.Item as={Link} to="/Salao/Deyvid-Barber" eventKey="Home">
+          Agendar
+        </Nav.Item>
+        <Nav.Item as={Link} to="/Agendamentos" eventKey="Agenda">
+          Agendados
+        </Nav.Item>
+      </Nav>
       <div
         style={{ backgroundImage: `url(${selectSalao.capa})` }}
         className="hero d-flex justify-content-end align-items-end"
@@ -257,11 +271,11 @@ function HomeCliente() {
                 <button
                   className="btn btn-success"
                   onClick={() => {
-                    handleAgendarClick(service)
+                    handleAgendarClick(service);
                     dispatch({
-                      type:"agendamento/filterDiasDisponiveis",
-                      action:service
-                    })
+                      type: "agendamento/filterDiasDisponiveis",
+                      action: service,
+                    });
                   }}
                 >
                   <i className="fas fa-calendar-check me-2"></i> Agendar

@@ -178,3 +178,8 @@
 .btn-confirmar:hover {
   background-color: #FF4C4C;
 }
+.rs-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -76,7 +76,7 @@ export const ClienteMobile = () => {
                 overflowX: "auto",
               }}
             >
-              <Column fixed>
+              <Column fixed flexGrow={3} className="row-2">
                 <HeaderCell>Nome</HeaderCell>
                 <Cell dataKey="nome" />
               </Column>
@@ -87,14 +87,10 @@ export const ClienteMobile = () => {
               </Column>
 
               {/* Colunas extras visíveis somente em telas maiores */}
-              <Column flexGrow={1} className="d-md-table-cell">
-                <HeaderCell>Telefone</HeaderCell>
-                <Cell dataKey="telefone" />
-              </Column>
 
               <Column flexGrow={1} align="center" fixed="right">
                 <HeaderCell>Ações</HeaderCell>
-                <Cell style={{ padding: "6px" }}>
+                <Cell style={{ padding: "0px" }}>
                   {(rowData) => (
                     <Button
                       appearance="link"

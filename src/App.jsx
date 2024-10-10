@@ -2,7 +2,7 @@ import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
 
 import HomeCliente from "./pagesCliente/Home/Home";
-import AgendamentoPage from "./pagesCliente/Agendamentos/Agendamento";
+import AgendamentoPage from "./pagesCliente/Agendamento/Agendamento";
 
 import Home from "./pages/Home";
 import { ProtectedLayout } from "./components/ProtectedLayout";
