@@ -11,8 +11,12 @@ import {
   Notification,
   useToaster,
   FlexboxGrid,
-  Loader, // Adiciona o Loader
+  Loader,
+  TagPicker,
+  InputPicker,
+  Schema,
 } from "rsuite";
+import RemindIcon from "@rsuite/icons/legacy/Remind";
 import "rsuite/dist/rsuite-no-reset.min.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
@@ -20,8 +24,16 @@ import {
   setColaborador,
   saveColaborador,
   setNotification,
+  setBehaviorUpdate,
+  setBehaviorCreate,
+  addColaborador,
+  deleteColaborador,
 } from "../../store/modules/colaborador/colaboradorSlice";
-import { fetchAllRequest } from "../../store/modules/servicos/servicosSlice";
+import {
+  fetchAllRequest,
+  setColaboradorId,
+} from "../../store/modules/servicos/servicosSlice";
+import { checkLocalStorageKeys } from "../../services/util";
 import "./ColaboradorMobile.css";
 
 const Textarea = React.forwardRef((props, ref) => (
@@ -29,14 +41,27 @@ const Textarea = React.forwardRef((props, ref) => (
 ));
 
 export const ColaboradoresMobile = () => {
-  const { colaboradores, colaborador, components } = useSelector(
+  const { StringType, NumberType } = Schema.Types;
+  const model = Schema.Model({
+    nome: StringType().isRequired("Este campo é obrigatório"),
+    email: StringType().isEmail("Digite um email válido"),
+    telefone: NumberType()
+      .isInteger("Somente números inteiros")
+      .isRequired("Este campo é obrigatório"),
+  });
+
+  const { colaboradores, colaborador, components, behavior } = useSelector(
     (state) => state.colaborador
   );
-  const { servicos } = useSelector((state) => state.servicos);
+  const { servicos, selectedServico } = useSelector((state) => state.servicos);
+  const servicosArray = servicos || [];
+  const selectedServicoArray = selectedServico || [];
+  const handleClose = () => setOpen(false);
   const dispatch = useDispatch();
 
   const [open, setOpen] = useState(false);
   const [openInformation, setOpenInformation] = useState(false);
+  const [openConfirmation, setOpenConfirmation] = useState(false);
   const toaster = useToaster();
   const [formData, setFormData] = useState({
     _id: undefined,
@@ -46,16 +71,20 @@ export const ColaboradoresMobile = () => {
     dataCadastro: "",
     email: "",
     telefone: "",
+    servicos: "",
   });
 
   useEffect(() => {
+    checkLocalStorageKeys();
     dispatch(fetchAllColaboradores());
-
+    dispatch({
+      type: "servicos/fetchAllServicos",
+    });
   }, [dispatch]);
 
   useEffect(() => {
     const { type, description } = components.notification;
-
+    console.log(description);
     if (type && description) {
       toaster.push(
         <Notification
@@ -104,10 +133,22 @@ export const ColaboradoresMobile = () => {
   };
 
   const handleSubmit = () => {
+    console.log(formData);
     const colaboradorData = {
       ...formData,
     };
     dispatch(saveColaborador(colaboradorData));
+    dispatch(fetchAllColaboradores());
+    setOpen(false);
+  };
+
+  const handleSubmitSalvar = () => {
+    console.log(formData);
+    const colaboradorData = {
+      ...formData,
+    };
+    dispatch(addColaborador(colaboradorData));
+    dispatch(fetchAllColaboradores());
     setOpen(false);
   };
 
@@ -120,7 +161,8 @@ export const ColaboradoresMobile = () => {
           className="d-flex justify-content-center align-items-center"
           style={{ height: "80vh" }}
         >
-          <Loader size="lg" content="Carregando colaboradores..." /> {/* Loader do rsuite */}
+          <Loader size="lg" content="Carregando colaboradores..." />{" "}
+          {/* Loader do rsuite */}
         </div>
       </>
     );
@@ -129,15 +171,19 @@ export const ColaboradoresMobile = () => {
   return (
     <>
       <HeaderMobile />
-      <div className="d-flex flex-column justify-content-center align-items-center p-3">
+      <div
+        className="d-flex flex-column justify-content-center align-items-center p-3"
+        style={{}}
+      >
         <h4 className="pb-4">Colaboradores</h4>
 
-        <List bordered hover style={{ width: "100%" }}>
+        <List bordered hover style={{ width: "100%", height: "80vh", overflowY: "auto"  }}>
           {colaboradores.map((colaborador) => (
             <List.Item
               key={colaborador._id}
               onClick={() => {
                 handleRowClick(colaborador);
+                dispatch(setColaboradorId(colaborador._id));
               }}
               style={{ cursor: "pointer" }}
             >
@@ -152,22 +198,24 @@ export const ColaboradoresMobile = () => {
                   <strong>Nome:</strong> {colaborador.nome}
                 </FlexboxGrid.Item>
                 <FlexboxGrid.Item className="my-2">
-                  <strong>Telefone:</strong> {colaborador.telefone}
-                </FlexboxGrid.Item>
-                <FlexboxGrid.Item>
                   <strong>Email:</strong> {colaborador.email}
                 </FlexboxGrid.Item>
+                <FlexboxGrid.Item>
+                  <strong>Telefone:</strong> {colaborador.telefone}
+                </FlexboxGrid.Item>
+
                 <FlexboxGrid.Item colspan={24} style={{ marginTop: "10px" }}>
                   <Button
                     onClick={(e) => {
                       e.stopPropagation();
+                      dispatch(setBehaviorUpdate()); // Impede a propagação do evento de clique
                       dispatch(setColaborador(colaborador)); // Impede a propagação do evento de clique
                       setOpen(true); // Abre o Drawer
                     }}
                     style={{
                       width: "100%",
                       padding: "12px",
-                      backgroundColor: "#FF5B5B",
+                      backgroundColor: "#2f3243",
                       color: "#FFF",
                       border: "none",
                       borderRadius: "4px",
@@ -190,10 +238,14 @@ export const ColaboradoresMobile = () => {
           onClose={() => setOpen(false)}
         >
           <Drawer.Header>
-            <Drawer.Title>Editar Colaborador</Drawer.Title>
+            <Drawer.Title>
+              {behavior === "update"
+                ? "Editar Colaborador"
+                : "Adicionar Colaborador"}
+            </Drawer.Title>
           </Drawer.Header>
           <Drawer.Body>
-            <Form fluid>
+            <Form fluid model={model} formValue={formData}>
               <Form.Group controlId="name-1">
                 <Form.ControlLabel>Nome</Form.ControlLabel>
                 <Form.Control
@@ -215,10 +267,16 @@ export const ColaboradoresMobile = () => {
                 <Form.ControlLabel>Sexo</Form.ControlLabel>
                 <Form.Control
                   name="sexo"
-                  value={formData.sexo}
+                  accepter={InputPicker}
+                  data={[
+                    { label: "Masculino", value: "M" },
+                    { label: "Feminino", value: "F" },
+                  ]}
                   onChange={(value) => handleInputChange(value, "sexo")}
+                  style={{ width: "100%" }} // Para garantir que ocupe toda a largura, se necessário
                 />
               </Form.Group>
+
               <Form.Group controlId="dataNascimento-1">
                 <Form.ControlLabel>Data de Nascimento</Form.ControlLabel>
                 <Form.Control
@@ -233,16 +291,56 @@ export const ColaboradoresMobile = () => {
               <Form.Group controlId="telefone-1">
                 <Form.ControlLabel>Telefone</Form.ControlLabel>
                 <Form.Control
+                  type="number"
                   name="telefone"
                   value={formData.telefone}
                   onChange={(value) => handleInputChange(value, "telefone")}
                 />
               </Form.Group>
+
+              <Form.Group controlId="name-1">
+                <div className="col-12 mt-3">
+                  <b className="d-block">Serviço</b>
+                  <TagPicker
+                    data={servicosArray}
+                    labelKey="titulo"
+                    valueKey="_id"
+                    searchable={false}
+                    size="lg"
+                    placeholder="Selecione o serviço"
+                    style={{ width: "100%" }}
+                    onChange={(value) => handleInputChange(value, "servicos")}
+                  />
+                </div>
+              </Form.Group>
+
               <ButtonToolbar className="btns">
-                <Button appearance="primary" onClick={handleSubmit}>
-                  Salvar
-                </Button>
-                <Button appearance="default" onClick={() => setOpen(false)}>
+                {behavior === "update" ? (
+                  <Button appearance="primary" onClick={handleSubmit}>
+                    Salvar
+                  </Button>
+                ) : (
+                  <Button appearance="primary" onClick={handleSubmitSalvar}>
+                    Adicionar
+                  </Button>
+                )}
+
+                <Button
+                  appearance="default"
+                  onClick={() => {
+                    setOpen(false);
+                    setFormData({
+                      _id: undefined,
+                      nome: "",
+                      sexo: "",
+                      dataNascimento: "",
+                      dataCadastro: "",
+                      email: "",
+                      telefone: "",
+                      servicos: "",
+                    });
+                  }}
+                >
                   Cancelar
                 </Button>
               </ButtonToolbar>
@@ -270,7 +368,7 @@ export const ColaboradoresMobile = () => {
               />
               <h4 className="mt-3">{colaborador.nome || ""}</h4>
             </div>
-            <Form fluid>
+            <Form fluid model={model}>
               <Form.Group controlId="name-1">
                 <Form.ControlLabel>Nome</Form.ControlLabel>
                 <Form.Control
@@ -318,11 +416,33 @@ export const ColaboradoresMobile = () => {
                   name="telefone"
                   value={formData.telefone}
                   onChange={(value) => handleInputChange(value, "telefone")}
+                  placeholder="(99) 99999-9999" // Placeholder no mesmo formato da máscara
+                />
+              </Form.Group>
+              <Form.Group controlId="servicos">
+                <Form.ControlLabel>Serviços</Form.ControlLabel>
+                <TagPicker
+                  readOnly
+                  className="w-100"
+                  value={selectedServicoArray.map((servico) => servico._id)} // Array de IDs dos serviços selecionados
+                  data={selectedServicoArray} // Array de todos os serviços disponíveis
+                  labelKey="titulo" // Propriedade do serviço a ser exibida
+                  valueKey="_id" // Propriedade do serviço usada como valor único
                 />
               </Form.Group>
             </Form>
           </Modal.Body>
           <Modal.Footer>
+            <Button
+              appearance="primary"
+              color="red"
+              onClick={() => {
+                setOpenInformation(false);
+                setOpenConfirmation(true);
+              }}
+            >
+              Deletar
+            </Button>
             <Button
               onClick={() => setOpenInformation(false)}
               appearance="primary"
@@ -334,13 +454,18 @@ export const ColaboradoresMobile = () => {
       </div>
       <button
         onClick={() => {
-          dispatch(resetHorario());
-          setComponents("drawer", true);
-          dispatch(
-            updateHorario({
-              behavior: "create",
-            })
-          );
+          dispatch(setBehaviorCreate());
+          setFormData({
+            _id: undefined,
+            nome: "",
+            sexo: "",
+            dataNascimento: "",
+            dataCadastro: "",
+            email: "",
+            telefone: "",
+            servicos: "",
+          });
+          setOpen(true);
         }}
         className="d-flex align-items-center justify-content-center"
         style={{
@@ -357,6 +482,36 @@ export const ColaboradoresMobile = () => {
       >
         <span className="material-symbols-outlined text-white">add</span>
       </button>
+
+      <Modal
+        backdrop="static"
+        role="alertdialog"
+        open={openConfirmation}
+        onClose={handleClose}
+        size="xs"
+      >
+        <Modal.Body>
+          <RemindIcon style={{ color: "#ffb300", fontSize: 24 }} />
+          Esse colaborador será apagado permanentemente, tem certeza ?
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            onClick={() => {
+              dispatch(deleteColaborador(colaborador));
+              setOpenConfirmation(false);
+            }}
+            appearance="primary"
+          >
+            Ok
+          </Button>
+          <Button
+            onClick={() => setOpenConfirmation(false)}
+            appearance="subtle"
+          >
+            Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };

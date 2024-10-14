@@ -81,3 +81,8 @@ li>a {
   /* Ajuste conforme necessário */
 
 }
+.disable{
+  background-color: #bdbdbd !important;
+  color: #2f3243 !important;
+  cursor: no-drop;
+}

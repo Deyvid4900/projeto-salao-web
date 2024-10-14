@@ -5,6 +5,20 @@ import "./HeaderMobile.css";
 function HeaderMobile() {
   const location = useLocation();
 
+  function handlelogout() {
+    const keysToRemove = ['u', '_dSlun'];
+
+    keysToRemove.forEach(key => {
+      if (localStorage.getItem(key)) {
+        localStorage.removeItem(key);
+        console.log(`Chave ${key} removida do localStorage.`);
+      } else {
+        console.log(`Chave ${key} não encontrada no localStorage.`);
+      }
+    });
+  }
+
+
   return (
     <div
       className="container-fluid p-3 d-flex justify-content-between align-items-center text-white"
@@ -70,6 +84,12 @@ function HeaderMobile() {
                 Agendamentos
               </li>
             </Link>
+            <Link to={"#"}>
+              <li className="disable dropdown-item">
+                <span className="material-symbols-outlined">event_available</span>
+                Horários disponíveis
+              </li>
+            </Link>
             <Link to={"/ClientesMobile"}>
               <li
                 className={
@@ -124,6 +144,19 @@ function HeaderMobile() {
               <li className="dropdown-item">
                 <span className="material-symbols-outlined">Arrow_Forward</span>
                 Meu Salão
+              </li>
+            </Link>
+            <Link to={"#"}>
+              <li className="disable dropdown-item " >
+                <span className="material-symbols-outlined">bar_chart_4_bars</span>
+                DashBoard
+              </li>
+            </Link>
+
+            <Link to={"/"} onClick={()=>{handlelogout()}}>
+              <li className="dropdown-item">
+                <span className="material-symbols-outlined">logout</span>
+                Sair
               </li>
             </Link>
           </ul>

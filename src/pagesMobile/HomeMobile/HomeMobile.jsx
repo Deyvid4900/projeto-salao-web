@@ -16,6 +16,7 @@ import {
   setSelectedServicos,
 } from "../../store/modules/servicos/servicosSlice";
 import { addAgendamento } from "../../store/modules/agendamento/agendamentoSlice";
+import { checkLocalStorageKeys } from "../../services/util";
 
 moment.locale("pt-br"); // Configura o Moment.js para usar o idioma português
 const localizer = momentLocalizer(moment);
@@ -39,6 +40,7 @@ const HomeMobile = () => {
   const servicosArray = selectedServico || [];
 
   useEffect(() => {
+    checkLocalStorageKeys()
     const periodo = {
       start: moment().startOf("M").format("YYYY-MM-DD"),
       end: moment().endOf("M").format("YYYY-MM-DD"),

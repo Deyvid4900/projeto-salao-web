@@ -12,6 +12,7 @@ import "moment/locale/pt-br";
 import { Modal, Button, Drawer, Form, Loader } from "rsuite";
 import "rsuite/dist/rsuite.min.css";
 import HeaderMobile from "../../components/HeaderMobile/HeaderMobile";
+import { checkLocalStorageKeys } from "../../services/util";
 
 export const ServicoMobile = () => {
   const dispatch = useDispatch();
@@ -23,6 +24,7 @@ export const ServicoMobile = () => {
   const [loadingSave, setLoadingSave] = useState(false); // Estado para controle do carregamento
 
   useEffect(() => {
+    checkLocalStorageKeys()
     dispatch({
       type: "servicos/fetchAllServicos",
     });

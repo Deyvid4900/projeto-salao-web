@@ -28,7 +28,7 @@ import {
   setSaving,
   setServicos, // Importamos apenas as ações do slice
 } from "../../store/modules/horarios/horariosSlice";
-import util from "../../services/util";
+import util, { checkLocalStorageKeys } from "../../services/util";
 import colors from "../../data/colors.json";
 import HeaderMobile from "../../components/HeaderMobile/HeaderMobile";
 
@@ -195,6 +195,7 @@ const HorariosAtendimentoMobile = () => {
     return listaEventos;
   };
   useEffect(() => {
+    checkLocalStorageKeys()
     dispatch({ type: "horarios/allHorarios" }); // Chama o Saga responsável por obter todos os horários
     dispatch({ type: "horarios/allServicos" });
     // Chama o Saga responsável por obter todos os serviços
@@ -225,8 +226,8 @@ const HorariosAtendimentoMobile = () => {
               <Drawer.Body>
                 <h3>
                   {behavior === "create"
-                    ? "Criar novo Horário"
-                    : "Atualizar Horário"}
+                    ? "Criar novo Horário de atendimento"
+                    : "Atualizar Horário de atendimento"}
                 </h3>
                 <div className=" mt-3">
                   {/* Dias da semana */}

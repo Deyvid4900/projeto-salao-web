@@ -34,6 +34,12 @@ const colaboradorSlice = createSlice({
   name: "colaborador",
   initialState,
   reducers: {
+    setBehaviorUpdate:(state)=>{
+      state.behavior = "update";
+    },
+    setBehaviorCreate:(state)=>{
+      state.behavior = "create";
+    },
     updateColaborador: (state, action) => {
       return { ...state, ...action.payload };
     },
@@ -56,6 +62,7 @@ const colaboradorSlice = createSlice({
       state.servicos = action.payload;
     },
     fetchAllColaboradores: (state) => {},
+    deleteColaborador: (state) => {},
     
     // Nova ação para definir a notificação
     setNotification: (state, action) => {
@@ -66,11 +73,14 @@ const colaboradorSlice = createSlice({
 
 // Exportando as ações
 export const {
+  deleteColaborador,
   updateColaborador,
   filterColaborador,
   resetColaborador,
   setColaboradores,
   setColaboradoresServico,
+  setBehaviorCreate,
+  setBehaviorUpdate,
   setColaborador,
   setServicos,
   fetchAllColaboradores,
@@ -78,5 +88,6 @@ export const {
 } = colaboradorSlice.actions;
 
 export const saveColaborador = createAction("colaborador/saveColaborador");
+export const addColaborador = createAction("colaborador/addColaborador");
 
 export default colaboradorSlice.reducer;

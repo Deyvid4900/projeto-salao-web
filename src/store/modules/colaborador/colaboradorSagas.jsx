@@ -6,11 +6,52 @@ import {
   setColaborador,
   setServicos,
   fetchAllColaboradores,
-  saveColaborador,setNotification
+  saveColaborador,setNotification,
+  addColaborador,
+  deleteColaborador
 } from "./colaboradorSlice"; // novo arquivo
 import { api } from "../../../services/api";
 import { notification } from "../../../services/rsuite";
 
+function* addColaboradorSaga(action) {
+  try {
+    const { payload } = action; // Obtém os dados do colaborador
+   
+    // Chamada à API
+    const { data: response } = yield call(api.post, `/colaborador`,{
+      "salaoId": localStorage.getItem("_dSlun"),
+      "colaborador": {
+        ...payload,
+        especialidades:payload.servicos
+      }
+    });
+
+    // Verifica se há erro na resposta
+    if (response.error) {
+      // Dispara uma ação para definir a notificação de erro
+      console.log(response)
+      yield put(setNotification({
+        type: "error",
+        description: response.message,
+      }));
+    } else {
+      // Atualiza a lista de colaboradores
+      yield put(fetchAllColaboradores()); // Atualiza o estado com os colaboradores
+
+      // Dispara uma ação para definir a notificação de sucesso
+      yield put(setNotification({
+        type: "success",
+        description: "Colaborador salvo com sucesso!",
+      }));
+    }
+  } catch (err) {
+    // Dispara uma ação para definir a notificação de erro
+    yield put(setNotification({
+      type: "error",
+      description: err.message || "Erro ao salvar colaborador",
+    }));
+  }
+}
 
 function* saveColaboradorSaga(action) {
   try {
@@ -125,12 +166,57 @@ export function* allColaboradores() {
     });
   }
 }
+export function* colaboradorDelete(action) {
+  try {
+    console.log(action)
+    const { payload } = action; // Obtém os dados do colaborador
+    const colaboradorId =payload._id;
+    console.log(colaboradorId)
+    
+    // Chamada à API
+    const { data: response } = yield call(api.delete, `/colaborador/vinculo/${colaboradorId}`);
+    // console.log(response);
 
+    // Verifica se há erro na resposta
+    if (response.error) {
+      // Dispara uma ação para definir a notificação de erro
+      yield put(setNotification({
+        type: "error",
+        description: response.error,
+      }));
+    } else {
+      // Atualiza a lista de colaboradores
+      yield put(fetchAllColaboradores()); // Atualiza o estado com os colaboradores
+
+      // Dispara uma ação para definir a notificação de sucesso
+      yield put(setNotification({
+        type: "success",
+        description: "Colaborador deletado com sucesso!",
+      }));
+    }
+  } catch (err) {
+    // Dispara uma ação para definir a notificação de erro
+    yield put(setNotification({
+      type: "error",
+      description: err.message || "Erro ao deletadar colaborador",
+    }));
+  }
+}
+
+
+
+function* watcherDeleteColaborador() {
+  yield takeLatest(deleteColaborador.type, colaboradorDelete);
+}
 function* watcherAllColaborador() {
   yield takeLatest(fetchAllColaboradores.type, allColaboradores);
 }
 function* watchersaveColaborador() {
   yield takeLatest(saveColaborador.type, saveColaboradorSaga);
+}
+
+function* watcherAddColaborador() {
+  yield takeLatest(addColaborador.type, addColaboradorSaga);
 }
 function* fetchColaboradores() {
   yield takeLatest(setColaboradores.type, filterColaborador);
@@ -138,8 +224,10 @@ function* fetchColaboradores() {
 
 export default function* rootSaga() {
   yield all([
+    watcherDeleteColaborador(),
     watcherAllColaborador(),
     watchersaveColaborador(),
-    fetchColaboradores()
+    fetchColaboradores(),
+    watcherAddColaborador()
   ]);
 }

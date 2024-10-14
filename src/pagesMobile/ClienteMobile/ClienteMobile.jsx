@@ -8,6 +8,7 @@ import {
   selectedCliente,
 } from "../../store/modules/clientes/clientesSlice";
 import HeaderMobile from "../../components/HeaderMobile/HeaderMobile";
+import { checkLocalStorageKeys } from "../../services/util";
 
 const Textarea = React.forwardRef((props, ref) => (
   <Input {...props} as="textarea" ref={ref} />
@@ -21,6 +22,7 @@ export const ClienteMobile = () => {
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
+    checkLocalStorageKeys();
     dispatch(fetchAllClientesRequest());
   }, [dispatch]);
 
@@ -76,7 +78,7 @@ export const ClienteMobile = () => {
                 overflowX: "auto",
               }}
             >
-              <Column fixed flexGrow={3} className="row-2">
+              <Column fixed flexGrow={2.5} >
                 <HeaderCell>Nome</HeaderCell>
                 <Cell dataKey="nome" />
               </Column>
