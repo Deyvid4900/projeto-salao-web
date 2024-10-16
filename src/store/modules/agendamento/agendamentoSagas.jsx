@@ -1,30 +1,61 @@
-import { call, put, all, takeLatest } from "redux-saga/effects";
+import { takeLatest, all, call, put } from "redux-saga/effects";
+import { getServicosById, updateAgendamento,addAgendamento,addAgendamentoFailure,addAgendamentoSuccess, updateAgenda } from "./agendamentoSlice";
 import { api } from "../../../services/api";
-import {filterAgendamentoRequest,filterAgendamentoFailure,filterAgendamentoSuccess} from "../agendamento/agendamentoSlice"
+import moment from "moment";
 
-const salaoId = localStorage.getItem("_dSlun");
-
-export function* filterAgendamento(action) {
+function* filterDiasDisponiveis(payload){
+  console.log(payload.action)
+  const dia = moment().format('YYYY-MM-DDTHH:mm:ssZ') 
+  const {_id} = payload.action
   try {
-    const response = yield call(api.post, "/agendamento/filter/",{
-      salaoId: salaoId,
-      range: {
-        start: action.payload.start,
-        end: action.payload.end,
-      },
+    const { data } = yield call(api.post, "agendamento/dias-disponiveis", {
+      salaoId: localStorage.getItem("_dSlun"),
+      data:dia,
+      servicoId:_id
     });
 
-    
-    yield put(filterAgendamentoSuccess(response.data));
-  } catch (error) {
-    yield put(filterAgendamentoFailure(error.message));
+    console.log(dia);
+
+   yield put(updateAgenda(data))
+  } catch (err) {
+    // Lidando com o erro se necessário
+    console.error("Erro ao filtrar dias disponiveis ", err);
   }
 }
 
-function* watchFilterAgendamento() {
-  yield takeLatest(filterAgendamentoRequest.type, filterAgendamento);
+function* filterAgendamentos({ range }) {
+  // console.log(range);
+  try {
+    const { data: res } = yield call(api.post, "/agendamento/filter", {
+      salaoId: localStorage.getItem("_dSlun"),
+      range,
+    });
+
+    // console.log(res);
+
+    yield put(updateAgendamento({ agendamentos: res.agendamentos }));
+  } catch (err) {
+    // Lidando com o erro se necessário
+    console.error("Erro ao filtrar agendamentos", err);
+  }
 }
 
-export default function* rootSaga() {
-  yield all([watchFilterAgendamento()]);
+function* handleAddAgendamento(action) {
+  try {
+    console.log(action.payload)
+    const response = yield call(api.post, "/agendamento", action.payload); // Chama a API para criar o agendamento
+    yield put(addAgendamentoSuccess(response.data)); // Dispara sucesso com a resposta da API
+    yield call(filterAgendamentos)
+
+  } catch (error) {
+    yield put(addAgendamentoFailure(error.message)); // Dispara falha com a mensagem de erro
+  }
+}
+
+export default function* agendamentoSagas() {
+  yield all([
+    takeLatest("agendamento/filterAgendamentos", filterAgendamentos),
+    takeLatest("agendamento/filterDiasDisponiveis", filterDiasDisponiveis),
+    takeLatest(addAgendamento.type, handleAddAgendamento)
+  ]);
 }

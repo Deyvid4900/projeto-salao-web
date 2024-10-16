@@ -1,53 +1,93 @@
-// slices/colaboradorSlice.js
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice, createAction } from "@reduxjs/toolkit";
+
+const initialState = {
+  behavior: "create", // create, update, read
+  components: {
+    confirmDelete: false,
+    drawer: false,
+    tab: "dados-cadastrais", // dados-cadastrais, agendamentos, arquivos
+    notification: {
+      type: "",
+      description: "",
+    },
+  },
+  form: {
+    filtering: false,
+    disabled: true,
+    saving: false,
+  },
+  colaborador: {
+    email: "",
+    nome: "",
+    telefone: "",
+    dataNascimento: "",
+    sexo: "M",
+    vinculo: "A",
+    especialidades: [],
+  },
+  colaboradores: [],
+  colaboradoresServico: [],
+  servicos: [],
+};
 
 const colaboradorSlice = createSlice({
-  name: 'colaborador',
-  initialState: {
-    data: [],
-    loading: false,
-    error: null,
-  },
-
+  name: "colaborador",
+  initialState,
   reducers: {
-    fetchAllRequest(state) {
-      state.loading = true;
-      state.error = null;
+    setBehaviorUpdate:(state)=>{
+      state.behavior = "update";
     },
-    fetchAllSuccess(state, action) {
-      state.loading = false;
-      state.data = action.payload;
+    setBehaviorCreate:(state)=>{
+      state.behavior = "create";
     },
-    fetchAllFailure(state, action) {
-      state.loading = false;
-      state.error = action.payload;
+    updateColaborador: (state, action) => {
+      return { ...state, ...action.payload };
     },
-
-
-
+    filterColaborador: (state) => {
+      state.form.filtering = true;
+    },
+    resetColaborador: (state) => {
+      state.colaborador = initialState.colaborador;
+    },
+    setColaborador: (state, action) => {
+      state.colaborador = action.payload;
+    },
+    setColaboradores: (state, action) => {
+      state.colaboradores = action.payload;
+    },
+    setColaboradoresServico: (state, action) => {
+      state.colaboradoresServico = action.payload;
+    },
+    setServicos: (state, action) => {
+      state.servicos = action.payload;
+    },
+    fetchAllColaboradores: (state) => {},
+    deleteColaborador: (state) => {},
     
-    fetchOneRequest(state) {
-      state.loading = true;
-      state.error = null;
-    },
-    fetchOneSuccess(state, action) {
-      state.loading = false;
-      state.data.colaborador = action.payload; // ajuste conforme necessário
-    },
-    fetchOneFailure(state, action) {
-      state.loading = false;
-      state.error = action.payload;
+    // Nova ação para definir a notificação
+    setNotification: (state, action) => {
+      state.components.notification = action.payload;
     },
   },
 });
 
+// Exportando as ações
 export const {
-  fetchAllRequest,
-  fetchAllSuccess,
-  fetchAllFailure,
-  fetchOneRequest,
-  fetchOneSuccess,
-  fetchOneFailure,
+  deleteColaborador,
+  updateColaborador,
+  filterColaborador,
+  resetColaborador,
+  setColaboradores,
+  setColaboradoresServico,
+  setBehaviorCreate,
+  setBehaviorUpdate,
+  setColaborador,
+  setServicos,
+  fetchAllColaboradores,
+  setNotification, // Ação de notificação
 } = colaboradorSlice.actions;
+
+export const saveColaborador = createAction("colaborador/saveColaborador");
+export const addColaborador = createAction("colaborador/addColaborador");
 
 export default colaboradorSlice.reducer;

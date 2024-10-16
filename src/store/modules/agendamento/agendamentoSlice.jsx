@@ -1,35 +1,51 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
+
+const initialState = {
+  components: {
+    modal: false,
+  },
+  agendamento: {},
+  agendamentos: [],
+  newAgendamento: {},
+  agenda:{
+
+  }
+};
 
 const agendamentoSlice = createSlice({
-  name: 'agendamento',
-  initialState: {
-    data: [],
-    loading: false,
-    error: null,
-  },
+  name: "agendamento",
+  initialState,
   reducers: {
-
-    filterAgendamentoRequest(state,payload){
+    updateAgendamento: (state, action) => {
+      return { ...state, ...action.payload };
+    },
+    updateAgenda: (state, action) => {
+      state.agenda = action.payload ;
+    },
+    getServicosById: (state, action) => {
+      return state;
+    },
+    addAgendamento: (state, action) => {
       state.loading = true;
-      state.error = null;
-      state = payload
     },
-    filterAgendamentoSuccess(state,action) {
+    addAgendamentoSuccess: (state, action) => {
       state.loading = false;
-      state.error = null;
-      state.data = action.payload;
+      state.agendamentos.push(action.payload);
     },
-    filterAgendamentoFailure(state, action) {
+    addAgendamentoFailure: (state, action) => {
       state.loading = false;
       state.error = action.payload;
     },
+    // Outras actions síncronas podem ser adicionadas aqui
   },
 });
 
 export const {
-  filterAgendamentoRequest,
-  filterAgendamentoSuccess,
-  filterAgendamentoFailure,
+  updateAgendamento,
+  getServicosById,
+  addAgendamento,
+  addAgendamentoSuccess,
+  addAgendamentoFailure,
+  updateAgenda
 } = agendamentoSlice.actions;
-
 export default agendamentoSlice.reducer;

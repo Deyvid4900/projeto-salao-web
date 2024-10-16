@@ -1,5 +1,9 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./App.css";
+
+import HomeCliente from "./pagesCliente/Home/Home";
+import AgendamentoPage from "./pagesCliente/Agendamento/Agendamento";
+
 import Home from "./pages/Home";
 import { ProtectedLayout } from "./components/ProtectedLayout";
 import { AuthProvider } from "./context/AuthProvider";
@@ -10,6 +14,14 @@ import Colaborador from "./pages/Colaborador";
 import Horario from "./pages/Horarios/index";
 import { Provider } from "react-redux";
 import store from "./store/store";
+import HeaderMobile from "./components/HeaderMobile/HeaderMobile";
+import ClienteMobile from "./pagesMobile/ClienteMobile/ClienteMobile";
+import HomeMobile from "./pagesMobile/HomeMobile/HomeMobile";
+import ColaboradorMobile from "./pagesMobile/ColaboradorMobile/ColaboradorMobile";
+import HorariosAtendimento from "./pages/Horarios/index";
+import HorariosAtendimentoMobile from "./pagesMobile/HorarioMobile/HorarioMobile";
+import ServicosMobile from "./pagesMobile/ServicosMobile/ServicosMobile";
+import Agendados from "./pagesCliente/Agendados/Agendados";
 
 function App() {
   return (
@@ -18,6 +30,33 @@ function App() {
         <AuthProvider>
           <BrowserRouter>
             <Routes>
+              <Route path="Salao/:nome" element={<HomeCliente></HomeCliente>} />
+              <Route path="/Agendados" element={<Agendados></Agendados>} />
+              <Route
+                path="ClientesMobile"
+                element={<ClienteMobile></ClienteMobile>}
+              />
+              <Route
+                path="AgendamentosMobile"
+                element={<HomeMobile></HomeMobile>}
+              />
+              <Route
+                path="ColaboradoresMobile"
+                element={<ColaboradorMobile></ColaboradorMobile>}
+              />
+              <Route
+                path="HorariosMobile"
+                element={<HorariosAtendimentoMobile></HorariosAtendimentoMobile>}
+              />
+              <Route
+                path="ServicosMobile"
+                element={<ServicosMobile></ServicosMobile>}
+              />
+
+              <Route
+                path="Agendamento"
+                element={<AgendamentoPage></AgendamentoPage>}
+              />
               <Route path="/" element={<Login />} />
               <Route
                 path="/Home"

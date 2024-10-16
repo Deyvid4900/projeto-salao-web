@@ -1,0 +1,88 @@
+@media (max-width: 767.98px) {
+
+  /* Para telas pequenas */
+  .d-none {
+    display: none !important;
+    /* Oculta elementos que têm essa classe */
+  }
+
+  .logo {
+    /* Estilos para a logo, se necessário */
+    width: 150px;
+    /* Ajuste o tamanho conforme necessário */
+  }
+}
+
+.ulServicesMobile>a>li {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  cursor: pointer;
+  color: #FFF !important;
+  list-style: none !important;
+  padding: 1rem;
+  border-radius: 6px;
+  background-color: #2f3243 ;
+ 
+}
+.active{
+  color: white !important;
+  background-color: #FF5B5B !important;
+  
+}
+
+li>a {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 5px;
+  color: #FFF;
+}
+
+.navbar-toggler-icon {
+  display: inline-block;
+  width: 30px;
+  height: 2px;
+  background-color: white;
+  position: relative;
+}
+
+.navbar-toggler-icon::before,
+.navbar-toggler-icon::after {
+  content: '';
+  display: block;
+  width: 30px;
+  height: 2px;
+  background-color: white;
+  position: absolute;
+  left: 0;
+  transition: all 0.3s ease;
+}
+
+.navbar-toggler-icon::before {
+  top: -8px;
+}
+
+.navbar-toggler-icon::after {
+  bottom: -8px;
+}
+
+.dropdown-item {
+  text-align: center;
+  margin: 5px 0px;
+  display: flex;
+  justify-content: space-between;
+}
+
+.dropdown-menu {
+  background-color: #FFf;
+  min-width: 200px;
+  /* Ajuste conforme necessário */
+
+}
+.disable{
+  background-color: #bdbdbd !important;
+  color: #2f3243 !important;
+  cursor: no-drop;
+}
