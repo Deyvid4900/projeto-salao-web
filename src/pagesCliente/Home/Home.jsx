@@ -116,18 +116,7 @@ function HomeCliente() {
     service.titulo.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  if (loading) {
-    return (
-      <>
-        <Placeholder.Paragraph className="mt-5" type="media" />
-        <Placeholder.Paragraph type="media" />
-        <Placeholder.Paragraph className="mt-5" type="media" />
-        <Placeholder.Paragraph type="media" />
-        <Placeholder.Paragraph className="mt-5" type="media" />
-        <Placeholder.Paragraph type="media" />
-      </>
-    );
-  }
+ 
 
   if (error) {
     return <div>Erro: {error}</div>;
@@ -144,12 +133,12 @@ function HomeCliente() {
         appearance="pills"
         defaultActiveKey="Home"
         className="p-2 gap-2"
-        style={{ position: "absolute", zIndex: "30", width: "100vw" }}
+        style={{ position: "absolute", zIndex: "30", width: "100%" }}
       >
         <Nav.Item as={Link} to="/Salao/Deyvid-Barber" eventKey="Home">
           Agendar
         </Nav.Item>
-        <Nav.Item as={Link} to="/Agendamentos" eventKey="Agenda">
+        <Nav.Item as={Link} to="/Agendados" eventKey="Agenda">
           Agendados
         </Nav.Item>
       </Nav>

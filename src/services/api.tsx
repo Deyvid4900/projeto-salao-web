@@ -1,12 +1,12 @@
 import axios from "axios";
 import { getUserLocalStorage } from "../context/AuthProvider/util";
 
+//export const api = axios.create({
+//  baseURL: "http://localhost:8000",
+//});
 export const api = axios.create({
-  baseURL: "http://localhost:8000",
-});
-// export const api = axios.create({
-//   baseURL: "https://api-production-70cb.up.railway.app/",
-// });
+   baseURL: "https://api-production-70cb.up.railway.app/",
+ });
 
 export  const Api = axios.create({
   baseURL: "https://reqres.in/api/",

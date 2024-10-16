@@ -21,6 +21,7 @@ import ColaboradorMobile from "./pagesMobile/ColaboradorMobile/ColaboradorMobile
 import HorariosAtendimento from "./pages/Horarios/index";
 import HorariosAtendimentoMobile from "./pagesMobile/HorarioMobile/HorarioMobile";
 import ServicosMobile from "./pagesMobile/ServicosMobile/ServicosMobile";
+import Agendados from "./pagesCliente/Agendados/Agendados";
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <BrowserRouter>
             <Routes>
               <Route path="Salao/:nome" element={<HomeCliente></HomeCliente>} />
+              <Route path="/Agendados" element={<Agendados></Agendados>} />
               <Route
                 path="ClientesMobile"
                 element={<ClienteMobile></ClienteMobile>}
