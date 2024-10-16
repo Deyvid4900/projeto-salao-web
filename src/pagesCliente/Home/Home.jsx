@@ -159,9 +159,7 @@ function HomeCliente() {
             zIndex: 2,
           }}
         >
-          <div className="btn btn-md btn-light ">
-            <i className="fas fa-calendar-check me-2"></i> Reserve Agora
-          </div>
+          
           <h2 className="pt-2" style={{ fontWeight: 500 }}>
             {selectSalao.nome}
           </h2>

@@ -5,42 +5,110 @@ import {
   setServicos,
   setLoading,
   setFiltering,
-  toggleDrawer, setColaboradorId,
-  setSelectedServicos,// Importando a ação de notificação
+  toggleDrawer,
+  setColaboradorId,
+  setSelectedServicos,
+  deleteServico,
+  createServicoFailure,
+  createServicoRequest,
+  createServicoSuccess, // Importando a ação de notificação
 } from "./servicosSlice"; // Importando o slice correspondente
 import { api } from "../../../services/api"; // Importando a API
 import { setColaboradoresServico } from "../colaborador/colaboradorSlice";
 
 function* findColaboradoreByServico(action) {
-  console.log(action.payload)
+  console.log(action.payload);
   const servicoId = action.payload;
   try {
     yield put(setLoading(true));
-    const {data} = yield call(api.get,`/servico/${servicoId}/colaboradores`);
+    const { data } = yield call(api.get, `/servico/${servicoId}/colaboradores`);
     yield put(setLoading(false));
 
-    console.log(data)
+    console.log(data);
     if (data.error) {
       // Tratar erro se a resposta da API indicar erro
       console.error(data.error);
     } else {
       yield put(setColaboradoresServico(data.colaboradores)); // Armazena os serviços do colaborador
     }
-
   } catch (error) {
     yield put(setLoading(false)); // Para o loading em caso de erro
-    console.error('Error fetching colaborador servicos:', error);
+    console.error("Error fetching colaborador servicos:", error);
   }
 }
 
+function* createServicoSaga(action) {
+  const servico = action.payload;
+  console.log(servico);
+  try {
+    yield put(createServicoRequest()); // Dispara a ação de loading
+
+    // Cria um FormData para enviar os dados
+    const formData = new FormData();
+    // Adiciona o ID do salão
+    formData.append("salaoId", localStorage.getItem("_dSlun"));
+
+    // Cria um objeto serviço
+    const servicoObj = {
+      titulo: servico.titulo,
+      preco: servico.preco,
+      duracao: servico.duracao,
+      descricao: servico.descricao,
+      status: "A",
+    };
+
+    // Serializa o objeto como uma string JSON
+    formData.append("servico", JSON.stringify(servicoObj));
+
+    // Adiciona cada chave e valor do payload ao FormData
+
+    // Chamada à API para criar o serviço
+    const response = yield call(api.post, "/servico", formData, {
+      // O Content-Type será definido automaticamente
+    });
+    // Obtém os dados do serviço da resposta
+    yield call(fetchAllServicos);
+  } catch (error) {
+    console.error("Error creating service:", error);
+    yield put(
+      createServicoFailure(
+        error.response ? error.response.data.message : error.message
+      )
+    ); // Dispara a ação de erro
+  }
+}
+
+function* deleteServicoById(action) {
+  console.log(action.payload);
+  const servicoId = action.payload;
+  try {
+    yield put(setLoading(true));
+    const { data } = yield call(api.delete, `/servico/${servicoId}`);
+    yield put(setLoading(false));
+
+    console.log(data);
+    if (data.error) {
+      // Tratar erro se a resposta da API indicar erro
+      console.error(data.error);
+    } else {
+      yield call(fetchAllServicos);
+    }
+  } catch (error) {
+    yield put(setLoading(false)); // Para o loading em caso de erro
+    console.error("Error fetching colaborador servicos:", error);
+  }
+}
 
 function* fetchColaboradorServicos(action) {
-  const colaboradorId  = action.payload; // Obtenha o ID do colaborador da ação
+  const colaboradorId = action.payload; // Obtenha o ID do colaborador da ação
   try {
     yield put(setLoading(true)); // Inicia o loading
 
     // Chamada à API
-    const { data } = yield call(api.get, `/servico/colaborador/${colaboradorId}`);
+    const { data } = yield call(
+      api.get,
+      `/servico/colaborador/${colaboradorId}`
+    );
     yield put(setLoading(false)); // Termina o loading
 
     if (data.error) {
@@ -51,7 +119,7 @@ function* fetchColaboradorServicos(action) {
     }
   } catch (error) {
     yield put(setLoading(false)); // Para o loading em caso de erro
-    console.error('Error fetching colaborador servicos:', error);
+    console.error("Error fetching colaborador servicos:", error);
   }
 }
 
@@ -113,7 +181,12 @@ function* fetchAllServicos() {
 // Função de watcher para as ações de serviço
 function* watchServicosActions() {
   yield takeLatest(setColaboradorId.type, fetchColaboradorServicos);
-  yield takeLatest("servicos/findColaboradoreByServico", findColaboradoreByServico);
+  yield takeLatest(deleteServico.type, deleteServicoById);
+  yield takeLatest("servicos/createServico", createServicoSaga);
+  yield takeLatest(
+    "servicos/findColaboradoreByServico",
+    findColaboradoreByServico
+  );
   yield takeLatest("servicos/fetchAllServicos", fetchAllServicos);
   yield takeLatest(updateServico.type, saveServico); // Certifique-se de usar a ação correta
 }

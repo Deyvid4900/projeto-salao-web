@@ -161,13 +161,6 @@ export const ClienteMobile = () => {
       </div>
       <button
         onClick={() => {
-          dispatch(resetHorario());
-          setComponents("drawer", true);
-          dispatch(
-            updateHorario({
-              behavior: "create",
-            })
-          );
         }}
         className="d-flex align-items-center justify-content-center"
         style={{

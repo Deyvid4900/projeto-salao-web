@@ -3,6 +3,21 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const clienteSlice = createSlice({
   name: "cliente",
+  behavior: "create", // create, update, read
+  components: {
+    confirmDelete: false,
+    drawer: false,
+    tab: "dados-cadastrais", // dados-cadastrais, agendamentos, arquivos
+    notification: {
+      type: "",
+      description: "",
+    },
+  },
+  form: {
+    filtering: false,
+    disabled: true,
+    saving: false,
+  },
   initialState: {
     clientes: [],
     loading: false,
