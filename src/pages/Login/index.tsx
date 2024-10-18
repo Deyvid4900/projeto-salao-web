@@ -8,7 +8,6 @@ export const Login = () => {
   const auth = useAuth();
   const navigate = useNavigate();
 
-
   async function onFinish(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
@@ -19,13 +18,28 @@ export const Login = () => {
 
     try {
       await auth.authenticate(email, password);
+
       if (window.innerWidth < 700) {
-        navigate("/AgendamentosMobile"); // Redirecionar para outra rota
-        localStorage.setItem("_dSlun", "66e0507b48555f3e9898edfb");
-      }
-      else{
+        navigate("/AgendamentosMobile");
+
+        // Recupera o valor de 'u' do localStorage
+        const salaoData = localStorage.getItem("u");
+
+        // Verifica se o dado existe no localStorage
+        if (salaoData) {
+          // Converte a string JSON de volta para um objeto
+          const salao = JSON.parse(salaoData);
+
+          // Acessa o ID do salão e armazena no localStorage com a chave '_dSlun'
+          localStorage.setItem("_dSlun", salao.id);
+          console.log("ID do salão salvo em _dSlun:", salao.id);
+        } else {
+          console.log("Nenhum dado de salão encontrado no localStorage.");
+        }
+
+        
+      } else {
         navigate("/Home");
-        localStorage.setItem("_dSlun", "66e0507b48555f3e9898edfb");
       }
     } catch (error) {
       alert("Email ou senha inválidos");
@@ -86,7 +100,12 @@ export const Login = () => {
       </div>
 
       {active && (
-        <div style={{ ...styles.spinnerContainer, ...styles.spinnerContainerActive }}>
+        <div
+          style={{
+            ...styles.spinnerContainer,
+            ...styles.spinnerContainerActive,
+          }}
+        >
           <div
             className="spinner-border"
             style={{ width: "4rem", height: "4rem" }}

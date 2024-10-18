@@ -28,6 +28,7 @@ import {
   setBehaviorCreate,
   addColaborador,
   deleteColaborador,
+  resetColaborador,
 } from "../../store/modules/colaborador/colaboradorSlice";
 import {
   fetchAllRequest,
@@ -35,6 +36,8 @@ import {
 } from "../../store/modules/servicos/servicosSlice";
 import { checkLocalStorageKeys } from "../../services/util";
 import "./ColaboradorMobile.css";
+
+import util from "../../services/util";
 
 const Textarea = React.forwardRef((props, ref) => (
   <Input {...props} as="textarea" ref={ref} />
@@ -50,9 +53,8 @@ export const ColaboradoresMobile = () => {
       .isRequired("Este campo é obrigatório"),
   });
 
-  const { colaboradores, colaborador, components, behavior } = useSelector(
-    (state) => state.colaborador
-  );
+  const { colaboradores, colaborador, components, behavior, loading } =
+    useSelector((state) => state.colaborador);
   const { servicos, selectedServico } = useSelector((state) => state.servicos);
   const servicosArray = servicos || [];
   const selectedServicoArray = selectedServico || [];
@@ -118,6 +120,7 @@ export const ColaboradoresMobile = () => {
         dataCadastro: colaborador.dataCadastro || "",
         email: colaborador.email || "",
         telefone: colaborador.telefone || "",
+        foto: null,
       });
     }
   }, [colaborador]);
@@ -127,6 +130,7 @@ export const ColaboradoresMobile = () => {
   };
 
   const handleRowClick = (rowData) => {
+    console.log(rowData);
     dispatch(setColaborador(rowData));
     dispatch(fetchAllRequest());
     setOpenInformation(true);
@@ -153,7 +157,7 @@ export const ColaboradoresMobile = () => {
   };
 
   // Exibe o Loader enquanto os colaboradores estão sendo carregados (quando o array está vazio)
-  if (colaboradores.length === 0) {
+  if (loading) {
     return (
       <>
         <HeaderMobile />
@@ -177,7 +181,11 @@ export const ColaboradoresMobile = () => {
       >
         <h4 className="pb-4">Colaboradores</h4>
 
-        <List bordered hover style={{ width: "100%", height: "80vh", overflowY: "auto"  }}>
+        <List
+          bordered
+          hover
+          style={{ width: "100%", height: "80vh", overflowY: "auto" }}
+        >
           {colaboradores.map((colaborador) => (
             <List.Item
               key={colaborador._id}
@@ -254,6 +262,21 @@ export const ColaboradoresMobile = () => {
                   onChange={(value) => handleInputChange(value, "nome")}
                 />
               </Form.Group>
+              <Form.Group controlId="name-1">
+                <div className="col-12 mt-3">
+                  <b className="d-block">Serviço</b>
+                  <TagPicker
+                    data={servicosArray}
+                    labelKey="titulo"
+                    valueKey="_id"
+                    searchable={false}
+                    size="lg"
+                    placeholder="Selecione o serviço"
+                    style={{ width: "100%" }}
+                    onChange={(value) => handleInputChange(value, "servicos")}
+                  />
+                </div>
+              </Form.Group>
               <Form.Group controlId="email-1">
                 <Form.ControlLabel>Email</Form.ControlLabel>
                 <Form.Control
@@ -297,21 +320,16 @@ export const ColaboradoresMobile = () => {
                   onChange={(value) => handleInputChange(value, "telefone")}
                 />
               </Form.Group>
-
-              <Form.Group controlId="name-1">
-                <div className="col-12 mt-3">
-                  <b className="d-block">Serviço</b>
-                  <TagPicker
-                    data={servicosArray}
-                    labelKey="titulo"
-                    valueKey="_id"
-                    searchable={false}
-                    size="lg"
-                    placeholder="Selecione o serviço"
-                    style={{ width: "100%" }}
-                    onChange={(value) => handleInputChange(value, "servicos")}
-                  />
-                </div>
+              <Form.Group controlId="foto-1">
+                <Form.ControlLabel>Foto</Form.ControlLabel>
+                <input
+                  type="file"
+                  onChange={(event) => {
+                    const file = event.target.files[0]; // Captura o arquivo selecionado
+                    handleInputChange(file, "foto");
+                  }}
+                  accept="image/*"
+                />
               </Form.Group>
 
               <ButtonToolbar className="btns">
@@ -363,7 +381,10 @@ export const ColaboradoresMobile = () => {
               <img
                 className="rounded-circle"
                 style={{ width: "100px", height: "100px", objectFit: "cover" }}
-                src={colaborador.foto || "default-image-url.jpg"}
+                src={
+                  `${util.AWS.bucketURL}/${colaborador.foto}` ||
+                  "default-image-url.jpg"
+                }
                 alt={`${colaborador.nome} Foto`}
               />
               <h4 className="mt-3">{colaborador.nome || ""}</h4>
@@ -455,6 +476,7 @@ export const ColaboradoresMobile = () => {
       <button
         onClick={() => {
           dispatch(setBehaviorCreate());
+          dispatch(resetColaborador());
           setFormData({
             _id: undefined,
             nome: "",

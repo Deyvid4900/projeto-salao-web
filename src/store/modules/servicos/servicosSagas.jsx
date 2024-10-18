@@ -47,6 +47,8 @@ function* createServicoSaga(action) {
     const formData = new FormData();
     // Adiciona o ID do salão
     formData.append("salaoId", localStorage.getItem("_dSlun"));
+    console.log(action.payload)
+    formData.append("arquivo_0", action.payload.foto);
 
     // Cria um objeto serviço
     const servicoObj = {

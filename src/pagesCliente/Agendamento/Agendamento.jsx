@@ -7,6 +7,7 @@ import {
   cadastrarClienteRequest,
   closeCadastroModal,
 } from "../../store/modules/clientes/clientesSlice";
+import util from "../../services/util";
 import "./Agendamento.css"; // Estilização personalizada
 
 const AgendamentoPage = () => {
@@ -109,7 +110,18 @@ const AgendamentoPage = () => {
       {/* Serviço selecionado */}
       <div className="servico-selecionado">
         <div className="servico-info">
-          <div className="servico-img-placeholder"></div>
+          <div className="servico-img-placeholder">
+            <img
+              style={{
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+              }}
+              key={servico.arquivos[0]?._id}
+              src={`${util.AWS.bucketURL}/${servico.arquivos[0]?.arquivo}`}
+              alt={servico.titulo}
+            />
+          </div>
           <div className="servico-detalhes">
             <p>{servico.titulo}</p>
             <p>{servico.descricao}</p>

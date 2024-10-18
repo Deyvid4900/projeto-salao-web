@@ -11,6 +11,7 @@ const initialState = {
       description: "",
     },
   },
+  loading:false,
   form: {
     filtering: false,
     disabled: true,
@@ -24,6 +25,7 @@ const initialState = {
     sexo: "M",
     vinculo: "A",
     especialidades: [],
+    foto:""
   },
   colaboradores: [],
   colaboradoresServico: [],
@@ -34,6 +36,12 @@ const colaboradorSlice = createSlice({
   name: "colaborador",
   initialState,
   reducers: {
+    setLoadingTrue:(state)=>{
+      state.loading = true;
+    },
+    setLoadingFalse:(state)=>{
+      state.loading = false;
+    },
     setBehaviorUpdate:(state)=>{
       state.behavior = "update";
     },
@@ -73,6 +81,8 @@ const colaboradorSlice = createSlice({
 
 // Exportando as ações
 export const {
+  setLoadingFalse,
+  setLoadingTrue,
   deleteColaborador,
   updateColaborador,
   filterColaborador,

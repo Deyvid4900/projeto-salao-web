@@ -1,55 +1,57 @@
 .hero {
-    
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-    height: 270px;
-    position: relative;
-  }
-  .btn-success{
-    background-color: #FF5B5B;
-    border-color: #FF5B5B;
-  }
-  .btn-success:hover{
-    background-color: #b63f3f;
-    border-color: #b63f3f;
-  }
-  .overlay {
-    background: rgba(0, 0, 0, 0.5);
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-  }
-  
-  .search-bar {
-    width: 100%;
-    max-width: 600px;
-    margin: 0 auto;
-  }
-  
-  .divider {
-    background-color: #C4C4C4;
-  }
-  
-  .card {
-    display: flex;
-    align-items: center;
-  }
-  
-  .service-title {
-    font-size: 1.25rem;
-    font-weight: 500;
-  }
-  
-  .service-info {
-    font-size: 0.9rem;
-  }
-  
-  .btn-success {
-    display: flex;
-    align-items: center;
-    padding: 0.5rem 1rem;
-  }
-  
+
+  background-size: contain;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 270px;
+  position: relative;
+}
+
+.btn-success {
+  background-color: #FF5B5B;
+  border-color: #FF5B5B;
+}
+
+.btn-success:hover {
+  background-color: #b63f3f;
+  border-color: #b63f3f;
+}
+
+.overlay {
+  background: rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+}
+
+.search-bar {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.divider {
+  background-color: #C4C4C4;
+}
+
+.card {
+  display: flex;
+  align-items: center;
+}
+
+.service-title {
+  font-size: 1.25rem;
+  font-weight: 500;
+}
+
+.service-info {
+  font-size: 0.9rem;
+}
+
+.btn-success {
+  display: flex;
+  align-items: center;
+  padding: 0.5rem 1rem;
+}

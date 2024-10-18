@@ -6,9 +6,12 @@ import {
   setColaborador,
   setServicos,
   fetchAllColaboradores,
-  saveColaborador,setNotification,
+  saveColaborador,
+  setNotification,
   addColaborador,
-  deleteColaborador
+  deleteColaborador,
+  setLoadingTrue,
+  setLoadingFalse,
 } from "./colaboradorSlice"; // novo arquivo
 import { api } from "../../../services/api";
 import { notification } from "../../../services/rsuite";
@@ -16,79 +19,113 @@ import { notification } from "../../../services/rsuite";
 function* addColaboradorSaga(action) {
   try {
     const { payload } = action; // Obtém os dados do colaborador
-   
-    // Chamada à API
-    const { data: response } = yield call(api.post, `/colaborador`,{
-      "salaoId": localStorage.getItem("_dSlun"),
-      "colaborador": {
-        ...payload,
-        especialidades:payload.servicos
-      }
+    const salaoId = localStorage.getItem("_dSlun");
+    console.log("Payload:", payload);
+
+    const formData = new FormData();
+
+    // Adiciona os campos do colaborador ao FormData
+    formData.append("salaoId", salaoId);
+    formData.append("nome", payload.nome);
+    formData.append("sexo", payload.sexo);
+    formData.append("dataNascimento", payload.dataNascimento);
+    formData.append("dataCadastro", payload.dataCadastro);
+    formData.append("email", payload.email);
+    formData.append("telefone", payload.telefone);
+    formData.append("especialidades", JSON.stringify(payload.servicos)); // Adicionando especialidades como string JSON
+
+    // Verifica se existe uma foto e adiciona ao FormData
+    if (payload.foto instanceof File) {
+      console.log("Foto payload:", payload.foto);
+      formData.append("files", payload.foto); // Adiciona o arquivo de foto ao FormData
+    } else {
+      console.error("payload.foto não é um arquivo válido:", payload.foto);
+    }
+
+    // Log para verificar o conteúdo do FormData
+    for (const pair of formData.entries()) {
+      console.log(`${pair[0]}:`, pair[1]);
+    }
+
+    // Chamada à API com formData
+    const { data: response } = yield call(api.post, `/colaborador`, formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
     });
 
     // Verifica se há erro na resposta
     if (response.error) {
-      // Dispara uma ação para definir a notificação de erro
-      console.log(response)
-      yield put(setNotification({
-        type: "error",
-        description: response.message,
-      }));
+      yield put(
+        setNotification({
+          type: "error",
+          description: response.message,
+        })
+      );
     } else {
-      // Atualiza a lista de colaboradores
       yield put(fetchAllColaboradores()); // Atualiza o estado com os colaboradores
-
-      // Dispara uma ação para definir a notificação de sucesso
-      yield put(setNotification({
-        type: "success",
-        description: "Colaborador salvo com sucesso!",
-      }));
+      yield put(
+        setNotification({
+          type: "success",
+          description: "Colaborador salvo com sucesso!",
+        })
+      );
     }
-  } catch (err) {
-    // Dispara uma ação para definir a notificação de erro
-    yield put(setNotification({
-      type: "error",
-      description: err.message || "Erro ao salvar colaborador",
-    }));
+  } catch (error) {
+    console.error("Erro ao enviar dados:", error);
+    yield put(
+      setNotification({
+        type: "error",
+        description: "Erro ao salvar colaborador.",
+      })
+    );
   }
 }
 
 function* saveColaboradorSaga(action) {
   try {
     const { payload } = action; // Obtém os dados do colaborador
-    const colaboradorId =payload._id;
+    const colaboradorId = payload._id;
 
     // Chamada à API
-    const { data: response } = yield call(api.put, `/colaborador/${colaboradorId}`, payload);
+    const { data: response } = yield call(
+      api.put,
+      `/colaborador/${colaboradorId}`,
+      payload
+    );
     // console.log(response);
 
     // Verifica se há erro na resposta
     if (response.error) {
       // Dispara uma ação para definir a notificação de erro
-      yield put(setNotification({
-        type: "error",
-        description: response.error,
-      }));
+      yield put(
+        setNotification({
+          type: "error",
+          description: response.error,
+        })
+      );
     } else {
       // Atualiza a lista de colaboradores
       yield put(fetchAllColaboradores()); // Atualiza o estado com os colaboradores
 
       // Dispara uma ação para definir a notificação de sucesso
-      yield put(setNotification({
-        type: "success",
-        description: "Colaborador salvo com sucesso!",
-      }));
+      yield put(
+        setNotification({
+          type: "success",
+          description: "Colaborador salvo com sucesso!",
+        })
+      );
     }
   } catch (err) {
     // Dispara uma ação para definir a notificação de erro
-    yield put(setNotification({
-      type: "error",
-      description: err.message || "Erro ao salvar colaborador",
-    }));
+    yield put(
+      setNotification({
+        type: "error",
+        description: err.message || "Erro ao salvar colaborador",
+      })
+    );
   }
 }
-
-
 
 export function* filterColaborador({ payload }) {
   const { form } = yield select((state) => state.colaborador);
@@ -139,6 +176,7 @@ export function* allColaboradores() {
   try {
     const { form } = yield select((state) => state.colaborador);
     yield put(updateColaborador({ form: { ...form, filtering: true } }));
+    yield call(setLoadingTrue);
 
     const { data: res } = yield call(
       api.get,
@@ -157,6 +195,7 @@ export function* allColaboradores() {
     }
 
     yield put(setColaboradores(res.colaboradores));
+    yield call(setLoadingFalse);
   } catch (err) {
     yield put(updateColaborador({ form: { ...form, filtering: false } }));
     notification("error", {
@@ -168,42 +207,49 @@ export function* allColaboradores() {
 }
 export function* colaboradorDelete(action) {
   try {
-    console.log(action)
+    console.log(action);
     const { payload } = action; // Obtém os dados do colaborador
-    const colaboradorId =payload._id;
-    console.log(colaboradorId)
-    
+    const colaboradorId = payload._id;
+    console.log(colaboradorId);
+
     // Chamada à API
-    const { data: response } = yield call(api.delete, `/colaborador/vinculo/${colaboradorId}`);
+    const { data: response } = yield call(
+      api.delete,
+      `/colaborador/vinculo/${colaboradorId}`
+    );
     // console.log(response);
 
     // Verifica se há erro na resposta
     if (response.error) {
       // Dispara uma ação para definir a notificação de erro
-      yield put(setNotification({
-        type: "error",
-        description: response.error,
-      }));
+      yield put(
+        setNotification({
+          type: "error",
+          description: response.error,
+        })
+      );
     } else {
       // Atualiza a lista de colaboradores
       yield put(fetchAllColaboradores()); // Atualiza o estado com os colaboradores
 
       // Dispara uma ação para definir a notificação de sucesso
-      yield put(setNotification({
-        type: "success",
-        description: "Colaborador deletado com sucesso!",
-      }));
+      yield put(
+        setNotification({
+          type: "success",
+          description: "Colaborador deletado com sucesso!",
+        })
+      );
     }
   } catch (err) {
     // Dispara uma ação para definir a notificação de erro
-    yield put(setNotification({
-      type: "error",
-      description: err.message || "Erro ao deletadar colaborador",
-    }));
+    yield put(
+      setNotification({
+        type: "error",
+        description: err.message || "Erro ao deletadar colaborador",
+      })
+    );
   }
 }
-
-
 
 function* watcherDeleteColaborador() {
   yield takeLatest(deleteColaborador.type, colaboradorDelete);
@@ -228,6 +274,6 @@ export default function* rootSaga() {
     watcherAllColaborador(),
     watchersaveColaborador(),
     fetchColaboradores(),
-    watcherAddColaborador()
+    watcherAddColaborador(),
   ]);
 }

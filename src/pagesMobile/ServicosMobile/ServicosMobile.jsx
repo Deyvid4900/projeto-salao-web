@@ -9,7 +9,7 @@ import {
   deleteServico,
   createServicoRequest,
 } from "../../store/modules/servicos/servicosSlice";
-
+import util from "../../services/util";
 import RemindIcon from "@rsuite/icons/legacy/Remind";
 import { Spinner } from "react-bootstrap";
 import moment from "moment";
@@ -29,7 +29,7 @@ export const ServicoMobile = () => {
   const [showModal, setShowModal] = useState(false);
   const [showDrawer, setShowDrawer] = useState(false);
   const [loadingSave, setLoadingSave] = useState(false); // Estado para controle do carregamento
-
+  const [foto, setFoto] = useState(null);
   useEffect(() => {
     checkLocalStorageKeys();
     dispatch({
@@ -64,7 +64,7 @@ export const ServicoMobile = () => {
         return;
       }
       // Adicione a lógica para salvar um novo serviço
-      dispatch({type:"servicos/createServico",payload:selectedServico}); // Supondo que exista uma ação createServico
+      dispatch({ type: "servicos/createServico", payload: selectedServico }); // Supondo que exista uma ação createServico
     } else {
       // Lógica para atualizar um serviço existente
       if (!selectedServico.titulo || !selectedServico.preco) {
@@ -82,6 +82,8 @@ export const ServicoMobile = () => {
       descricao: "",
       preco: "",
       duracao: "",
+      arquivos: {},
+      foto: foto,
     }); // Inicializa os campos com valores vazios para criação de um novo serviço
     dispatch(updateServicoBehavior("create")); // Define o behavior como create
     handleOpenDrawer(); // Abre o Drawer para adicionar um novo serviço
@@ -126,15 +128,24 @@ export const ServicoMobile = () => {
             </div>
           </div>
         )}
-
         {/* Modal do RSuite */}
         <Modal open={showModal} onClose={handleCloseModal}>
           {selectedServico && (
             <>
               <Modal.Header>
-                <Modal.Title>{selectedServico.titulo}</Modal.Title>
+                <Modal.Title>
+                  <h5>{selectedServico.titulo}</h5>
+                </Modal.Title>
               </Modal.Header>
               <Modal.Body>
+                <div className="w-100 p-3" style={{ textAlign: "center" }}>
+                  <img
+                    style={{ width: "75%", height: "20%" }} // Ajuste de estilo conforme necessário
+                    key={selectedServico.arquivos[0]?._id || ""}
+                    src={`${util.AWS.bucketURL}/${selectedServico.arquivos[0]?.arquivo}`}
+                    alt={selectedServico.titulo}
+                  />
+                </div>
                 <p>
                   <strong>Recorrência:</strong> {selectedServico.recorrencia}
                 </p>
@@ -249,10 +260,19 @@ export const ServicoMobile = () => {
                     }
                   />
                 </Form.Group>
+                <input
+                  type="file"
+                  onChange={(event) =>
+                    setSelectedServico((prev) => ({
+                      ...prev,
+                      foto: event.target.files[0], // Captura o arquivo selecionado
+                    }))
+                  }
+                  accept="image/*"
+                />
               </Form>
             )}
             <Drawer.Actions className="mt-5">
-              
               <Button onClick={handleCloseDrawer} appearance="subtle">
                 Cancelar
               </Button>

@@ -6,7 +6,8 @@ import "@fortawesome/fontawesome-free/css/all.min.css";
 import { fetchSalaoRequest } from "../../store/modules/salao/salaoSlice";
 import { fetchAllRequest } from "../../store/modules/servicos/servicosSlice";
 import { Divider, Placeholder, Nav } from "rsuite";
-import { Link } from 'react-router-dom';
+import { Link } from "react-router-dom";
+import util from "../../services/util";
 
 function HomeCliente() {
   const { nome } = useParams();
@@ -116,8 +117,6 @@ function HomeCliente() {
     service.titulo.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
- 
-
   if (error) {
     return <div>Erro: {error}</div>;
   }
@@ -159,7 +158,6 @@ function HomeCliente() {
             zIndex: 2,
           }}
         >
-          
           <h2 className="pt-2" style={{ fontWeight: 500 }}>
             {selectSalao.nome}
           </h2>
@@ -218,45 +216,80 @@ function HomeCliente() {
 
         <div
           className="services-list"
-          style={{ overflow: "auto", maxHeight: "43vh" }}
+          style={{ overflowY: "auto", maxHeight: "43vh", overflowX:"clip" }}
         >
           {filteredServices.map((service, index) => (
             <div
               key={index}
-              className="card mb-3 d-flex flex-row align-items-center justify-content-end p-3 flex-wrap"
-              style={{ backgroundColor: "#f8f9fa", borderRadius: "8px" }}
+              className="card mb-4 p-3 shadow-sm d-flex flex-row align-items-center justify-content-between "
+              style={{
+                backgroundColor: "#ffffff",
+                borderRadius: "12px",
+                border: "1px solid #e0e0e0",
+                transition: "transform 0.2s ease-in-out",
+                cursor: "pointer",
+                overflowX:"-moz-hidden-unscrollable"
+              }}
+              onMouseEnter={(e) =>
+                (e.currentTarget.style.transform = "scale(1.02)")
+              }
+              onMouseLeave={(e) =>
+                (e.currentTarget.style.transform = "scale(1)")
+              }
             >
-              {/* Imagem Placeholder */}
+              {/* Imagem do Serviço */}
               <div
-                className="image-placeholder"
+                className="image-placeholder d-flex align-items-center justify-content-center "
                 style={{
+                  textAlign:"center",
                   width: "70px",
-                  minHeight: "70px",
-                  backgroundColor: "#C4C4C4",
-                  borderRadius: "8px",
-                  marginRight: "15px",
+                  height: "70px",
+                  backgroundColor: "#f1f1f1",
+                  borderRadius: "10px",
+                  marginRight: "20px",
+                  overflow: "hidden",
                 }}
-              ></div>
+              >
+                <img
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                  key={service.arquivos[0]?._id}
+                  src={`${util.AWS.bucketURL}/${service.arquivos[0]?.arquivo}`}
+                  alt={service.titulo}
+                />
+              </div>
 
               {/* Detalhes do Serviço */}
-              <div className="service-details flex-grow-1 my-1">
+              <div className="service-details d-flex flex-column"  >
                 <h5
-                  className="service-title mb-1"
-                  style={{ textSizeAdjust: "auto" }}
+                  className="service-title mb-2"
+                  style={{ fontSize: "1.0rem", fontWeight: "600" }}
                 >
                   {service.titulo}
                 </h5>
-                <p className="service-info text-muted">
-                  R$ {Number(service.preco).toFixed(2)} • {service.duracao}min{" "}
-                  <br />
-                  <span>{service.descricao}</span>
+                <p
+                  className="service-info text-muted mb-0"
+                  style={{ fontSize: "0.8rem" }}
+                >
+                  R$ {Number(service.preco).toFixed(2)} <br /> {service.duracao} min
                 </p>
+                
               </div>
 
               {/* Botão de Agendar */}
-              <div className="mt-2 mt-md-0">
+              <div className="">
                 <button
-                  className="btn btn-success"
+                  className="btn btn-primary"
+                  style={{
+                    backgroundColor: "#FF6B6B",
+                    borderColor: "#FF6B6B",
+                    padding: "2px 8px",
+                    borderRadius: "8px",
+                    width:"90px"
+                  }}
                   onClick={() => {
                     handleAgendarClick(service);
                     dispatch({
@@ -265,7 +298,7 @@ function HomeCliente() {
                     });
                   }}
                 >
-                  <i className="fas fa-calendar-check me-2"></i> Agendar
+                  <i className="fas fa-calendar-check "></i> Agendar
                 </button>
               </div>
             </div>
