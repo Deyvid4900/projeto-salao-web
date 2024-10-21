@@ -7,7 +7,7 @@ export const api = axios.create({
  });
 
 export  const Api = axios.create({
-  baseURL: "https://api-production-70cb.up.railway.app/",
+  baseURL: "https://api-production-70cb.up.railway.app/salao",
 });
 
 
