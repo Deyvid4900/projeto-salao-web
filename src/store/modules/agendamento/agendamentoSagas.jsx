@@ -70,7 +70,7 @@ function* filterAgendamentos({ range }) {
 }
 
 function* handleAddAgendamento(action) {
-  console.log(action)
+  // console.log(action)
   try {
     console.log(action.payload);
     const response = yield call(api.post, "/agendamento", action.payload); // Chama a API para criar o agendamento

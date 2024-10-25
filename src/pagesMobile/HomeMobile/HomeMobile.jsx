@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
-import 'moment/dist/locale/pt-br'// Corrige o locale para português do Brasil
+import "moment/dist/locale/pt-br"; // Corrige o locale para português do Brasil
 import moment from "moment";
 import { useDispatch, useSelector } from "react-redux";
 import { filterAgendamentos } from "../../store/modules/agendamento/agendamentoActions";
@@ -40,7 +40,7 @@ const HomeMobile = () => {
   const servicosArray = selectedServico || [];
 
   useEffect(() => {
-    checkLocalStorageKeys()
+    checkLocalStorageKeys();
     const periodo = {
       start: moment().startOf("M").format("YYYY-MM-DD"),
       end: moment().endOf("M").format("YYYY-MM-DD"),
@@ -54,37 +54,46 @@ const HomeMobile = () => {
   useEffect(() => {
     if (agendamentos) {
       const mappedEvents = agendamentos.map((e) => {
-        const dataInicio = moment(e.data).utcOffset(+6).toDate(); // Converte de UTC para o horário local
+        const dataInicio = moment.utc(e.data).add("3", "h"); // Define o offset para UTC+6
         const duracao = e.servicoId?.duracao || 0;
-        const dataFim = moment(dataInicio).add(duracao, "minutes").toDate();
-    
+        const dataFim = dataInicio.clone().add(duracao, "minutes");
         return {
           title: `Agendamento ${e.servicoId?.titulo || "Serviço"} com ${
             e.clienteId?.nome || "Cliente"
           } - ${e.colaboradorId?.nome || "Colaborador"}`,
-          start: dataInicio,
-          end: dataFim,
+          start: dataInicio.toDate(),
+          end: dataFim.toDate(),
         };
       });
       setEvents(mappedEvents);
     }
-    
   }, [agendamentos]);
 
   const handleRangeChange = (periodo) => {
-    const range = {
-      start: moment(periodo.start || periodo[0]).format("YYYY-MM-DD"),
-      end: moment(
-        periodo.end || periodo[1] || periodo[periodo.length - 1]
-      ).format("YYYY-MM-DD"),
-    };
-    dispatch(filterAgendamentos(range));
+    if (periodo.length >= 7) {
+      console.log("Semana");
+      const fim =periodo.length - 1
+      const range = {
+        start: moment(periodo[0] || periodo[0]).format("YYYY-MM-DD"),
+        end: moment(periodo[fim]).format("YYYY-MM-DD"),
+      };
+      console.log(range);
+      dispatch(filterAgendamentos(range));
+    } else {
+      const range = {
+        start: moment(periodo.start || periodo[0]).format("YYYY-MM-DD"),
+        end: moment(
+          periodo.end || periodo[1] || periodo[periodo.length - 1]
+        ).format("YYYY-MM-DD"),
+      };
+      dispatch(filterAgendamentos(range));
+    }
   };
 
   const handleAddAgendamento = () => {
     const agendamentoData = {
       ...formValues,
-      data: moment(formValues.data).format(),
+      data: moment.utc(formValues.data).subtract("3", "h"),
     };
     console.log(agendamentoData);
 
@@ -133,7 +142,6 @@ const HomeMobile = () => {
             event: "Evento",
             noEventsInRange: "Nada agendado",
           }}
-
           culture="pt-br"
           onRangeChange={(range) => handleRangeChange(range)}
           localizer={localizer}
@@ -144,7 +152,7 @@ const HomeMobile = () => {
           style={{ height: "87%", fontSize: "0.8rem" }}
         />
       </div>
-
+      {/* {console.log(events)} */}
       {/* Botão para abrir o Drawer */}
       <button
         onClick={() => setDrawerOpen(true)}

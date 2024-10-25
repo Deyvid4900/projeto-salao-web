@@ -58,18 +58,21 @@ const AgendamentoPage = () => {
     dataNascimento: "",
     sexo: "M",
   });
-  function mergeDateAndTime(dateString, timeObj) {
-    // Parse a data como uma data do Moment
+  function mergeDateAndTimeWithOffset(dateString, timeObj) {
+    // Parse the date as a Moment.js object
     const date = moment(dateString, "YYYY-MM-DD");
-
-    // Adicionar o horário à data
+  
+    // Add the time to the date
     const dateTime = date.set({
-      hour: moment(timeObj.time, "HH:mm").hours(),
-      minute: moment(timeObj.time, "HH:mm").minutes(),
+      hour: moment(timeObj.time, "HH:mm").hour(),
+      minute: moment(timeObj.time, "HH:mm").minute(),
     });
-
-    // Retornar no formato ISO com offset
-    return dateTime.format("YYYY-MM-DDTHH:mm:ssZ");
+  
+    // Convert to UTC and subtract 3 hours
+    const utcDateTime = dateTime.utc().subtract(3, 'hours');
+  
+    // Return the adjusted date and time in ISO 8601 format
+    return utcDateTime.toISOString();
   }
 
   const handleConfirmar = () => {
@@ -78,7 +81,7 @@ const AgendamentoPage = () => {
       salaoId: localStorage.getItem("_dSlun"),
       servicoId: servico._id,
       colaboradorId: selectedSpecialist,
-      data: mergeDateAndTime(selectedDay, selectedHour),
+      data: mergeDateAndTimeWithOffset(selectedDay, selectedHour),
     };
     dispatch({ type: "VERIFICAR_CLIENTE", payload: { navigate, dados } });
   };
