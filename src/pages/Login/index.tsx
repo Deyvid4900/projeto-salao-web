@@ -20,9 +20,9 @@ export const Login = () => {
     </Notification>
   );
 
-  useEffect(() => {
-    checkLocalStorageKeysFromLogin();
-  }, []);
+  // useEffect(() => {
+  //   checkLocalStorageKeysFromLogin();
+  // }, []);
 
   async function onFinish(event) {
     event.preventDefault();
