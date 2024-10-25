@@ -1,28 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import {
-  Modal,
-  Button,
-  Form,
-  Input,
-  Notification,
-  InputPicker,
-  Loader,
-} from "rsuite";
+import { Modal, Button, Form, InputPicker, Loader } from "rsuite";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllColaboradores } from "../../store/modules/colaborador/colaboradorSlice";
 import { useNavigate } from "react-router-dom";
 import moment from "moment";
-
 import {
   cadastrarClienteRequest,
   closeCadastroModal,
   setLoading,
 } from "../../store/modules/clientes/clientesSlice";
 import util from "../../services/util";
-import "./Agendamento.css"; // Estilização personalizada
-import Position from "rsuite/esm/internals/Overlay/Position";
-import { addAgendamento } from "../../store/modules/agendamento/agendamentoSlice";
+import "./Agendamento.css";
 
 const AgendamentoPage = () => {
   // Estado para o dia, horário e especialista selecionados
@@ -38,19 +27,6 @@ const AgendamentoPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { servico } = location.state || {};
-
-  const dispatch = useDispatch();
-
-  useEffect(() => {
-    dispatch(fetchAllColaboradores());
-    dispatch({
-      type: "servicos/findColaboradoreByServico",
-      payload: servico._id,
-    });
-    dispatch(setLoading(false))
-  }, []);
-
-  const [open, setOpen] = useState(false);
   const [formData, setFormData] = useState({
     nome: "",
     telefone: "",
@@ -58,19 +34,32 @@ const AgendamentoPage = () => {
     dataNascimento: "",
     sexo: "M",
   });
+  const dispatch = useDispatch();
+  const colaboradoesArray = colaboradoresServico || [];
+  const agendaArray = agenda.agenda || [];
+
+  useEffect(() => {
+    dispatch(fetchAllColaboradores());
+    dispatch({
+      type: "servicos/findColaboradoreByServico",
+      payload: servico._id,
+    });
+    dispatch(setLoading(false));
+  }, []);
+
   function mergeDateAndTimeWithOffset(dateString, timeObj) {
     // Parse the date as a Moment.js object
     const date = moment(dateString, "YYYY-MM-DD");
-  
+
     // Add the time to the date
     const dateTime = date.set({
       hour: moment(timeObj.time, "HH:mm").hour(),
       minute: moment(timeObj.time, "HH:mm").minute(),
     });
-  
+
     // Convert to UTC and subtract 3 hours
-    const utcDateTime = dateTime.utc().subtract(3, 'hours');
-  
+    const utcDateTime = dateTime.utc().subtract(3, "hours");
+
     // Return the adjusted date and time in ISO 8601 format
     return utcDateTime.toISOString();
   }
@@ -86,28 +75,13 @@ const AgendamentoPage = () => {
     dispatch({ type: "VERIFICAR_CLIENTE", payload: { navigate, dados } });
   };
 
-  const generateHoursWithIds = (hours) => {
-    return hours.map((hour, index) => ({
-      id: `hour-${index}`, // Gerando ID único com o índice
-      available: hour.length === 0, // Verificando se o slot está vazio
-      time: `${Math.floor(index / 2)}:${index % 2 === 0 ? "00" : "30"}`, // Convertendo índice para horas e minutos
-    }));
-  };
-  const hoursWithIds = generateHoursWithIds(hours);
-
   const handleCadastrarCliente = () => {
     const salao = saloes.salao || {};
     dispatch(cadastrarClienteRequest({ ...formData, salaoId: salao._id }));
   };
 
-  const confirmarAgendamento = () => {
-    // console.log("Agendamento confirmado!");
-  };
+  
 
-  const colaboradoesArray = colaboradoresServico || [];
-  const agendaArray = agenda.agenda || [];
-
-  // Função para buscar os dias e horários disponíveis
   const getDaysAndHours = (specialist) => {
     setSelectedSpecialist(specialist._id);
     dispatch({
@@ -128,8 +102,6 @@ const AgendamentoPage = () => {
     });
     setDays(availableDays);
   };
-
-  // Função para selecionar um dia e buscar os horários disponíveis
 
   const handleDaySelection = (dayId) => {
     dispatch({
@@ -181,7 +153,7 @@ const AgendamentoPage = () => {
     }
   };
 
-  if (loading==true) {
+  if (loading == true) {
     return (
       <>
         <div className="overlay d-flex justify-content-center align-items-center">
@@ -199,7 +171,7 @@ const AgendamentoPage = () => {
               128,
               128,
               128,
-              0.5
+              0,2
             ); /* Fundo cinza transparente */
             z-index: 9999; /* Garante que o loader fique sobre os outros elementos */
           }
@@ -334,7 +306,7 @@ const AgendamentoPage = () => {
         ""
       )}
       {/* Botão de confirmação */}
-      
+
       <button
         style={{
           position: "absolute",
@@ -408,10 +380,8 @@ const AgendamentoPage = () => {
           </Button>
         </Modal.Footer>
       </Modal>
-      <div>
-      </div>
+      <div></div>
     </div>
-    
   );
 };
 

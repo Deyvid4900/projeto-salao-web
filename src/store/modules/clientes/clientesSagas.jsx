@@ -26,6 +26,7 @@ function* verificarCliente(action) {
   } else {
     yield put(setLoading(true))
     yield put(addAgendamento(dados));
+    
     yield delay(2000);
     yield put(setLoading(false))
     // Redireciona para a rota /Agendados

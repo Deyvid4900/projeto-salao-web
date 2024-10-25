@@ -175,9 +175,9 @@ function* fetchAllServicos() {
 
     // Chamada à API
     const { data } = yield call(api.get, `/servico/salao/${salaoId}`);
-    yield put(setLoading(false));
     // Sinalizando que o loading terminou
     yield put(setServicos(data.servicos)); // Atualizando a lista de serviços
+    yield put(setLoading(false));
   } catch (error) {
     yield put(setLoading(false)); // Parando o loading em caso de erro
     // Dispara uma ação para definir a notificação de erro

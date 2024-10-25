@@ -5,12 +5,10 @@ import "./Home.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { fetchSalaoRequest } from "../../store/modules/salao/salaoSlice";
 import { fetchAllRequest } from "../../store/modules/servicos/servicosSlice";
-import { Divider, Placeholder, Nav } from "rsuite";
+import { Divider, Placeholder, Nav ,Loader } from "rsuite";
 import { Link } from "react-router-dom";
 import util from "../../services/util";
-import {
-  setLoading,
-} from "../../store/modules/clientes/clientesSlice";
+import { setLoading } from "../../store/modules/clientes/clientesSlice";
 
 function HomeCliente() {
   const { nome } = useParams();
@@ -19,8 +17,8 @@ function HomeCliente() {
   const [userCoordinates, setUserCoordinates] = useState(null);
 
   const dispatch = useDispatch();
-  const { saloes, loading, error } = useSelector((state) => state.salao);
-  const { data, servicos } = useSelector((state) => state.servicos);
+  const { saloes, error } = useSelector((state) => state.salao);
+  const { data, servicos,loading } = useSelector((state) => state.servicos);
   const selectSalao = saloes.salao || {};
 
   const handleAgendarClick = (servico) => {
@@ -103,7 +101,7 @@ function HomeCliente() {
       type: "servicos/fetchAllServicos",
     });
     fetchUserLocation();
-    dispatch(setLoading(false))
+    dispatch(setLoading(false));
   }, [dispatch]);
 
   const servicosArray = servicos || [];
@@ -149,7 +147,7 @@ function HomeCliente() {
           ""
         )}
       </Nav>
-      
+
       <div
         style={{ backgroundImage: `url(${selectSalao.capa})` }}
         className="hero d-flex justify-content-end align-items-end"
@@ -225,90 +223,95 @@ function HomeCliente() {
 
         <div
           className="services-list"
-          style={{ overflowY: "auto", maxHeight: "43vh", overflowX: "clip" }}
+          style={{ overflowY: "auto", maxHeight: "37vh", overflowX: "clip" }}
         >
-          {filteredServices.map((service, index) => (
-            <div
-              key={index}
-              className="card mb-4 p-3 shadow-sm d-flex flex-row align-items-center justify-content-between "
-              style={{
-                backgroundColor: "#ffffff",
-                borderRadius: "12px",
-                border: "1px solid #e0e0e0",
-                transition: "transform 0.2s ease-in-out",
-                cursor: "pointer",
-                overflowX: "-moz-hidden-unscrollable",
-              }}
-              onMouseEnter={(e) =>
-                (e.currentTarget.style.transform = "scale(1.02)")
-              }
-              onMouseLeave={(e) =>
-                (e.currentTarget.style.transform = "scale(1)")
-              }
-            >
-              {/* Imagem do Serviço */}
+          {!loading
+            ? (filteredServices.map((service, index) => (
               <div
-                className="image-placeholder d-flex align-items-center justify-content-center "
+                key={index}
+                className="card mb-4 p-3 shadow-sm d-flex flex-row align-items-center justify-content-between "
                 style={{
-                  textAlign: "center",
-                  width: "70px",
-                  height: "70px",
-                  backgroundColor: "#f1f1f1",
-                  borderRadius: "10px",
-                  marginRight: "20px",
-                  overflow: "hidden",
+                  backgroundColor: "#ffffff",
+                  borderRadius: "12px",
+                  border: "1px solid #e0e0e0",
+                  transition: "transform 0.2s ease-in-out",
+                  cursor: "pointer",
+                  overflowX: "-moz-hidden-unscrollable",
                 }}
+                onMouseEnter={(e) =>
+                  (e.currentTarget.style.transform = "scale(1.02)")
+                }
+                onMouseLeave={(e) =>
+                  (e.currentTarget.style.transform = "scale(1)")
+                }
               >
-                <img
+                {/* Imagem do Serviço */}
+                <div
+                  className="image-placeholder d-flex align-items-center justify-content-center "
                   style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
+                    textAlign: "center",
+                    width: "70px",
+                    height: "70px",
+                    backgroundColor: "#f1f1f1",
+                    borderRadius: "10px",
+                    marginRight: "20px",
+                    overflow: "hidden",
                   }}
-                  key={service.arquivos[0]?._id}
-                  src={`${util.AWS.bucketURL}/${service.arquivos[0]?.arquivo}`}
-                  alt={service.titulo}
-                />
-              </div>
+                >
+                  <img
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                    }}
+                    key={service.arquivos[0]?._id}
+                    src={`${util.AWS.bucketURL}/${service.arquivos[0]?.arquivo}`}
+                    alt={service.titulo}
+                  />
+                </div>
 
-              {/* Detalhes do Serviço */}
-              <div className="service-details d-flex flex-column">
-                <h5
-                  className="service-title mb-2"
-                  style={{ fontSize: "1.0rem", fontWeight: "600" }}
-                >
-                  {service.titulo}
-                </h5>
-                <p
-                  className="service-info text-muted mb-0"
-                  style={{ fontSize: "0.8rem" }}
-                >
-                  R$ {Number(service.preco).toFixed(2)} <br /> {service.duracao}{" "}
-                  min
-                </p>
-              </div>
+                {/* Detalhes do Serviço */}
+                <div className="service-details d-flex flex-column">
+                  <h5
+                    className="service-title mb-2"
+                    style={{ fontSize: "1.0rem", fontWeight: "600" }}
+                  >
+                    {service.titulo}
+                  </h5>
+                  <p
+                    className="service-info text-muted mb-0"
+                    style={{ fontSize: "0.8rem" }}
+                  >
+                    R$ {Number(service.preco).toFixed(2)} <br />{" "}
+                    {service.duracao} min
+                  </p>
+                </div>
 
-              {/* Botão de Agendar */}
-              <div className="">
-                <button
-                  className="btn btn-primary"
-                  style={{
-                    backgroundColor: "#FF6B6B",
-                    borderColor: "#FF6B6B",
-                    padding: "2px 8px",
-                    borderRadius: "8px",
-                    width: "90px",
-                  }}
-                  onClick={() => {
-                    handleAgendarClick(service);
-                   
-                  }}
-                >
-                  <i className="fas fa-calendar-check "></i> Agendar
-                </button>
+                {/* Botão de Agendar */}
+                <div className="">
+                  <button
+                    className="btn btn-primary"
+                    style={{
+                      backgroundColor: "#FF6B6B",
+                      borderColor: "#FF6B6B",
+                      padding: "2px 8px",
+                      borderRadius: "8px",
+                      width: "90px",
+                    }}
+                    onClick={() => {
+                      handleAgendarClick(service);
+                    }}
+                  >
+                    <i className="fas fa-calendar-check "></i> Agendar
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
+            )))
+            : ( <>
+              <div className="d-flex justify-content-center align-items-center">
+                <Loader size="lg" /> {/* Loader do rsuite */}
+              </div>
+            </>)}
         </div>
       </div>
     </>

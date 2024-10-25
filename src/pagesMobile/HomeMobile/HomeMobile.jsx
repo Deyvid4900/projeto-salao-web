@@ -70,7 +70,7 @@ const HomeMobile = () => {
   }, [agendamentos]);
 
   const handleRangeChange = (periodo) => {
-    if (periodo.length >= 7) {
+    if (periodo.length >= 6) {
       console.log("Semana");
       const fim =periodo.length - 1
       const range = {

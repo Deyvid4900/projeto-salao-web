@@ -42,7 +42,7 @@ const clienteSlice = createSlice({
       state.error = null;
     },
     setLoading(state,action){
-      state.loading = action;
+      state.loading = action.payload;
     },
     fetchAllClientesSuccess(state, action) {
       state.loading = false;
