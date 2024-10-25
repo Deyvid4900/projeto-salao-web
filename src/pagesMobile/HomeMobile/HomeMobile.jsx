@@ -138,7 +138,7 @@ const HomeMobile = () => {
           onRangeChange={(range) => handleRangeChange(range)}
           localizer={localizer}
           events={events}
-          defaultView="day"
+          defaultView="agenda"
           popup
           selectable
           style={{ height: "87%", fontSize: "0.8rem" }}
@@ -201,7 +201,7 @@ const HomeMobile = () => {
               data={servicosArray}
               labelKey="titulo"
               valueKey="_id"
-              searchable={false}
+              searchable={true}
               size="lg"
               placeholder="Selecione o serviço"
               value={formValues.servicoId}
@@ -217,7 +217,7 @@ const HomeMobile = () => {
               data={clientesArray}
               labelKey="nome"
               valueKey="_id"
-              searchable={false}
+              searchable={true}
               size="lg"
               placeholder="Selecione o cliente"
               value={formValues.clienteId}
@@ -244,6 +244,7 @@ const HomeMobile = () => {
             <b className="d-block">Horário</b>
             <DatePicker
               format="HH:mm"
+              hideMinutes={(min) => ![0, 30].includes(min)}
               placeholder="Selecione o horário"
               value={formValues.data}
               onChange={(value) =>

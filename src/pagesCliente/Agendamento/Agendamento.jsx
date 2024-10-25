@@ -1,34 +1,53 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { Modal, Button, Form, Input, Notification, InputPicker } from "rsuite";
+import {
+  Modal,
+  Button,
+  Form,
+  Input,
+  Notification,
+  InputPicker,
+  Loader,
+} from "rsuite";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllColaboradores } from "../../store/modules/colaborador/colaboradorSlice";
+import { useNavigate } from "react-router-dom";
+import moment from "moment";
+
 import {
   cadastrarClienteRequest,
   closeCadastroModal,
+  setLoading,
 } from "../../store/modules/clientes/clientesSlice";
 import util from "../../services/util";
 import "./Agendamento.css"; // Estilização personalizada
+import Position from "rsuite/esm/internals/Overlay/Position";
+import { addAgendamento } from "../../store/modules/agendamento/agendamentoSlice";
 
 const AgendamentoPage = () => {
   // Estado para o dia, horário e especialista selecionados
+  const [days, setDays] = useState([]);
+  const [hours, setHours] = useState([]);
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedHour, setSelectedHour] = useState(null);
   const [selectedSpecialist, setSelectedSpecialist] = useState(null);
   const { colaboradoresServico } = useSelector((state) => state.colaborador);
   const { saloes } = useSelector((state) => state.salao);
-  const { isModalOpen } = useSelector((state) => state.cliente);
+  const { isModalOpen, loading } = useSelector((state) => state.cliente);
+  const { agenda } = useSelector((state) => state.agendamento);
   const location = useLocation();
+  const navigate = useNavigate();
   const { servico } = location.state || {};
 
   const dispatch = useDispatch();
+
   useEffect(() => {
-    console.log(servico);
     dispatch(fetchAllColaboradores());
     dispatch({
       type: "servicos/findColaboradoreByServico",
       payload: servico._id,
     });
+    dispatch(setLoading(false))
   }, []);
 
   const [open, setOpen] = useState(false);
@@ -39,65 +58,152 @@ const AgendamentoPage = () => {
     dataNascimento: "",
     sexo: "M",
   });
+  function mergeDateAndTime(dateString, timeObj) {
+    // Parse a data como uma data do Moment
+    const date = moment(dateString, "YYYY-MM-DD");
+
+    // Adicionar o horário à data
+    const dateTime = date.set({
+      hour: moment(timeObj.time, "HH:mm").hours(),
+      minute: moment(timeObj.time, "HH:mm").minutes(),
+    });
+
+    // Retornar no formato ISO com offset
+    return dateTime.format("YYYY-MM-DDTHH:mm:ssZ");
+  }
 
   const handleConfirmar = () => {
-    dispatch({ type: "VERIFICAR_CLIENTE" });
+    const dados = {
+      clienteId: localStorage.getItem("cl_idtor"),
+      salaoId: localStorage.getItem("_dSlun"),
+      servicoId: servico._id,
+      colaboradorId: selectedSpecialist,
+      data: mergeDateAndTime(selectedDay, selectedHour),
+    };
+    dispatch({ type: "VERIFICAR_CLIENTE", payload: { navigate, dados } });
   };
+
+  const generateHoursWithIds = (hours) => {
+    return hours.map((hour, index) => ({
+      id: `hour-${index}`, // Gerando ID único com o índice
+      available: hour.length === 0, // Verificando se o slot está vazio
+      time: `${Math.floor(index / 2)}:${index % 2 === 0 ? "00" : "30"}`, // Convertendo índice para horas e minutos
+    }));
+  };
+  const hoursWithIds = generateHoursWithIds(hours);
 
   const handleCadastrarCliente = () => {
     const salao = saloes.salao || {};
-    console.log(salao);
     dispatch(cadastrarClienteRequest({ ...formData, salaoId: salao._id }));
   };
 
   const confirmarAgendamento = () => {
-    console.log("Agendamento confirmado!");
+    // console.log("Agendamento confirmado!");
   };
 
   const colaboradoesArray = colaboradoresServico || [];
+  const agendaArray = agenda.agenda || [];
 
-  // Função para gerar os dias da semana atual e da próxima
-  const generateDays = () => {
-    const daysOfWeek = ["Dom", "Seg", "Ter", "Qua", "Qui", "Sex", "Sáb"];
-    const today = new Date();
-    let days = [];
+  // Função para buscar os dias e horários disponíveis
+  const getDaysAndHours = (specialist) => {
+    setSelectedSpecialist(specialist._id);
+    dispatch({
+      type: "agendamento/filterDiasDisponiveis",
+      action: {
+        _id: servico._id,
+        dia: null,
+        colaboradorId: selectedSpecialist,
+      },
+    });
 
-    // Semana atual
-    for (let i = 0; i < 7; i++) {
-      const currentDay = new Date();
-      currentDay.setDate(today.getDate() + i);
-      const dayLabel = `${daysOfWeek[currentDay.getDay()]} ${
-        currentDay.getDate() < 9
-          ? "0" + currentDay.getDate()
-          : currentDay.getDate()
-      } ${currentDay.toLocaleString("default", { month: "short" })}`;
-      days.push({ id: i, label: dayLabel });
-    }
-
-    // Próxima semana
-    for (let i = 7; i < 14; i++) {
-      const currentDay = new Date();
-      currentDay.setDate(today.getDate() + i);
-      const dayLabel = `${daysOfWeek[currentDay.getDay()]} ${
-        currentDay.getDate() < 9
-          ? "0" + currentDay.getDate()
-          : currentDay.getDate()
-      } ${currentDay.toLocaleString("default", { month: "short" })}`;
-      days.push({ id: i, label: dayLabel });
-    }
-
-    return days;
+    const availableDays = agendaArray.map((item) => {
+      const day = Object.keys(item)[0];
+      return {
+        id: day,
+        label: day,
+      };
+    });
+    setDays(availableDays);
   };
 
-  const days = generateDays();
+  // Função para selecionar um dia e buscar os horários disponíveis
 
-  const hours = ["10:00", "11:00", "11:30", "12:00", "12:30", "13:00"];
+  const handleDaySelection = (dayId) => {
+    dispatch({
+      type: "agendamento/filterDiasDisponiveis",
+      action: {
+        _id: servico._id,
+        dia: selectedDay,
+        colaboradorId: selectedSpecialist,
+      },
+    });
+    setSelectedDay(dayId);
 
-  const specialists = [
-    { id: 1, name: "Silvio Sampaio" },
-    { id: 2, name: "Maria Oliveira" },
-    { id: 3, name: "João Silva" },
-  ];
+    // Encontrar a agenda selecionada pelo dia
+    const selectedAgenda = agendaArray.find((item) => item[dayId]);
+    // console.log(agendaArray);
+    if (selectedAgenda) {
+      const horariosColaboradores = selectedAgenda[dayId];
+      const availableHoursSet = new Set(); // Usar um Set para evitar duplicatas
+
+      // Iterar sobre os colaboradores e suas horas
+      Object.values(horariosColaboradores).forEach((horarios) => {
+        if (Array.isArray(horarios)) {
+          horarios.forEach((hora) => {
+            // Verifique se a hora está disponível antes de adicioná-la
+            if (hora.available) {
+              // Cria uma chave única combinando o id e o time
+              const uniqueKey = `${hora.time}-${hora.id}`;
+              availableHoursSet.add(uniqueKey); // Adiciona a chave ao Set
+            }
+          });
+        }
+      });
+
+      // Converter o Set de volta para um array e construir objetos completos
+      const availableHours = Array.from(availableHoursSet).map((uniqueKey) => {
+        const [time, id] = uniqueKey.split("-"); // Divide a chave em time e id
+        return {
+          time,
+          id,
+          available: true, // ou qualquer outra propriedade que você queira manter
+        };
+      });
+
+      // Atualizar o estado com as horas disponíveis
+      setHours(availableHours);
+    } else {
+      // Caso não encontre a agenda, pode-se definir o estado como vazio
+      setHours([]);
+    }
+  };
+
+  if (loading==true) {
+    return (
+      <>
+        <div className="overlay d-flex justify-content-center align-items-center">
+          <Loader size="lg" /> {/* Loader do rsuite */}
+        </div>
+
+        <style jsx>{`
+          .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(
+              128,
+              128,
+              128,
+              0.5
+            ); /* Fundo cinza transparente */
+            z-index: 9999; /* Garante que o loader fique sobre os outros elementos */
+          }
+        `}</style>
+      </>
+    );
+  }
 
   return (
     <div className="agendamento-container">
@@ -129,9 +235,11 @@ const AgendamentoPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Escolha de especialista */}
       <div className="especialista-selecao">
-        {colaboradoesArray.length == 1 ? (
-          <h4>Especialista que faz o serviço</h4>
+        {colaboradoesArray.length === 1 ? (
+          <h4>Selecione especialista que faz o serviço</h4>
         ) : (
           <h4>Gostaria de escolher um especialista específico?</h4>
         )}
@@ -139,27 +247,26 @@ const AgendamentoPage = () => {
         <div className="especialista-opcoes-scroll mt-3">
           <div
             className={
-              colaboradoesArray.length == 1 ? "" : "especialista-opcoes"
+              colaboradoesArray.length === 1 ? "" : "especialista-opcoes"
             }
           >
             {colaboradoesArray.map((specialist) => (
               <div key={specialist._id} className="especialista-card">
-                <div className="especialista-img-placeholder"></div>
+                <div
+                  className="especialista-img-placeholder"
+                  style={{
+                    backgroundImage: `url(${util.AWS.bucketURL}/${specialist.foto})`,
+                    backgroundPosition: "center center",
+                    backgroundSize: "cover",
+                  }}
+                ></div>
                 <p className="mb-1">{specialist.nome}</p>
                 <button
-                  className={
-                    colaboradoesArray.length == 1
-                      ? "ativo btn-especialista"
-                      : "" ||
-                        `btn-especialista  ${
-                          colaboradoesArray.length > 1 &&
-                          selectedSpecialist === specialist._id
-                            ? "ativo"
-                            : ""
-                        }`
-                  }
+                  className={`btn-especialista ${
+                    selectedSpecialist === specialist._id ? "ativo" : ""
+                  }`}
                   onClick={() => {
-                    setSelectedSpecialist(specialist._id);
+                    getDaysAndHours(specialist);
                   }}
                 >
                   Escolher Especialista
@@ -169,56 +276,79 @@ const AgendamentoPage = () => {
           </div>
         </div>
       </div>
+
       {/* Seção de datas */}
-      <div className="datas">
-        <h4>Pra quando você gostaria de agendar?</h4>
-        <div className="dias-semana-scroll mt-3">
-          <div className="dias-semana">
-            {days.map((day) => (
-              <button
-                key={day.id}
-                className={`btn-dia ${selectedDay === day.id ? "ativo" : ""}`}
-                onClick={() => setSelectedDay(day.id)}
-              >
-                {day.label}
-              </button>
-            ))}
+      {days.length > 0 ? (
+        <div className="datas">
+          <h4>Para quando você gostaria de agendar?</h4>
+          <div className="dias-semana-scroll mt-3">
+            <div className="dias-semana">
+              {days.map((day) => (
+                <button
+                  key={day.id} // Aqui o key deve ser único
+                  className={`btn-dia ${selectedDay === day.id ? "ativo" : ""}`}
+                  onClick={() => handleDaySelection(day.id)}
+                >
+                  {new Date(day.label).getUTCDate()}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
-      </div>
+      ) : (
+        ""
+      )}
 
-      {/* Seção de horas */}
-      <div className="horarios">
-        <h4>Que horas?</h4>
-        <div className="horas-disponiveis-scroll mt-3">
-          <div className="horas-disponiveis">
-            {hours.map((hour) => (
-              <button
-                key={hour}
-                className={`btn-hora ${selectedHour === hour ? "ativo" : ""}`}
-                onClick={() => setSelectedHour(hour)}
-              >
-                {hour}
-              </button>
-            ))}
+      {/* Seção de horários */}
+      {hours.length > 0 ? (
+        <div className="horarios">
+          <h4>Que horas?</h4>
+          <div className="horas-disponiveis-scroll mt-3">
+            {/* {console.log(hours)} */}
+
+            {Array.isArray(hours) ? (
+              <div className="horas-disponiveis">
+                {hours.map((hour) => (
+                  <button
+                    key={hour.id}
+                    className={`btn-hora ${
+                      selectedHour === hour ? "ativo" : ""
+                    }`}
+                    onClick={() => setSelectedHour(hour)}
+                  >
+                    {hour.time}
+                  </button>
+                ))}
+              </div>
+            ) : (
+              <h4 className="pt-4" style={{ textAlign: "center" }}>
+                Nenhum Horário disponível
+              </h4>
+            )}
           </div>
         </div>
-      </div>
-
-      {/* Escolher especialista */}
-
+      ) : (
+        ""
+      )}
       {/* Botão de confirmação */}
+      
       <button
+        style={{
+          position: "absolute",
+          bottom: 20,
+          left: "50%", // Move o botão para o centro horizontalmente
+          transform: "translateX(-50%)", // Ajusta o botão para ficar centralizado
+          width: "95vw", // Mantém a largura do botão
+        }}
         className="btn-confirmar"
         onClick={() => {
-          console.log(selectedDay, selectedHour, selectedSpecialist);
-          console.log(servico);
           handleConfirmar();
         }}
       >
         Confirmar meu agendamento
       </button>
 
+      {/* Modal de cadastro */}
       <Modal open={isModalOpen} onClose={() => setOpen(false)}>
         <Modal.Body>
           <h5 className="mx-auto mb-4" style={{ textAlign: "center" }}>
@@ -254,74 +384,31 @@ const AgendamentoPage = () => {
                   { label: "Feminino", value: "F" },
                   { label: "Outro", value: "F" },
                 ]}
-                value={formData.sexo} // Mantém o valor atualizado
-                onChange={(value) => {
-                  // Atualiza o estado com o valor selecionado
-                  setFormData((prevData) => ({ ...prevData, sexo: value }));
-                }}
-                searchable={false} // Desabilita a busca se não for necessário
+                value={formData.sexo}
+                onChange={(value) =>
+                  setFormData((prevData) => ({ ...prevData, sexo: value }))
+                }
+                searchable={false}
               />
             </Form.Group>
           </Form>
         </Modal.Body>
         <Modal.Footer>
           <Button onClick={handleCadastrarCliente} appearance="primary">
-            Cadastrar
+            Cadastrar e Confirmar
           </Button>
           <Button
-            onClick={() => {
-              setOpen(false);
-              dispatch(closeCadastroModal());
-            }}
+            onClick={() => dispatch(closeCadastroModal())}
             appearance="subtle"
           >
             Cancelar
           </Button>
         </Modal.Footer>
       </Modal>
-
-      {/* <Modal open={open} onClose={() => setOpen(false)}>
-        <Modal.Header >
-          <Modal.Title className="p-1" ></Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <h5 className="mx-auto mb-4" style={{textAlign:"center"}}> Cadastre-se antes de agendar</h5>
-          <Form fluid onChange={(value) => setFormData(value)}>
-            <Form.Group controlId="nome">
-              <Form.ControlLabel>Nome</Form.ControlLabel>
-              <Form.Control name="nome" />
-            </Form.Group>
-            <Form.Group controlId="telefone">
-              <Form.ControlLabel>Telefone</Form.ControlLabel>
-              <Form.Control name="telefone" />
-            </Form.Group>
-            <Form.Group controlId="email">
-              <Form.ControlLabel>Email</Form.ControlLabel>
-              <Form.Control name="email" />
-            </Form.Group>
-            <Form.Group controlId="dataNascimento">
-              <Form.ControlLabel>Data de Nascimento</Form.ControlLabel>
-              <Form.Control name="dataNascimento" type="date" />
-            </Form.Group>
-            <Form.Group controlId="sexo">
-              <Form.ControlLabel>Sexo</Form.ControlLabel>
-              <Form.Control name="sexo" accepter="select" defaultValue="M">
-                <option value="M">Masculino</option>
-                <option value="F">Feminino</option>
-              </Form.Control>
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button onClick={handleCadastroCliente} appearance="primary">
-            Cadastrar
-          </Button>
-          <Button onClick={() => setOpen(false)} appearance="subtle">
-            Cancelar
-          </Button>
-        </Modal.Footer>
-      </Modal> */}
+      <div>
+      </div>
     </div>
+    
   );
 };
 

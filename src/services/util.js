@@ -30,3 +30,25 @@ export function checkLocalStorageKeys() {
     window.location.href = '/';
   }
 }
+export function checkLocalStorageKeysClienteId() {
+  const keysToCheck = ['cl_idtor'];
+
+  const missingKey = keysToCheck.some(key => !localStorage.getItem(key));
+
+  if (!missingKey) {
+    // Se alguma chave estiver faltando, redireciona para a página inicial
+    
+    return "Nenhum cliente encontrado"
+  }
+}
+
+export function checkLocalStorageKeysFromLogin() {
+  const keysToCheck = ['u', '_dSlun'];
+
+  const missingKey = keysToCheck.some(key => !localStorage.getItem(key));
+
+  if (!missingKey) {
+    // Se alguma chave estiver faltando, redireciona para a página inicial
+    window.location.href = '/AgendamentosMobile';
+  }
+}

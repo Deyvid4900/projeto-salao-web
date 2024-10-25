@@ -13,38 +13,43 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
 
   useEffect(() => {
     const user = getUserLocalStorage();
-    console.log(user);
+    // console.log(user);
     if (user) {
       setUser(user);
     }
   }, []);
 
-  async function authenticate(email: string, password: string) {
-    try {
-      // Faz a requisição de login e espera pela resposta
-      const response = await logingRequest(email, password);
+  async function authenticate(email, password) {
+  try {
+    const response = await logingRequest(email, password);
 
-      // Cria o payload com o token, email e id retornados
-      const payload = {
-        token: response.token,
-        email: response.email,
-        id: response.id,
-      };
-
-      // Obtém o usuário atual salvo localmente
-
-      // Define o ID do usuário atual
-      setUser(payload.id);
-
-      // Armazena o payload no localStorage com a chave "u"
-      setUserLocalStorage("u", payload);
-
-      // Verifica se aux existe e armazena o id antigo, caso exista
-    } catch (error) {
-      console.error("Erro ao autenticar:", error);
-      // Tratar erro de autenticação aqui, como mostrar uma mensagem ao usuário
+    if (response.error) {
+      return false; // Retorna false se houve erro
     }
+
+    const payload = {
+      token: response.token,
+      email: response.email,
+      id: response.id,
+    };
+
+    setUser(payload.id);
+    setUserLocalStorage("u", payload);
+
+    const aux = localStorage.getItem("aux");
+    if (aux) {
+      const auxData = JSON.parse(aux);
+      console.log("ID antigo armazenado:", auxData.oldId);
+    }
+
+    return true; // Retorna true se a autenticação foi bem-sucedida
+  } catch (error) {
+    console.error("Erro ao autenticar:", error);
+    return false; // Retorna false em caso de exceção
   }
+}
+
+  
 
   function logout() {
     setUser(null);

@@ -3,7 +3,7 @@ import { IUser } from "./types";
 
 // Função para salvar usuário no localStorage
 export function setUserLocalStorage(name: string, user: IUser | any) {
-  console.log(user);
+  
 
   if (name === "id") {
     // Salvar o ID diretamente
@@ -23,7 +23,6 @@ export function getUserLocalStorage() {
   }
 
   const user = JSON.parse(json);
-  console.log(user.id);
 
   return user; // Retorna o usuário ou null
 }
@@ -32,7 +31,7 @@ export function getUserLocalStorage() {
 export async function logingRequest(email: string, senha: string) {
   try {
     const request = await Api.post("login", { email, senha });
-    console.log(request);
+    
 
     return request.data; // Retorna os dados da requisição
   } catch (error: any) {

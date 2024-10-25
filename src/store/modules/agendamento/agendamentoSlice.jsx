@@ -9,7 +9,8 @@ const initialState = {
   newAgendamento: {},
   agenda:{
 
-  }
+  },
+  agendado:[]
 };
 
 const agendamentoSlice = createSlice({
@@ -21,6 +22,9 @@ const agendamentoSlice = createSlice({
     },
     updateAgenda: (state, action) => {
       state.agenda = action.payload ;
+    },
+    updateAgendado: (state, action) => {
+      state.agendado = action.payload ;
     },
     getServicosById: (state, action) => {
       return state;
@@ -46,6 +50,7 @@ export const {
   addAgendamento,
   addAgendamentoSuccess,
   addAgendamentoFailure,
-  updateAgenda
+  updateAgenda,
+  updateAgendado,
 } = agendamentoSlice.actions;
 export default agendamentoSlice.reducer;

@@ -8,6 +8,9 @@ import { fetchAllRequest } from "../../store/modules/servicos/servicosSlice";
 import { Divider, Placeholder, Nav } from "rsuite";
 import { Link } from "react-router-dom";
 import util from "../../services/util";
+import {
+  setLoading,
+} from "../../store/modules/clientes/clientesSlice";
 
 function HomeCliente() {
   const { nome } = useParams();
@@ -89,7 +92,7 @@ function HomeCliente() {
     try {
       const coordinates = await getUserCoordinates();
       setUserCoordinates(coordinates);
-      console.log(coordinates);
+      // console.log(coordinates);
     } catch (error) {
       console.error("Erro ao obter coordenadas:", error);
     }
@@ -100,6 +103,7 @@ function HomeCliente() {
       type: "servicos/fetchAllServicos",
     });
     fetchUserLocation();
+    dispatch(setLoading(false))
   }, [dispatch]);
 
   const servicosArray = servicos || [];
@@ -132,15 +136,20 @@ function HomeCliente() {
         appearance="pills"
         defaultActiveKey="Home"
         className="p-2 gap-2"
-        style={{ position: "absolute", zIndex: "30", width: "100%" }}
+        style={{ zIndex: "30", width: "100%" }}
       >
         <Nav.Item as={Link} to="/Salao/Deyvid-Barber" eventKey="Home">
           Agendar
         </Nav.Item>
-        <Nav.Item as={Link} to="/Agendados" eventKey="Agenda">
-          Agendados
-        </Nav.Item>
+        {localStorage.getItem("cl_idtor") ? (
+          <Nav.Item as={Link} to="/Agendados" eventKey="Agenda">
+            Agendados
+          </Nav.Item>
+        ) : (
+          ""
+        )}
       </Nav>
+      
       <div
         style={{ backgroundImage: `url(${selectSalao.capa})` }}
         className="hero d-flex justify-content-end align-items-end"
@@ -216,7 +225,7 @@ function HomeCliente() {
 
         <div
           className="services-list"
-          style={{ overflowY: "auto", maxHeight: "43vh", overflowX:"clip" }}
+          style={{ overflowY: "auto", maxHeight: "43vh", overflowX: "clip" }}
         >
           {filteredServices.map((service, index) => (
             <div
@@ -228,7 +237,7 @@ function HomeCliente() {
                 border: "1px solid #e0e0e0",
                 transition: "transform 0.2s ease-in-out",
                 cursor: "pointer",
-                overflowX:"-moz-hidden-unscrollable"
+                overflowX: "-moz-hidden-unscrollable",
               }}
               onMouseEnter={(e) =>
                 (e.currentTarget.style.transform = "scale(1.02)")
@@ -241,7 +250,7 @@ function HomeCliente() {
               <div
                 className="image-placeholder d-flex align-items-center justify-content-center "
                 style={{
-                  textAlign:"center",
+                  textAlign: "center",
                   width: "70px",
                   height: "70px",
                   backgroundColor: "#f1f1f1",
@@ -263,7 +272,7 @@ function HomeCliente() {
               </div>
 
               {/* Detalhes do Serviço */}
-              <div className="service-details d-flex flex-column"  >
+              <div className="service-details d-flex flex-column">
                 <h5
                   className="service-title mb-2"
                   style={{ fontSize: "1.0rem", fontWeight: "600" }}
@@ -274,9 +283,9 @@ function HomeCliente() {
                   className="service-info text-muted mb-0"
                   style={{ fontSize: "0.8rem" }}
                 >
-                  R$ {Number(service.preco).toFixed(2)} <br /> {service.duracao} min
+                  R$ {Number(service.preco).toFixed(2)} <br /> {service.duracao}{" "}
+                  min
                 </p>
-                
               </div>
 
               {/* Botão de Agendar */}
@@ -288,14 +297,11 @@ function HomeCliente() {
                     borderColor: "#FF6B6B",
                     padding: "2px 8px",
                     borderRadius: "8px",
-                    width:"90px"
+                    width: "90px",
                   }}
                   onClick={() => {
                     handleAgendarClick(service);
-                    dispatch({
-                      type: "agendamento/filterDiasDisponiveis",
-                      action: service,
-                    });
+                   
                   }}
                 >
                   <i className="fas fa-calendar-check "></i> Agendar

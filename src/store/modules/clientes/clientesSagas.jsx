@@ -9,21 +9,35 @@ import {
   cadastrarClienteRequest,
   cadastrarClienteSuccess,
   cadastrarClienteFailure,
+  setLoading,
 } from "./clientesSlice";
+import { addAgendamento } from "../agendamento/agendamentoSlice";
+import { delay } from 'redux-saga/effects';
 
 // Saga para verificar o localStorage
-function* verificarCliente() {
+function* verificarCliente(action) {
+  console.log(action);
+  const { navigate, dados } = action.payload;
   const clienteId = localStorage.getItem("cl_idtor");
-  if (!clienteId && (clienteId != 'undefined' || null)) {
+
+  // Verifica se clienteId é nulo, undefined ou 'undefined'
+  if (!clienteId || clienteId === "undefined") {
     yield put(openCadastroModal()); // Abre o modal para cadastro
   } else {
-    // Prosseguir com a lógica de confirmação
-    // Chame outra ação ou continue o fluxo
+    yield put(setLoading(true))
+    yield put(addAgendamento(dados));
+    yield delay(2000);
+    yield put(setLoading(false))
+    // Redireciona para a rota /Agendados
+    yield call(navigate, "/Agendados"); // Usa o navigate para redirecionar
   }
 }
 function* fetchAllClientesSaga() {
   try {
-    const { data } = yield call(api.get, `/cliente/salao/${localStorage.getItem('_dSlun')}`);
+    const { data } = yield call(
+      api.get,
+      `/cliente/salao/${localStorage.getItem("_dSlun")}`
+    );
     yield put(fetchAllClientesSuccess(data));
   } catch (error) {
     yield put(fetchAllClientesFailure(error.message));
@@ -36,17 +50,17 @@ function* cadastrarClienteSaga(action) {
   const req = action.payload;
   try {
     const { data } = yield call(api.post, "/cliente", {
-      "cliente": {
-        nome: req.nome ,
-        email: req.email ,
+      cliente: {
+        nome: req.nome,
+        email: req.email,
         telefone: req.telefone,
-        dataNascimento: req.dataNascimento ,
-        sexo:req.sexo
+        dataNascimento: req.dataNascimento,
+        sexo: req.sexo,
       },
       salaoId: req.salaoId,
     }); // Cadastro do cliente
-    console.log(data)
-    const clienteId = data.clienteId
+    console.log(data);
+    const clienteId = data.clienteId;
     localStorage.setItem("cl_idtor", clienteId); // Armazena o cliente no localStorage
     yield put(cadastrarClienteSuccess(data)); // Sucesso no cadastro
     yield put(closeCadastroModal()); // Fecha o modal
@@ -69,5 +83,9 @@ function* watchFetchAll() {
 
 // Função root para exportar as sagas
 export default function* clienteSagas() {
-  yield all([watchVerificarCliente(), watchCadastrarCliente(),watchFetchAll()]);
+  yield all([
+    watchVerificarCliente(),
+    watchCadastrarCliente(),
+    watchFetchAll(),
+  ]);
 }

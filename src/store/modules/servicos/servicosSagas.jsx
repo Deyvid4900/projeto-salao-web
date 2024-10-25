@@ -17,14 +17,19 @@ import { api } from "../../../services/api"; // Importando a API
 import { setColaboradoresServico } from "../colaborador/colaboradorSlice";
 
 function* findColaboradoreByServico(action) {
-  console.log(action.payload);
+  // console.log(action.payload);
   const servicoId = action.payload;
+  const salaoId = localStorage.getItem("_dSlun");
   try {
     yield put(setLoading(true));
-    const { data } = yield call(api.get, `/servico/${servicoId}/colaboradores`);
+    const { data } = yield call(
+      api.get,
+      `/servico/${servicoId}/colaboradores`,
+      {salaoId}
+    );
     yield put(setLoading(false));
 
-    console.log(data);
+    // console.log(data);
     if (data.error) {
       // Tratar erro se a resposta da API indicar erro
       console.error(data.error);
@@ -39,7 +44,7 @@ function* findColaboradoreByServico(action) {
 
 function* createServicoSaga(action) {
   const servico = action.payload;
-  console.log(servico);
+  // console.log(servico);
   try {
     yield put(createServicoRequest()); // Dispara a ação de loading
 
@@ -47,7 +52,7 @@ function* createServicoSaga(action) {
     const formData = new FormData();
     // Adiciona o ID do salão
     formData.append("salaoId", localStorage.getItem("_dSlun"));
-    console.log(action.payload)
+    // console.log(action.payload);
     formData.append("arquivo_0", action.payload.foto);
 
     // Cria um objeto serviço
@@ -81,14 +86,14 @@ function* createServicoSaga(action) {
 }
 
 function* deleteServicoById(action) {
-  console.log(action.payload);
+  // console.log(action.payload);
   const servicoId = action.payload;
   try {
     yield put(setLoading(true));
     const { data } = yield call(api.delete, `/servico/${servicoId}`);
     yield put(setLoading(false));
 
-    console.log(data);
+    // console.log(data);
     if (data.error) {
       // Tratar erro se a resposta da API indicar erro
       console.error(data.error);

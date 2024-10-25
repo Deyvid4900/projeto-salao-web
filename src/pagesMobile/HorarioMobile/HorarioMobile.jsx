@@ -138,7 +138,6 @@ const HorariosAtendimentoMobile = () => {
       });
       return false;
     }
-
     if (behavior === "create") {
       dispatch({ type: "horarios/addHorario" }); // Chama o Saga responsável por adicionar horário
     } else {
@@ -195,7 +194,7 @@ const HorariosAtendimentoMobile = () => {
     return listaEventos;
   };
   useEffect(() => {
-    checkLocalStorageKeys()
+    checkLocalStorageKeys();
     dispatch({ type: "horarios/allHorarios" }); // Chama o Saga responsável por obter todos os horários
     dispatch({ type: "horarios/allServicos" });
     // Chama o Saga responsável por obter todos os serviços
@@ -271,11 +270,14 @@ const HorariosAtendimentoMobile = () => {
                       block
                       format="HH:mm"
                       hideMinutes={(min) => ![0, 30].includes(min)}
-                      value={moment(horario.inicio).toDate()}
+                      value={horario.inicio ? moment(horario.inicio).add(3, "hours").toDate() : null} // Adiciona 3 horas ao valor
                       onChange={(date) => {
                         const selectedDate = new Date(date);
                         selectedDate.setSeconds(0, 0);
-                        setHorario("inicio", selectedDate.toISOString());
+                    
+                        // Diminui 3 horas ao horário selecionado antes de armazenar
+                        const newDateWithOffset = moment(selectedDate).subtract(3, 'hours').toISOString();
+                        setHorario("inicio", newDateWithOffset);
                       }}
                     />
                   </div>
@@ -287,11 +289,14 @@ const HorariosAtendimentoMobile = () => {
                       block
                       format="HH:mm"
                       hideMinutes={(min) => ![0, 30].includes(min)}
-                      value={horario.fim ? moment(horario.fim).toDate() : null}
+                      value={horario.fim ? moment(horario.fim).add(3, "hours").toDate() : null}
                       onChange={(date) => {
                         const selectedDate = new Date(date);
                         selectedDate.setSeconds(0, 0);
-                        setHorario("fim", selectedDate.toISOString());
+                    
+                        // Diminui 3 horas ao horário selecionado antes de armazenar
+                        const newDateWithOffset = moment(selectedDate).subtract(3, 'hours').toISOString();
+                        setHorario("fim", newDateWithOffset);
                       }}
                     />
                   </div>
@@ -305,9 +310,9 @@ const HorariosAtendimentoMobile = () => {
                       data={servicos}
                       labelKey="titulo"
                       valueKey="_id"
-                      value={horario.especialidade}
+                      value={horario.especialidades}
                       onChange={(e) => {
-                        setHorario("especialidade", e);
+                        setHorario("especialidades", e);
                       }}
                     />
 
@@ -317,7 +322,7 @@ const HorariosAtendimentoMobile = () => {
                       onChange={(value, checked) => {
                         if (checked) {
                           setHorario(
-                            "especialidade",
+                            "especialidades",
                             servicos.map((s) => s._id)
                           );
                         } else {
@@ -333,6 +338,7 @@ const HorariosAtendimentoMobile = () => {
                   <div className="col-12 mt-3">
                     <b>Colaboradores disponíveis</b>
                     <TagPicker
+                      
                       size="lg"
                       block
                       data={colaboradores}

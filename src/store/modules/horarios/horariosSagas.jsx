@@ -14,8 +14,6 @@ import {
 } from "./horariosSlice";
 import { api } from "../../../services/api";
 
-import moment from "moment";
-
 export function* allServicos() {
   try {
     yield put(setFiltering(true)); // Sinaliza que está carregando
@@ -27,35 +25,34 @@ export function* allServicos() {
     yield put(setFiltering(false)); // Para o estado de carregamento
 
     if (res.error) {
-      
-      console.log(error)
+      console.log(error);
     }
 
     // Atualiza o estado com os serviços obtidos
     yield put(setServicos(res.servicos));
   } catch (err) {
     yield put(setFiltering(false));
-   
-    console.log(err)
+
+    console.log(err);
   }
 }
 
 export function* addHorario() {
   try {
     const { horario } = yield select((state) => state.horarios);
-    console.log(horario)
+    console.log(horario);
     yield put(setSaving(true));
 
     const { data: res } = yield call(api.post, "/horario", {
       ...horario,
       salaoId: localStorage.getItem("_dSlun"),
-      especialidades:horario.especialidade // Obter salaoId do localStorage
+      especialidades: horario.especialidade, // Obter salaoId do localStorage
     });
 
     yield put(setSaving(false));
 
     if (res.error) {
-      console.log(error)
+      console.log(error);
       return;
     }
 
@@ -63,12 +60,11 @@ export function* addHorario() {
     yield put(closeDrawer());
     yield put(resetHorario());
 
-
-    console.log("Horário salvo com sucesso!")
+    console.log("Horário salvo com sucesso!");
   } catch (err) {
     yield put(setSaving(false));
-    
-    console.log(err)
+
+    console.log(err);
   }
 }
 
@@ -82,13 +78,15 @@ export function* allHorarios() {
     );
 
     yield put(setFiltering(false));
-    const horariosArray = res.horarios || [];
-
-    const horariosComHoras = horariosArray.map((horario) => ({...horario}));
-
-    // console.log(horariosComHoras);
-
-    yield put(setHorarios(horariosComHoras));
+    if (res.horarios.length > 3) {
+      const horariosArray = res.horarios[0] || [];
+      const horariosComHoras = horariosArray.map((horario) => ({ ...horario }));
+      yield put(setHorarios(horariosComHoras));
+    } else {
+      const horariosArray = res.horarios || [];
+      const horariosComHoras = horariosArray.map((horario) => ({ ...horario }));
+      yield put(setHorarios(horariosComHoras));
+    }
   } catch (err) {
     yield put(setFiltering(false));
   }
@@ -108,7 +106,7 @@ export function* saveHorario() {
     yield put(setSaving(false));
 
     if (res.error) {
-      console.log(error)
+      console.log(error);
       return;
     }
 
@@ -116,11 +114,10 @@ export function* saveHorario() {
     yield put(closeDrawer());
     yield put(resetHorario());
 
-    
-    console.log("Horário salvo com sucesso!")
+    console.log("Horário salvo com sucesso!");
   } catch (err) {
     yield put(setSaving(false));
-    console.log(err)
+    console.log(err);
   }
 }
 
@@ -136,9 +133,8 @@ export function* removeHorario() {
     yield put({ type: "horarios/allHorarios" });
     yield put(closeDrawer());
     yield put(closeConfirm());
-
   } catch (err) {
-    console.error(err)
+    console.error(err);
   }
 }
 
@@ -192,14 +188,12 @@ export function* filterColaboradores() {
     yield put(setFiltering(false));
 
     if (res.error) {
-      
-      console.log(error)
+      console.log(error);
     }
 
     yield put(updateHorario({ colaboradores: res.colaboradores }));
   } catch (err) {
-   
-    console.log(err)
+    console.log(err);
   }
 }
 

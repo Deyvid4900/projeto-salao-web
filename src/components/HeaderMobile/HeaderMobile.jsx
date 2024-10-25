@@ -143,7 +143,7 @@ function HeaderMobile() {
             <Link to={"/Salao/Deyvid-Barber"}>
               <li className="dropdown-item">
                 <span className="material-symbols-outlined">Arrow_Forward</span>
-                Meu Salão
+                Meu Site
               </li>
             </Link>
             <Link to={"#"}>
