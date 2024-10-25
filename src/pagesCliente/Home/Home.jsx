@@ -152,7 +152,7 @@ function HomeCliente() {
         style={{ backgroundImage: `url(${selectSalao.capa})` }}
         className="hero d-flex justify-content-end align-items-end"
       >
-        <div className="overlay"></div>
+        <div className="overlay d-flex align-items-end justify-content-end">
         <div
           style={{
             display: "flex",
@@ -180,6 +180,8 @@ function HomeCliente() {
           </h6>
         </div>
       </div>
+        </div>
+        
 
       {/* Action Section */}
       <div className="d-flex gap-3 justify-content-end action py-4 px-3">
