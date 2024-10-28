@@ -183,7 +183,7 @@ const HomeMobile = () => {
           <Drawer.Title>Novo Agendamento</Drawer.Title>
         </Drawer.Header>
         <Drawer.Body>
-          <div className="col-12 mt-3">
+          <div className="col-12 ">
             <b className="d-block">Especialista</b>
             <SelectPicker
               data={colaboradores}
@@ -250,6 +250,7 @@ const HomeMobile = () => {
           <div className="col-12 mt-3">
             <b className="d-block">Horário</b>
             <DatePicker
+              placement="top"
               format="HH:mm"
               hideMinutes={(min) => ![0, 30].includes(min)}
               placeholder="Selecione o horário"

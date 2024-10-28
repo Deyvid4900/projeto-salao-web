@@ -305,6 +305,7 @@ const HorariosAtendimentoMobile = () => {
                   <div className="col-12 mt-3">
                     <b>Especialidades disponíveis</b>
                     <TagPicker
+                    placement="top"
                       size="lg"
                       block
                       data={servicos}
@@ -338,7 +339,7 @@ const HorariosAtendimentoMobile = () => {
                   <div className="col-12 mt-3">
                     <b>Colaboradores disponíveis</b>
                     <TagPicker
-                      
+                      placement="top"
                       size="lg"
                       block
                       data={colaboradores}

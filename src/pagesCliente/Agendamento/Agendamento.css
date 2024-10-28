@@ -303,3 +303,17 @@ body {
 .studioBackground {
   background-color: var(--color-studioBackground);
 }
+
+.btn-confirmar {
+  transition: all 0.3s ease; /* Transição suave para todas as propriedades */
+  
+}
+
+.btn-confirmar:hover {
+  background-color: #0056b3; /* Muda a cor do fundo no hover */
+  transform: scale(1.05); /* Aumenta levemente o tamanho */
+}
+
+.btn-confirmar:active {
+  transform: scale(0.95); /* Reduz o tamanho no clique */
+}

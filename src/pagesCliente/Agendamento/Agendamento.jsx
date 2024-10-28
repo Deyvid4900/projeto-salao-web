@@ -80,8 +80,6 @@ const AgendamentoPage = () => {
     dispatch(cadastrarClienteRequest({ ...formData, salaoId: salao._id }));
   };
 
-  
-
   const getDaysAndHours = (specialist) => {
     setSelectedSpecialist(specialist._id);
     dispatch({
@@ -171,7 +169,8 @@ const AgendamentoPage = () => {
               128,
               128,
               128,
-              0,2
+              0,
+              2
             ); /* Fundo cinza transparente */
             z-index: 9999; /* Garante que o loader fique sobre os outros elementos */
           }
@@ -182,206 +181,201 @@ const AgendamentoPage = () => {
 
   return (
     <div className="agendamento-container">
-      {/* Cabeçalho */}
-      <div className="agendamento-header">
-        <h4>Finalizar Agendamento</h4>
-        <p>Escolha o horário e a data</p>
-      </div>
-
-      {/* Serviço selecionado */}
-      <div className="servico-selecionado">
-        <div className="servico-info">
-          <div className="servico-img-placeholder">
-            <img
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-              }}
-              key={servico.arquivos[0]?._id}
-              src={`${util.AWS.bucketURL}/${servico.arquivos[0]?.arquivo}`}
-              alt={servico.titulo}
-            />
-          </div>
-          <div className="servico-detalhes">
-            <p>{servico.titulo}</p>
-            <p>{servico.descricao}</p>
-            <p className="preco">R$ {Number(servico.preco).toFixed(2)}</p>
+      <div>
+        {/* Cabeçalho */}
+        <div className="agendamento-header">
+          <h4>Finalizar Agendamento</h4>
+          <p>Escolha o horário e a data</p>
+        </div>
+        {/* Serviço selecionado */}
+        <div className="servico-selecionado">
+          <div className="servico-info">
+            <div className="servico-img-placeholder">
+              <img
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                }}
+                key={servico.arquivos[0]?._id}
+                src={`${util.AWS.bucketURL}/${servico.arquivos[0]?.arquivo}`}
+                alt={servico.titulo}
+              />
+            </div>
+            <div className="servico-detalhes">
+              <p>{servico.titulo}</p>
+              <p>{servico.descricao}</p>
+              <p className="preco">R$ {Number(servico.preco).toFixed(2)}</p>
+            </div>
           </div>
         </div>
-      </div>
-
-      {/* Escolha de especialista */}
-      <div className="especialista-selecao">
-        {colaboradoesArray.length === 1 ? (
-          <h4>Selecione especialista que faz o serviço</h4>
-        ) : (
-          <h4>Gostaria de escolher um especialista específico?</h4>
-        )}
-
-        <div className="especialista-opcoes-scroll mt-3">
-          <div
-            className={
-              colaboradoesArray.length === 1 ? "" : "especialista-opcoes"
-            }
-          >
-            {colaboradoesArray.map((specialist) => (
-              <div key={specialist._id} className="especialista-card">
-                <div
-                  className="especialista-img-placeholder"
-                  style={{
-                    backgroundImage: `url(${util.AWS.bucketURL}/${specialist.foto})`,
-                    backgroundPosition: "center center",
-                    backgroundSize: "cover",
-                  }}
-                ></div>
-                <p className="mb-1">{specialist.nome}</p>
-                <button
-                  className={`btn-especialista ${
-                    selectedSpecialist === specialist._id ? "ativo" : ""
-                  }`}
-                  onClick={() => {
-                    getDaysAndHours(specialist);
-                  }}
-                >
-                  Escolher Especialista
-                </button>
-              </div>
-            ))}
-          </div>
-        </div>
-      </div>
-
-      {/* Seção de datas */}
-      {days.length > 0 ? (
-        <div className="datas">
-          <h4>Para quando você gostaria de agendar?</h4>
-          <div className="dias-semana-scroll mt-3">
-            <div className="dias-semana">
-              {days.map((day) => (
-                <button
-                  key={day.id} // Aqui o key deve ser único
-                  className={`btn-dia ${selectedDay === day.id ? "ativo" : ""}`}
-                  onClick={() => handleDaySelection(day.id)}
-                >
-                  {new Date(day.label).getUTCDate()}
-                </button>
+        {/* Escolha de especialista */}
+        <div className="especialista-selecao">
+          {colaboradoesArray.length === 1 ? (
+            <h4>Selecione especialista que faz o serviço</h4>
+          ) : (
+            <h4>Gostaria de escolher um especialista específico?</h4>
+          )}
+          <div className="especialista-opcoes-scroll mt-3">
+            <div
+              className={
+                colaboradoesArray.length === 1 ? "" : "especialista-opcoes"
+              }
+            >
+              {colaboradoesArray.map((specialist) => (
+                <div key={specialist._id} className="especialista-card">
+                  <div
+                    className="especialista-img-placeholder"
+                    style={{
+                      backgroundImage: `url(${util.AWS.bucketURL}/${specialist.foto})`,
+                      backgroundPosition: "center center",
+                      backgroundSize: "cover",
+                    }}
+                  ></div>
+                  <p className="mb-1">{specialist.nome}</p>
+                  <button
+                    className={`btn-especialista ${
+                      selectedSpecialist === specialist._id ? "ativo" : ""
+                    }`}
+                    onClick={() => {
+                      getDaysAndHours(specialist);
+                    }}
+                  >
+                    Escolher Especialista
+                  </button>
+                </div>
               ))}
             </div>
           </div>
         </div>
-      ) : (
-        ""
-      )}
-
-      {/* Seção de horários */}
-      {hours.length > 0 ? (
-        <div className="horarios">
-          <h4>Que horas?</h4>
-          <div className="horas-disponiveis-scroll mt-3">
-            {/* {console.log(hours)} */}
-
-            {Array.isArray(hours) ? (
-              <div className="horas-disponiveis">
-                {hours.map((hour) => (
+        {/* Seção de datas */}
+        {days.length > 0 ? (
+          <div className="datas">
+            <h4>Para quando você gostaria de agendar?</h4>
+            <div className="dias-semana-scroll mt-3">
+              <div className="dias-semana">
+                {days.map((day) => (
                   <button
-                    key={hour.id}
-                    className={`btn-hora ${
-                      selectedHour === hour ? "ativo" : ""
-                    }`}
-                    onClick={() => setSelectedHour(hour)}
+                    key={day.id} // Aqui o key deve ser único
+                    className={`btn-dia ${selectedDay === day.id ? "ativo" : ""}`}
+                    onClick={() => handleDaySelection(day.id)}
                   >
-                    {hour.time}
+                    {new Date(day.label).getUTCDate()}
                   </button>
                 ))}
               </div>
-            ) : (
-              <h4 className="pt-4" style={{ textAlign: "center" }}>
-                Nenhum Horário disponível
-              </h4>
-            )}
+            </div>
           </div>
-        </div>
-      ) : (
-        ""
-      )}
-      {/* Botão de confirmação */}
-
-      <button
-        style={{
-          position: "absolute",
-          bottom: 20,
-          left: "50%", // Move o botão para o centro horizontalmente
-          transform: "translateX(-50%)", // Ajusta o botão para ficar centralizado
-          width: "95vw", // Mantém a largura do botão
-        }}
-        className="btn-confirmar"
-        onClick={() => {
-          handleConfirmar();
-        }}
-      >
-        Confirmar meu agendamento
-      </button>
-
-      {/* Modal de cadastro */}
-      <Modal open={isModalOpen} onClose={() => setOpen(false)}>
-        <Modal.Body>
-          <h5 className="mx-auto mb-4" style={{ textAlign: "center" }}>
-            Cadastre-se antes de agendar
-          </h5>
-          <Form
-            fluid
-            onChange={(value) => setFormData(value)}
-            formValue={formData}
-          >
-            <Form.Group controlId="nome">
-              <Form.ControlLabel>Nome</Form.ControlLabel>
-              <Form.Control name="nome" required />
-            </Form.Group>
-            <Form.Group controlId="telefone">
-              <Form.ControlLabel>Telefone</Form.ControlLabel>
-              <Form.Control name="telefone" required />
-            </Form.Group>
-            <Form.Group controlId="email">
-              <Form.ControlLabel>Email</Form.ControlLabel>
-              <Form.Control name="email" type="email" required />
-            </Form.Group>
-            <Form.Group controlId="dataNascimento">
-              <Form.ControlLabel>Data de Nascimento</Form.ControlLabel>
-              <Form.Control name="dataNascimento" type="date" required />
-            </Form.Group>
-            <Form.Group controlId="sexo">
-              <Form.ControlLabel>Sexo</Form.ControlLabel>
-              <InputPicker
-                className="w-50"
-                data={[
-                  { label: "Masculino", value: "M" },
-                  { label: "Feminino", value: "F" },
-                  { label: "Outro", value: "F" },
-                ]}
-                value={formData.sexo}
-                onChange={(value) =>
-                  setFormData((prevData) => ({ ...prevData, sexo: value }))
-                }
-                searchable={false}
-              />
-            </Form.Group>
-          </Form>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button onClick={handleCadastrarCliente} appearance="primary">
-            Cadastrar e Confirmar
-          </Button>
-          <Button
-            onClick={() => dispatch(closeCadastroModal())}
-            appearance="subtle"
-          >
-            Cancelar
-          </Button>
-        </Modal.Footer>
-      </Modal>
-      <div></div>
+        ) : (
+          ""
+        )}
+        {/* Seção de horários */}
+        {hours.length > 0 ? (
+          <div className="horarios">
+            <h4>Que horas?</h4>
+            <div className="horas-disponiveis-scroll mt-3">
+              {/* {console.log(hours)} */}
+              {Array.isArray(hours) ? (
+                <div className="horas-disponiveis">
+                  {hours.map((hour) => (
+                    <button
+                      key={hour.id}
+                      className={`btn-hora ${
+                        selectedHour === hour ? "ativo" : ""
+                      }`}
+                      onClick={() => setSelectedHour(hour)}
+                    >
+                      {hour.time}
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <h4 className="pt-4" style={{ textAlign: "center" }}>
+                  Nenhum Horário disponível
+                </h4>
+              )}
+            </div>
+          </div>
+        ) : (
+          ""
+        )}
+        {/* Botão de confirmação */}
+       
+        {/* Modal de cadastro */}
+        <Modal open={isModalOpen} onClose={() => setOpen(false)}>
+          <Modal.Body>
+            <h5 className="mx-auto mb-4" style={{ textAlign: "center" }}>
+              Cadastre-se antes de agendar
+            </h5>
+            <Form
+              fluid
+              onChange={(value) => setFormData(value)}
+              formValue={formData}
+            >
+              <Form.Group controlId="nome">
+                <Form.ControlLabel>Nome</Form.ControlLabel>
+                <Form.Control name="nome" required />
+              </Form.Group>
+              <Form.Group controlId="telefone">
+                <Form.ControlLabel>Telefone</Form.ControlLabel>
+                <Form.Control name="telefone" required />
+              </Form.Group>
+              <Form.Group controlId="email">
+                <Form.ControlLabel>Email</Form.ControlLabel>
+                <Form.Control name="email" type="email" required />
+              </Form.Group>
+              <Form.Group controlId="dataNascimento">
+                <Form.ControlLabel>Data de Nascimento</Form.ControlLabel>
+                <Form.Control name="dataNascimento" type="date" required />
+              </Form.Group>
+              <Form.Group controlId="sexo">
+                <Form.ControlLabel>Sexo</Form.ControlLabel>
+                <InputPicker
+                  className="w-50"
+                  data={[
+                    { label: "Masculino", value: "M" },
+                    { label: "Feminino", value: "F" },
+                    { label: "Outro", value: "F" },
+                  ]}
+                  value={formData.sexo}
+                  onChange={(value) =>
+                    setFormData((prevData) => ({ ...prevData, sexo: value }))
+                  }
+                  searchable={false}
+                />
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button onClick={handleCadastrarCliente} appearance="primary">
+              Cadastrar e Confirmar
+            </Button>
+            <Button
+              onClick={() => dispatch(closeCadastroModal())}
+              appearance="subtle"
+            >
+              Cancelar
+            </Button>
+          </Modal.Footer>
+        </Modal>
+        <div></div>
+      </div>
+      {selectedHour != undefined?(<button
+          style={{
+            bottom:0,
+            width: "100%",
+            margin:"50px auto 5px auto"
+          }}
+          className="btn-confirmar"
+          onClick={() => {
+            handleConfirmar();
+          }}
+        >
+          Confirmar meu agendamento
+        </button>):""}
+      
     </div>
+    
   );
 };
 
