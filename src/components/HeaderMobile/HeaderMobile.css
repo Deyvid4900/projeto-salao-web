@@ -12,7 +12,9 @@
     /* Ajuste o tamanho conforme necessário */
   }
 }
-
+.ulServicesMobile>a>li:hover{
+  background-color: var(--color-salaoPrimary) ;
+}
 .ulServicesMobile>a>li {
   display: flex;
   align-items: center;
@@ -23,12 +25,12 @@
   list-style: none !important;
   padding: 1rem;
   border-radius: 6px;
-  background-color: #2f3243 ;
+  background-color: var(--color-salaoSeccundary) ;
  
 }
 .active{
   color: white !important;
-  background-color: #FF5B5B !important;
+  background-color: var(--color-salaoBody) !important;
   
 }
 
@@ -85,4 +87,7 @@ li>a {
   background-color: #bdbdbd !important;
   color: #2f3243 !important;
   cursor: no-drop;
+}
+.bg{
+  background-color: var(--color-salaoPrimary);
 }

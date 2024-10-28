@@ -11,7 +11,7 @@
   }
   
   .agendamento-header h4 {
-    background: linear-gradient(to right, #2F3243, #FF5B5B);
+    background: linear-gradient(to right, #2F3243, var(--color-salaoPrimary));
     color: white;
     padding: 15px;
     border-radius: 10px;
@@ -70,7 +70,7 @@
   }
   
   .btn-dia.ativo {
-    background-color: #FF5B5B;
+    background-color: var(--color-salaoPrimary);
     color: white;
   }
   
@@ -96,7 +96,7 @@
   }
   
   .btn-hora.ativo {
-    background-color: #FF5B5B;
+    background-color: var(--color-salaoPrimary);
     color: white;
   }
   
@@ -140,7 +140,7 @@
   .btn-confirmar {
     width: 100%;
     padding: 15px;
-    background-color: #FF5B5B;
+    background-color: var(--color-salaoPrimary);
     color: white;
     border: none;
     border-radius: 10px;
@@ -149,13 +149,13 @@
   
   /* Continuando do estilo anterior */
 .btn-dia.ativo, .btn-hora.ativo, .btn-especialista.ativo {
-  background-color: #FF9C9C;
+  background-color: var(--color-salaoPrimary);
   color: white;
-  border-color: #FF6B6B;
+  border-color: var(--color-salaoPrimary);
 }
 
 .btn-dia:hover, .btn-hora:hover, .btn-especialista:hover {
-  background-color: #FF6B6B;
+  background-color: var(--color-salaoPrimary);
   color: white;
 }
 
@@ -167,7 +167,7 @@
 .btn-confirmar {
   width: 100%;
   padding: 15px;
-  background-color: #FF6B6B;
+  background-color: var(--color-salaoPrimary);
   color: white;
   border: none;
   border-radius: 10px;
@@ -176,7 +176,7 @@
 }
 
 .btn-confirmar:hover {
-  background-color: #FF4C4C;
+  background-color: var(--color-salaoPrimary);
 }
 .rs-modal-header {
   display: flex;

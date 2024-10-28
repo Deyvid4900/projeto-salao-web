@@ -162,7 +162,7 @@ export const ClienteMobile = () => {
       <button
         onClick={() => {
         }}
-        className="d-flex align-items-center justify-content-center"
+        className="d-flex align-items-center justify-content-center btnPrimary"
         style={{
           bottom: 50,
           right: 30,
@@ -171,7 +171,6 @@ export const ClienteMobile = () => {
           borderRadius: "50%",
           width: 70,
           height: 70,
-          backgroundColor: "rgb(255, 91, 91)",
           boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)", // Sombra adicionada
         }}
       >

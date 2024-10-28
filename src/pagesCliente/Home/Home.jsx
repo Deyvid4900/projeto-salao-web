@@ -5,7 +5,7 @@ import "./Home.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { fetchSalaoRequest } from "../../store/modules/salao/salaoSlice";
 import { fetchAllRequest } from "../../store/modules/servicos/servicosSlice";
-import { Divider, Placeholder, Nav ,Loader } from "rsuite";
+import { Divider, Placeholder, Nav, Loader } from "rsuite";
 import { Link } from "react-router-dom";
 import util from "../../services/util";
 import { setLoading } from "../../store/modules/clientes/clientesSlice";
@@ -18,7 +18,7 @@ function HomeCliente() {
 
   const dispatch = useDispatch();
   const { saloes, error } = useSelector((state) => state.salao);
-  const { data, servicos,loading } = useSelector((state) => state.servicos);
+  const { data, servicos, loading } = useSelector((state) => state.servicos);
   const selectSalao = saloes.salao || {};
 
   const handleAgendarClick = (servico) => {
@@ -149,39 +149,49 @@ function HomeCliente() {
       </Nav>
 
       <div
-        style={{ backgroundImage: `url(${selectSalao.capa})` }}
+        style={{ backgroundImage: `url(${selectSalao.capa})`,backgroundPosition:"center" , backgroundSize:"cover" }}
         className="hero d-flex justify-content-end align-items-end"
       >
-        <div className="overlay d-flex align-items-end justify-content-end">
         <div
+          className="overlay d-flex align-items-end justify-content-end"
           style={{
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "end",
-            textAlign: "end",
-            color: "white",
-            padding: 25,
-            position: "relative",
-            zIndex: 2,
+            position: "absolute",
+            top: 0,
+            right: 0,
+            bottom: 0,
+            left: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)", // Escurece o overlay
+            zIndex: 1,
           }}
         >
-          <h2 className="pt-2" style={{ fontWeight: 500 }}>
-            {selectSalao.nome}
-          </h2>
-          <h6 style={{ fontWeight: 400, color: "rgba(248, 247, 255, 0.8)" }}>
-            Distância:{" "}
-            {selectSalao.distance
-              ? formatarDistancia(selectSalao.distance)
-              : "Indisponível"}{" "}
-            km •{" "}
-            <span style={statusStyle}>
-              {selectSalao.isOpened ? "Aberto" : "Fechado"}
-            </span>
-          </h6>
+          <div
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "end",
+              textAlign: "end",
+              color: "white",
+              padding: 25,
+              position: "relative",
+              zIndex: 2,
+            }}
+          >
+            <h2 className="pt-2" style={{ fontWeight: 500 }}>
+              {selectSalao.nome}
+            </h2>
+            <h6 style={{ fontWeight: 400, color: "rgba(248, 247, 255, 0.8)" }}>
+              Distância:{" "}
+              {selectSalao.distance
+                ? formatarDistancia(selectSalao.distance)
+                : "Indisponível"}{" "}
+              km •{" "}
+              <span style={statusStyle}>
+                {selectSalao.isOpened ? "Aberto" : "Fechado"}
+              </span>
+            </h6>
+          </div>
         </div>
       </div>
-        </div>
-        
 
       {/* Action Section */}
       <div className="d-flex gap-3 justify-content-end action py-4 px-3">
@@ -227,8 +237,8 @@ function HomeCliente() {
           className="services-list"
           style={{ overflowY: "auto", maxHeight: "37vh", overflowX: "clip" }}
         >
-          {!loading
-            ? (filteredServices.map((service, index) => (
+          {!loading ? (
+            filteredServices.map((service, index) => (
               <div
                 key={index}
                 className="card mb-4 p-3 shadow-sm d-flex flex-row align-items-center justify-content-between "
@@ -292,10 +302,8 @@ function HomeCliente() {
                 {/* Botão de Agendar */}
                 <div className="">
                   <button
-                    className="btn btn-primary"
+                    className="btn btnPrimary text-white"
                     style={{
-                      backgroundColor: "#FF6B6B",
-                      borderColor: "#FF6B6B",
                       padding: "2px 8px",
                       borderRadius: "8px",
                       width: "90px",
@@ -308,12 +316,14 @@ function HomeCliente() {
                   </button>
                 </div>
               </div>
-            )))
-            : ( <>
+            ))
+          ) : (
+            <>
               <div className="d-flex justify-content-center align-items-center">
                 <Loader size="lg" /> {/* Loader do rsuite */}
               </div>
-            </>)}
+            </>
+          )}
         </div>
       </div>
     </>

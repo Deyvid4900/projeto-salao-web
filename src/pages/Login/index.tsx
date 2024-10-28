@@ -24,7 +24,7 @@ export const Login = () => {
     checkLocalStorageKeysFromLogin();
   }, []);
 
-  async function onFinish(event) {
+  async function onFinish(event:any) {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     const email = formData.get("email");
@@ -63,6 +63,8 @@ export const Login = () => {
             const salao = JSON.parse(salaoData);
             localStorage.setItem("_dSlun", salao.id);
             console.log("ID do salão salvo em _dSlun:", salao.id);
+
+            
           } else {
             console.log("Nenhum dado de salão encontrado no localStorage.");
           }
@@ -98,7 +100,22 @@ export const Login = () => {
   return (
     <>
       {showError && message}
-      <form onSubmit={onFinish} style={styles.formContainer}>
+      <form
+        onSubmit={onFinish}
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+          backgroundImage: "url('../../../assets/bg.png')", 
+          backgroundPosition:"center",
+          backgroundSize:"cover",
+          backgroundRepeat:"repeat",
+          backgroundColor: "#FF5B5B",
+          margin: 0,
+          padding: 0,
+        }}
+      >
         <div style={styles.card}>
           <h2 style={styles.title}>Entrar</h2>
           <p style={styles.subtitle}>Por favor coloque seu email e senha</p>

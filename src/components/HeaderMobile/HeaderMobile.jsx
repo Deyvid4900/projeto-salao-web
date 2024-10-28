@@ -21,8 +21,8 @@ function HeaderMobile() {
 
   return (
     <div
-      className="container-fluid p-3 d-flex justify-content-between align-items-center text-white"
-      style={{ backgroundColor: "#FF5B5B", zIndex: 50, position: "relative" }}
+      className="bg container-fluid p-3 d-flex justify-content-between align-items-center text-white"
+      style={{ zIndex: 50, position: "relative" }}
     >
       <img src="/src/assets/Group3.png" alt="" className="logo" />
 
@@ -84,12 +84,12 @@ function HeaderMobile() {
                 Agendamentos
               </li>
             </Link>
-            <Link to={"#"}>
+            {/* <Link to={"#"}>
               <li className="disable dropdown-item">
                 <span className="material-symbols-outlined">event_available</span>
                 Horários disponíveis
               </li>
-            </Link>
+            </Link> */}
             <Link to={"/ClientesMobile"}>
               <li
                 className={
@@ -146,12 +146,12 @@ function HeaderMobile() {
                 Meu Site
               </li>
             </Link>
-            <Link to={"#"}>
+            {/* <Link to={"#"}>
               <li className="disable dropdown-item " >
                 <span className="material-symbols-outlined">bar_chart_4_bars</span>
                 DashBoard
               </li>
-            </Link>
+            </Link> */}
 
             <Link to={"/"} onClick={()=>{handlelogout()}}>
               <li className="dropdown-item">

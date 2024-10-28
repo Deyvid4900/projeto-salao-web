@@ -7,13 +7,13 @@
 }
 
 .btn-success {
-  background-color: #FF5B5B;
-  border-color: #FF5B5B;
+  background-color: var(--color-salaoPrimary);
+  border-color: var(--color-salaoPrimary);
 }
 
 .btn-success:hover {
-  background-color: #b63f3f;
-  border-color: #b63f3f;
+  background-color: var(--color-salaoPrimary);
+  border-color: var(--color-salaoPrimary);
 }
 
 .overlay {
