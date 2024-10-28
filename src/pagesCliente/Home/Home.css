@@ -54,3 +54,123 @@
   align-items: center;
   padding: 0.5rem 1rem;
 }
+
+.enfeite{
+  width: 400px;
+  height: 370px;
+  background-color: #ffb3b338;
+  border-radius: 30%;
+  position: absolute;
+}
+
+:root {
+  --color-salaoPrimary: #3064a0;       /* Cor principal */
+  --color-salaoSeccundary: #7faae2;    /* Cor principal mais clara */
+  --color-salaoBody: #224672;          /* Cor principal mais escura */
+
+  --color-studioPrimary: #ff5b5b;      /* Cor secundária */
+  --color-studioSeccundary: #2f3243;   /* Cor secundária mais clara */
+  --color-studioBody: #c4c4c4;         /* Cor secundária mais escura */
+
+  /* Novas variações */
+  --color-salaoAccent: #FFD700;        /* Cor de destaque */
+  --color-salaoText: #FFFFFF;          /* Cor do texto claro */
+  --color-salaoBackground: #F4F4F4;    /* Cor de fundo claro */
+
+  --color-studioAccent: #32CD32;       /* Cor de destaque secundária */
+  --color-studioText: #000000;         /* Cor do texto escuro */
+  --color-studioBackground: #FAFAFA;   /* Cor de fundo secundário claro */
+  
+  /* Bordas */
+  --border-radius: 4px;                /* Raio das bordas */
+  --border-color: rgba(0, 0, 0, 0.1);  /* Cor da borda */
+}
+
+/* Estilos dos botões */
+.btnPrimary {
+  background-color: var(--color-salaoPrimary);
+  color: var(--color-salaoText);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.btnPrimary:hover {
+  background-color: var(--color-salaoSeccundary);
+  transform: scale(1.05); /* Efeito de zoom */
+}
+
+.btnSeccundary {
+  background-color: var(--color-salaoSeccundary);
+  color: var(--color-salaoText);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.btnSeccundary:hover {
+  background-color: var(--color-salaoPrimary);
+  transform: scale(1.05); /* Efeito de zoom */
+}
+
+.btnAccent {
+  background-color: var(--color-salaoAccent);
+  color: var(--color-salaoText);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.btnAccent:hover {
+  background-color: #FFC107; /* Uma cor de destaque diferente */
+  transform: scale(1.05); /* Efeito de zoom */
+}
+
+/* Adicionando botões para o estúdio */
+.btnStudioPrimary {
+  background-color: var(--color-studioPrimary);
+  color: var(--color-studioText);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.btnStudioPrimary:hover {
+  background-color: var(--color-studioSeccundary);
+  transform: scale(1.05); /* Efeito de zoom */
+}
+
+.btnStudioSeccundary {
+  background-color: var(--color-studioSeccundary);
+  color: var(--color-studioText);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.btnStudioSeccundary:hover {
+  background-color: var(--color-studioPrimary);
+  transform: scale(1.05); /* Efeito de zoom */
+}
+
+.btnStudioAccent {
+  background-color: var(--color-studioAccent);
+  color: var(--color-studioText);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.btnStudioAccent:hover {
+  background-color: #228B22; /* Uma cor de destaque diferente */
+  transform: scale(1.05); /* Efeito de zoom */
+}
+
+/* Estilo de fundo */
+body {
+  background-color: var(--color-salaoBackground);
+}
+
+.studioBackground {
+  background-color: var(--color-studioBackground);
+}

@@ -302,7 +302,7 @@ function HomeCliente() {
                 {/* Botão de Agendar */}
                 <div className="">
                   <button
-                    className="btn btnPrimary text-white"
+                    className="btn btnPrimary btn-Primary text-white"
                     style={{
                       padding: "2px 8px",
                       borderRadius: "8px",
