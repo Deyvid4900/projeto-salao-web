@@ -1,17 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  fetchAllRequest,
   setServico,
-  setLoading,
   updateServico,
   updateServicoBehavior,
   deleteServico,
-  createServicoRequest,
 } from "../../store/modules/servicos/servicosSlice";
 import util from "../../services/util";
 import RemindIcon from "@rsuite/icons/legacy/Remind";
-import { Spinner } from "react-bootstrap";
 import moment from "moment";
 import "moment/locale/pt-br";
 import { Modal, Button, Drawer, Form, Loader } from "rsuite";

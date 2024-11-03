@@ -31,6 +31,7 @@ export const AuthProvider = ({ children }: IAuthProvider) => {
       token: response.token,
       email: response.email,
       id: response.id,
+      tipo: response.tipo
     };
 
     setUser(payload.id);

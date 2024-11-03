@@ -503,7 +503,7 @@ export const ColaboradoresMobile = () => {
       >
         <span className="material-symbols-outlined text-white">add</span>
       </button>
-
+      {/* Modal confirmação */}
       <Modal
         backdrop="static"
         role="alertdialog"

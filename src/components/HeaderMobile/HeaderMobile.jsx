@@ -4,11 +4,12 @@ import "./HeaderMobile.css";
 
 function HeaderMobile() {
   const location = useLocation();
+  const { tipo } = JSON.parse(localStorage.getItem("u"));
 
   function handlelogout() {
-    const keysToRemove = ['u', '_dSlun'];
+    const keysToRemove = ["u", "_dSlun"];
 
-    keysToRemove.forEach(key => {
+    keysToRemove.forEach((key) => {
       if (localStorage.getItem(key)) {
         localStorage.removeItem(key);
         console.log(`Chave ${key} removida do localStorage.`);
@@ -17,7 +18,6 @@ function HeaderMobile() {
       }
     });
   }
-
 
   return (
     <div
@@ -102,32 +102,40 @@ function HeaderMobile() {
                 Clientes
               </li>
             </Link>
-            <Link to={"/ColaboradoresMobile"}>
-              <li
-                className={
-                  location.pathname === "/ColaboradoresMobile"
-                    ? "active dropdown-item"
-                    : "dropdown-item"
-                }
-              >
-                <span className="material-symbols-outlined">groups</span>
-                Colaboradores
-              </li>
-            </Link>
-            <Link to={"/ServicosMobile"}>
-              <li
-                className={
-                  location.pathname === "/ServicosMobile"
-                    ? "active dropdown-item"
-                    : "dropdown-item"
-                }
-              >
-                <span className="material-symbols-outlined">
-                  design_services
-                </span>
-                Serviços
-              </li>
-            </Link>
+            {tipo == "Salao" ? (
+              <Link to={"/ColaboradoresMobile"}>
+                <li
+                  className={
+                    location.pathname === "/ColaboradoresMobile"
+                      ? "active dropdown-item"
+                      : "dropdown-item"
+                  }
+                >
+                  <span className="material-symbols-outlined">groups</span>
+                  Colaboradores
+                </li>
+              </Link>
+            ) : (
+              ""
+            )}
+            {tipo == "Salao" ? (
+              <Link to={"/ServicosMobile"}>
+                <li
+                  className={
+                    location.pathname === "/ServicosMobile"
+                      ? "active dropdown-item"
+                      : "dropdown-item"
+                  }
+                >
+                  <span className="material-symbols-outlined">
+                    design_services
+                  </span>
+                  Serviços
+                </li>
+              </Link>
+            ) : (
+              ""
+            )}
             <Link to={"/HorariosMobile"}>
               <li
                 className={
@@ -153,7 +161,12 @@ function HeaderMobile() {
               </li>
             </Link> */}
 
-            <Link to={"/"} onClick={()=>{handlelogout()}}>
+            <Link
+              to={"/"}
+              onClick={() => {
+                handlelogout();
+              }}
+            >
               <li className="dropdown-item">
                 <span className="material-symbols-outlined">logout</span>
                 Sair

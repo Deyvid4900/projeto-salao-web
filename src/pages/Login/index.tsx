@@ -4,6 +4,7 @@ import { useAuth } from "../../context/AuthProvider/useAuth";
 import { Notification, Message, useToaster } from "rsuite";
 import styles from "./styles";
 import { checkLocalStorageKeysFromLogin } from "../../services/util";
+import { useDispatch } from "react-redux";
 
 export const Login = () => {
   const [active, setActive] = useState(false);
@@ -11,6 +12,8 @@ export const Login = () => {
   const [showError, setShowError] = useState(false);
   const toaster = useToaster();
   const navigate = useNavigate();
+  
+  const dispatch = useDispatch();
 
   const message = (
     <Notification type="error" header="Erro de autenticação">
@@ -30,7 +33,7 @@ export const Login = () => {
     const email = formData.get("email");
     const password = formData.get("password");
 
-    setActive(true); // Mostra o spinner enquanto carrega
+    setActive(true);
 
     try {
       // Valida se a autenticação foi bem-sucedida
@@ -54,7 +57,9 @@ export const Login = () => {
             </div>
           </div>;
 
+          
           navigate("/AgendamentosMobile");
+          
 
           // Recupera o valor de 'u' do localStorage
           const salaoData = localStorage.getItem("u");
@@ -63,8 +68,9 @@ export const Login = () => {
             const salao = JSON.parse(salaoData);
             localStorage.setItem("_dSlun", salao.id);
             console.log("ID do salão salvo em _dSlun:", salao.id);
-
-            
+            dispatch({
+              type:"Salao/GetSalao"
+            })
           } else {
             console.log("Nenhum dado de salão encontrado no localStorage.");
           }
@@ -96,32 +102,59 @@ export const Login = () => {
       setActive(false); // Esconde o spinner após a finalização
     }
   }
+  
 
   return (
-    <>
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #ff5b5b 0%, #2f3243 100%)',
+      margin: 0,
+      padding: 0,
+      fontFamily: 'Arial, sans-serif'
+    }}>
       {showError && message}
-      <form
+      <form 
         onSubmit={onFinish}
         style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          minHeight: "100vh",
-          backgroundImage: "url('../../../assets/bg.png')", 
-          backgroundPosition:"center",
-          backgroundSize:"cover",
-          backgroundRepeat:"repeat",
-          backgroundColor: "#FF5B5B",
-          margin: 0,
-          padding: 0,
+          width: '100%',
+          maxWidth: '400px',
+          padding: '40px',
+          borderRadius: '20px',
+          boxShadow: '0 15px 35px rgba(0,0,0,0.1)',
+          background: '#FFF', // --color-studioBody
+          textAlign: 'center'
         }}
       >
-        <div style={styles.card}>
-          <h2 style={styles.title}>Entrar</h2>
-          <p style={styles.subtitle}>Por favor coloque seu email e senha</p>
+        <div>
+          <h2 style={{
+            color: '#333',
+            marginBottom: '20px',
+            fontSize: '2rem',
+            fontWeight: 'bold'
+          }}>
+            Entrar
+          </h2>
+          <p style={{
+            color: '#666',
+            marginBottom: '30px',
+            fontSize: '1rem'
+          }}>
+            Por favor coloque seu email e senha
+          </p>
 
-          <div style={styles.inputGroup}>
-            <label htmlFor="email" style={styles.label}>
+          <div style={{
+            marginBottom: '20px',
+            textAlign: 'left'
+          }}>
+            <label htmlFor="email" style={{
+              display: 'block',
+              marginBottom: '10px',
+              color: '#333',
+              fontWeight: '600'
+            }}>
               Email
             </label>
             <input
@@ -129,12 +162,28 @@ export const Login = () => {
               id="email"
               name="email"
               required
-              style={styles.input}
+              style={{
+                width: '100%',
+                padding: '12px 15px',
+                border: '1px solid #ddd',
+                borderRadius: '10px',
+                fontSize: '1rem',
+                transition: 'all 0.3s ease'
+              }}
+              placeholder="Digite seu email"
             />
           </div>
 
-          <div style={styles.inputGroup}>
-            <label htmlFor="password" style={styles.label}>
+          <div style={{
+            marginBottom: '20px',
+            textAlign: 'left'
+          }}>
+            <label htmlFor="password" style={{
+              display: 'block',
+              marginBottom: '10px',
+              color: '#333',
+              fontWeight: '600'
+            }}>
               Senha
             </label>
             <input
@@ -142,30 +191,67 @@ export const Login = () => {
               id="password"
               name="password"
               required
-              style={styles.input}
+              style={{
+                width: '100%',
+                padding: '12px 15px',
+                border: '1px solid #ddd',
+                borderRadius: '10px',
+                fontSize: '1rem',
+                transition: 'all 0.3s ease'
+              }}
+              placeholder="Digite sua senha"
             />
           </div>
 
-          <div style={styles.checkboxGroup}>
+          <div style={{
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: '20px'
+          }}>
             <input
               type="checkbox"
               id="remember"
               name="remember"
-              style={styles.checkbox}
+              style={{
+                marginRight: '10px',
+                accentColor: '#ff5b5b' // --color-studioPrimary
+              }}
             />
-            <label htmlFor="remember" style={styles.checkboxLabel}>
+            <label htmlFor="remember" style={{
+              color: '#666',
+              fontSize: '0.9rem'
+            }}>
               Lembrar Senha
             </label>
           </div>
 
-          <button type="submit" style={styles.button} disabled={active}>
-            Login
+          <button 
+            type="submit" 
+            disabled={active}
+            style={{
+              width: '100%',
+              padding: '12px',
+              background: 'linear-gradient(135deg, #ff5b5b 50%, #2f3243 100%)', // --color-studioPrimary
+              color: 'white',
+              border: 'none',
+              borderRadius: '10px',
+              fontSize: '1rem',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease',
+              opacity: active ? 0.6 : 1
+            }}
+          >
+            {active ? 'Carregando...' : 'Entrar'}
           </button>
 
-          <hr style={styles.divider} />
+          <hr style={{
+            margin: '30px 0',
+            border: 'none',
+            borderTop: '1px solid #ddd'
+          }} />
         </div>
       </form>
-    </>
+    </div>
   );
 };
 

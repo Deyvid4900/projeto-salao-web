@@ -1,10 +1,7 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import "./App.css";
-
 import HomeCliente from "./pagesCliente/Home/Home";
 import AgendamentoPage from "./pagesCliente/Agendamento/Agendamento";
 import Home from "./pages/Home";
-import { ProtectedLayout } from "./components/ProtectedLayout";
 import { AuthProvider } from "./context/AuthProvider";
 import Login from "./pages/Login/index";
 import Cliente from "./pages/Cliente";
@@ -13,15 +10,14 @@ import Colaborador from "./pages/Colaborador";
 import Horario from "./pages/Horarios/index";
 import { Provider } from "react-redux";
 import store from "./store/store";
-import HeaderMobile from "./components/HeaderMobile/HeaderMobile";
 import ClienteMobile from "./pagesMobile/ClienteMobile/ClienteMobile";
 import HomeMobile from "./pagesMobile/HomeMobile/HomeMobile";
 import ColaboradorMobile from "./pagesMobile/ColaboradorMobile/ColaboradorMobile";
-import HorariosAtendimento from "./pages/Horarios/index";
 import HorariosAtendimentoMobile from "./pagesMobile/HorarioMobile/HorarioMobile";
 import ServicosMobile from "./pagesMobile/ServicosMobile/ServicosMobile";
 import Agendados from "./pagesCliente/Agendados/Agendados";
 import ProtectedRoute from "./components/protectedRoute";
+import SalonForm  from "./pages/CreateSalao/createSalao";
 
 function App() {
   return (
@@ -32,6 +28,7 @@ function App() {
             {/* Rotas que não precisam de autenticação */}
             <Route path="Salao/:nome" element={<HomeCliente />} />
             <Route path="/Agendados" element={<Agendados />} />
+            <Route path="/Admin/SalaoCreate/Adm" element={<SalonForm />} />
 
             {/* Rotas que precisam de autenticação */}
             <Route path="/" element={<Login />} />

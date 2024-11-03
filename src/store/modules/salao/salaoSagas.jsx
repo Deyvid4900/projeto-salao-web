@@ -4,6 +4,7 @@ import {
   fetchSalaoRequest,
   fetchSalaoSuccess,
   fetchSalaoFailure,
+  setCurrentSalao,
 } from './salaoSlice';
 
 function* fetchSalaoSaga(action) {
@@ -17,9 +18,21 @@ function* fetchSalaoSaga(action) {
     yield put(fetchSalaoFailure(error.message));
   }
 }
+function* getSalao() {
+  const {id} = JSON.parse(localStorage.getItem('u'))
+  try {
+    const { data } = yield call(api.post, `/salao/filter/${id}`); // Utilizando api configurado
+    console.log(data)
+    yield put(setCurrentSalao(data.salao));
+
+  } catch (error) {
+    yield put(fetchSalaoFailure(error.message));
+  }
+}
 
 function* watchFetchAll() {
   yield takeLatest(fetchSalaoRequest.type, fetchSalaoSaga);
+  yield takeLatest("Salao/GetSalao", getSalao);
 }
 
 export default function* rootSaga() {

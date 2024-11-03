@@ -27,6 +27,7 @@ const HomeMobile = () => {
   const { clientes } = useSelector((state) => state.cliente);
   const { selectedServico } = useSelector((state) => state.servicos);
   const { colaboradores } = useSelector((state) => state.colaborador);
+  const { currentSalao } = useSelector((state) => state.salao);
   const [events, setEvents] = useState([]);
   const [drawerOpen, setDrawerOpen] = useState(false); // Estado do Drawer
   const [formValues, setFormValues] = useState({
@@ -49,6 +50,11 @@ const HomeMobile = () => {
 
     dispatch(fetchAllClientesRequest());
     dispatch(fetchAllColaboradores());
+
+    
+    currentSalao.type != ""?"":""
+
+
   }, [dispatch]);
 
   useEffect(() => {

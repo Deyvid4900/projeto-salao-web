@@ -20,6 +20,7 @@ const clienteSlice = createSlice({
       disabled: true,
       saving: false,
     },
+    currentClient:{},
     clientes: [],
     loading: false,
     error: null,
@@ -40,6 +41,9 @@ const clienteSlice = createSlice({
     fetchAllClientesRequest(state) {
       state.loading = true;
       state.error = null;
+    },
+    setCurrentCliente(state,action){
+      state.currentClient = action.payload;
     },
     setLoading(state,action){
       state.loading = action.payload;
@@ -77,6 +81,7 @@ const clienteSlice = createSlice({
 });
 
 export const {
+  setCurrentCliente,
   setLoading,
   fetchAllClientesRequest,
   fetchAllClientesSuccess,

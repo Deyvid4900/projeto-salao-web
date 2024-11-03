@@ -1,6 +1,15 @@
 import React, { useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { Modal, Button, Form, InputPicker, Loader } from "rsuite";
+import {
+  Modal,
+  Button,
+  Form,
+  InputPicker,
+  Loader,
+  Text,
+  useToaster,
+  Notification,
+} from "rsuite";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchAllColaboradores } from "../../store/modules/colaborador/colaboradorSlice";
 import { useNavigate } from "react-router-dom";
@@ -12,18 +21,36 @@ import {
 } from "../../store/modules/clientes/clientesSlice";
 import util from "../../services/util";
 import "./Agendamento.css";
+import {
+  setNotification,
+  updateDays,
+  updateHours,
+  updateLoading,
+  updateSelectedSpecialist,
+} from "../../store/modules/agendamento/agendamentoSlice";
 
 const AgendamentoPage = () => {
   // Estado para o dia, horário e especialista selecionados
-  const [days, setDays] = useState([]);
-  const [hours, setHours] = useState([]);
+  // const [days, setDays] = useState([]);
+  // const [hours, setHours] = useState([]);
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedHour, setSelectedHour] = useState(null);
-  const [selectedSpecialist, setSelectedSpecialist] = useState(null);
+  const [specialist, setSpecialist] = useState(null);
+  const [indexDay, setIndexDay] = useState(null);
+  const toaster = useToaster();
+
+  // const [selectedSpecialist, setSelectedSpecialist] = useState(null);
   const { colaboradoresServico } = useSelector((state) => state.colaborador);
   const { saloes } = useSelector((state) => state.salao);
   const { isModalOpen, loading } = useSelector((state) => state.cliente);
-  const { agenda } = useSelector((state) => state.agendamento);
+  const {
+    agenda,
+    selectedSpecialist,
+    days,
+    hours,
+    loadingAgendamento,
+    components,
+  } = useSelector((state) => state.agendamento);
   const location = useLocation();
   const navigate = useNavigate();
   const { servico } = location.state || {};
@@ -47,18 +74,24 @@ const AgendamentoPage = () => {
     dispatch(setLoading(false));
   }, []);
 
-  function mergeDateAndTimeWithOffset(dateString, timeObj) {
+  useEffect(() => {
+    dispatch(updateSelectedSpecialist(colaboradoresServico));
+  }, [colaboradoresServico]);
+
+  function mergeDateAndTimeWithOffset(dateString, timeString) {
     // Parse the date as a Moment.js object
     const date = moment(dateString, "YYYY-MM-DD");
 
-    // Add the time to the date
-    const dateTime = date.set({
-      hour: moment(timeObj.time, "HH:mm").hour(),
-      minute: moment(timeObj.time, "HH:mm").minute(),
-    });
+    // Parse the time and extract hours and minutes
+    const timeParts = timeString.split(":");
+    const hour = parseInt(timeParts[0], 10);
+    const minute = parseInt(timeParts[1], 10);
+
+    // Set the hour and minute on the date
+    date.set({ hour: hour, minute: minute });
 
     // Convert to UTC and subtract 3 hours
-    const utcDateTime = dateTime.utc().subtract(3, "hours");
+    const utcDateTime = date.utc().subtract(3, "hours");
 
     // Return the adjusted date and time in ISO 8601 format
     return utcDateTime.toISOString();
@@ -75,19 +108,38 @@ const AgendamentoPage = () => {
     dispatch({ type: "VERIFICAR_CLIENTE", payload: { navigate, dados } });
   };
 
+  useEffect(() => {
+    const { type, description } = components.notification;
+    if (type && description) {
+      toaster.push(
+        <Notification
+          type={type}
+          header={type === "error" ? "Erro" : "Sucesso"}
+          closable
+        >
+          {description}
+        </Notification>,
+        {
+          placement: "bottomCenter",
+          duration: 2000,
+        }
+      );
+    }
+  }, [components.notification, toaster]);
+
   const handleCadastrarCliente = () => {
-    const salao = saloes.salao || {};
+    const salao = saloes.salao || localStorage.getItem("_dSlun");
     dispatch(cadastrarClienteRequest({ ...formData, salaoId: salao._id }));
   };
 
   const getDaysAndHours = (specialist) => {
-    setSelectedSpecialist(specialist._id);
+    setSpecialist(specialist);
     dispatch({
       type: "agendamento/filterDiasDisponiveis",
       action: {
         _id: servico._id,
         dia: null,
-        colaboradorId: selectedSpecialist,
+        colaboradorId: specialist.payload[0]._id,
       },
     });
 
@@ -98,23 +150,24 @@ const AgendamentoPage = () => {
         label: day,
       };
     });
-    setDays(availableDays);
+    updateDays(availableDays);
   };
 
   const handleDaySelection = (dayId) => {
+    updateLoading(true);
     dispatch({
-      type: "agendamento/filterDiasDisponiveis",
+      type: "agendamento/filterHorasDisponiveis",
       action: {
         _id: servico._id,
         dia: selectedDay,
-        colaboradorId: selectedSpecialist,
+        colaboradorId: specialist.payload[0]._id,
+        data: dayId,
       },
     });
     setSelectedDay(dayId);
 
     // Encontrar a agenda selecionada pelo dia
     const selectedAgenda = agendaArray.find((item) => item[dayId]);
-    // console.log(agendaArray);
     if (selectedAgenda) {
       const horariosColaboradores = selectedAgenda[dayId];
       const availableHoursSet = new Set(); // Usar um Set para evitar duplicatas
@@ -144,43 +197,32 @@ const AgendamentoPage = () => {
       });
 
       // Atualizar o estado com as horas disponíveis
-      setHours(availableHours);
+      updateHours(availableHours);
     } else {
       // Caso não encontre a agenda, pode-se definir o estado como vazio
-      setHours([]);
+      updateHours([]);
     }
   };
 
-  if (loading == true) {
-    return (
-      <>
-        <div className="overlay d-flex justify-content-center align-items-center">
-          <Loader size="lg" /> {/* Loader do rsuite */}
-        </div>
+  // if (loading == true) {
+  //   return (
 
-        <style jsx>{`
-          .overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background-color: rgba(
-              128,
-              128,
-              128,
-              0,
-              2
-            ); /* Fundo cinza transparente */
-            z-index: 9999; /* Garante que o loader fique sobre os outros elementos */
-          }
-        `}</style>
-      </>
-    );
-  }
+  //   );
+  // }
 
   return (
     <div className="agendamento-container">
+      {loading == true ? (
+        <>
+          <div className="overlay d-flex justify-content-center align-items-center">
+            <Loader size="lg" /> {/* Loader do rsuite */}
+          </div>
+
+          
+        </>
+      ) : (
+        ""
+      )}
       <div>
         {/* Cabeçalho */}
         <div className="agendamento-header">
@@ -210,97 +252,112 @@ const AgendamentoPage = () => {
           </div>
         </div>
         {/* Escolha de especialista */}
-        <div className="especialista-selecao">
-          {colaboradoesArray.length === 1 ? (
-            <h4>Selecione especialista que faz o serviço</h4>
-          ) : (
-            <h4>Gostaria de escolher um especialista específico?</h4>
-          )}
-          <div className="especialista-opcoes-scroll mt-3">
-            <div
-              className={
-                colaboradoesArray.length === 1 ? "" : "especialista-opcoes"
-              }
-            >
-              {colaboradoesArray.map((specialist) => (
-                <div key={specialist._id} className="especialista-card">
-                  <div
-                    className="especialista-img-placeholder"
-                    style={{
-                      backgroundImage: `url(${util.AWS.bucketURL}/${specialist.foto})`,
-                      backgroundPosition: "center center",
-                      backgroundSize: "cover",
-                    }}
-                  ></div>
-                  <p className="mb-1">{specialist.nome}</p>
-                  <button
-                    className={`btn-especialista ${
-                      selectedSpecialist === specialist._id ? "ativo" : ""
-                    }`}
-                    onClick={() => {
-                      getDaysAndHours(specialist);
-                    }}
-                  >
-                    Escolher Especialista
-                  </button>
-                </div>
-              ))}
+        {colaboradoesArray.length == 0 ? (
+          <div className=" d-flex justify-content-center align-items-center">
+            <Loader size="lg" /> {/* Loader do rsuite */}
+          </div>
+        ) : (
+          <div className="especialista-selecao">
+            {colaboradoesArray.length === 1 ? (
+              <h4>Selecione especialista que faz o serviço</h4>
+            ) : (
+              <h4>Gostaria de escolher um especialista específico?</h4>
+            )}
+            <div className="especialista-opcoes-scroll mt-3">
+              <div
+                className={
+                  colaboradoesArray.length === 1 ? "" : "especialista-opcoes"
+                }
+              >
+                {colaboradoesArray.map((specialist) => (
+                  <div key={specialist._id} className="especialista-card">
+                    <div
+                      className="especialista-img-placeholder"
+                      style={{
+                        backgroundImage: `url(${util.AWS.bucketURL}/${specialist.foto})`,
+                        backgroundPosition: "center center",
+                        backgroundSize: "cover",
+                      }}
+                    ></div>
+                    <p className="mb-1">{specialist.nome}</p>
+                    <button
+                      className={`btn-especialista ${
+                        selectedSpecialist === specialist._id ? "ativo" : ""
+                      }`}
+                      onClick={() => {
+                        getDaysAndHours(selectedSpecialist);
+                      }}
+                    >
+                      Escolher Especialista
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
-        {/* Seção de datas */}
-        {days.length > 0 ? (
+        )}
+
+        {days.payload && days.payload.length > 0 ? (
           <div className="datas">
             <h4>Para quando você gostaria de agendar?</h4>
             <div className="dias-semana-scroll mt-3">
               <div className="dias-semana">
-                {days.map((day) => (
+                {days.payload.map((day, index) => (
                   <button
-                    key={day.id} // Aqui o key deve ser único
-                    className={`btn-dia ${selectedDay === day.id ? "ativo" : ""}`}
-                    onClick={() => handleDaySelection(day.id)}
+                    key={index} // Usando o índice como key já que não há um `id`
+                    className={`btn-dia ${selectedDay === day ? "ativo" : ""}`}
+                    onClick={() => {
+                      handleDaySelection(day);
+                      setIndexDay(index);
+                    }}
                   >
-                    {new Date(day.label).getUTCDate()}
+                    {new Date(day).getUTCDate()}/
+                    {new Date(day).getUTCMonth() + 1}
                   </button>
                 ))}
               </div>
             </div>
           </div>
+        ) : loadingAgendamento == true ? (
+          <div className=" d-flex justify-content-center align-items-center">
+            <Loader size="lg" />
+          </div>
         ) : (
           ""
         )}
-        {/* Seção de horários */}
-        {hours.length > 0 ? (
+        {hours.payload && hours.payload.length > 0 ? (
           <div className="horarios">
             <h4>Que horas?</h4>
-            <div className="horas-disponiveis-scroll mt-3">
-              {/* {console.log(hours)} */}
-              {Array.isArray(hours) ? (
+            {loadingAgendamento == true ? (
+              <div className=" d-flex justify-content-center align-items-center">
+                <Loader size="lg" />
+              </div>
+            ) : (
+              <div className="horas-disponiveis-scroll mt-3">
                 <div className="horas-disponiveis">
-                  {hours.map((hour) => (
+                  {hours.payload.map((hour, index) => (
                     <button
-                      key={hour.id}
+                      key={index} // Usando o índice como key já que não há um `id`
                       className={`btn-hora ${
                         selectedHour === hour ? "ativo" : ""
                       }`}
                       onClick={() => setSelectedHour(hour)}
                     >
-                      {hour.time}
+                      {hour}
                     </button>
                   ))}
                 </div>
-              ) : (
-                <h4 className="pt-4" style={{ textAlign: "center" }}>
-                  Nenhum Horário disponível
-                </h4>
-              )}
-            </div>
+              </div>
+            )}
+          </div>
+        ) : hours.payload && hours.payload.length == 0 ? (
+          <div className=" d-flex justify-content-center align-items-center">
+            Sem Horários para esse dia
           </div>
         ) : (
           ""
         )}
         {/* Botão de confirmação */}
-       
         {/* Modal de cadastro */}
         <Modal open={isModalOpen} onClose={() => setOpen(false)}>
           <Modal.Body>
@@ -313,16 +370,35 @@ const AgendamentoPage = () => {
               formValue={formData}
             >
               <Form.Group controlId="nome">
-                <Form.ControlLabel>Nome</Form.ControlLabel>
-                <Form.Control name="nome" required />
+                <Form.ControlLabel>
+                  Nome{" "}
+                  <Text as="sup" color="red">
+                    *
+                  </Text>{" "}
+                </Form.ControlLabel>
+                <Form.Control
+                  placeholder="Digite seu nome (Obrigatorio)"
+                  name="nome"
+                  required
+                />
               </Form.Group>
               <Form.Group controlId="telefone">
-                <Form.ControlLabel>Telefone</Form.ControlLabel>
-                <Form.Control name="telefone" required />
+                <Form.ControlLabel>Telefone </Form.ControlLabel>
+                <Form.Control
+                  placeholder="Digite seu Telefone"
+                  type="tel"
+                  name="telefone"
+                  required
+                />
               </Form.Group>
               <Form.Group controlId="email">
                 <Form.ControlLabel>Email</Form.ControlLabel>
-                <Form.Control name="email" type="email" required />
+                <Form.Control
+                  placeholder="Digite seu Email"
+                  name="email"
+                  type="email"
+                  required
+                />
               </Form.Group>
               <Form.Group controlId="dataNascimento">
                 <Form.ControlLabel>Data de Nascimento</Form.ControlLabel>
@@ -348,7 +424,7 @@ const AgendamentoPage = () => {
           </Modal.Body>
           <Modal.Footer>
             <Button onClick={handleCadastrarCliente} appearance="primary">
-              Cadastrar e Confirmar
+              Cadastrar
             </Button>
             <Button
               onClick={() => dispatch(closeCadastroModal())}
@@ -360,11 +436,12 @@ const AgendamentoPage = () => {
         </Modal>
         <div></div>
       </div>
-      {selectedHour != undefined?(<button
+      {selectedHour != undefined ? (
+        <button
           style={{
-            bottom:0,
+            bottom: 0,
             width: "100%",
-            margin:"50px auto 5px auto"
+            margin: "0px auto 5px auto",
           }}
           className="btn-confirmar"
           onClick={() => {
@@ -372,10 +449,11 @@ const AgendamentoPage = () => {
           }}
         >
           Confirmar meu agendamento
-        </button>):""}
-      
+        </button>
+      ) : (
+        ""
+      )}
     </div>
-    
   );
 };
 

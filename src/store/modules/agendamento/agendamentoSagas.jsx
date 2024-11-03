@@ -1,41 +1,150 @@
-import { takeLatest, all, call, put } from "redux-saga/effects";
+import { takeLatest, all, call, put, delay } from "redux-saga/effects";
 import {
-  getServicosById,
   updateAgendamento,
   addAgendamento,
   addAgendamentoFailure,
   addAgendamentoSuccess,
   updateAgenda,
   updateAgendado,
+  updateDays,
+  updateHours,
+  updateLoading,
+  setNotification,
 } from "./agendamentoSlice";
 import { api } from "../../../services/api";
 import moment from "moment";
 
-function* filterDiasDisponiveis(payload) {
-  const dateToSend =
-    payload.action.dia || null
-      ? moment(payload.action.dia).format("YYYY-MM-DDTHH:mm:ssZ")
-      : moment().format("YYYY-MM-DDTHH:mm:ssZ");
+// Função que retorna os dias disponíveis
+function getAvailableDays(data) {
+  return data.agenda.map((dayObj) => Object.keys(dayObj)[0]);
+}
+
+function* filterDisponiveis(payload) {
+  const dateToSend = payload.action.dia
+    ? moment(payload.action.dia).format("YYYY-MM-DDTHH:mm:ssZ")
+    : moment().format("YYYY-MM-DDTHH:mm:ssZ");
+
   const colaboradorId = payload.action.colaboradorId || null;
   const dia = dateToSend;
-
   const { _id } = payload.action;
+
   try {
     const { data } = yield call(api.post, "agendamento/dias-disponiveis", {
       salaoId: localStorage.getItem("_dSlun"),
       data: dia,
       servicoId: _id,
-      colaboradorId,
+      colaboradorId: colaboradorId || payload.action.colaboradorId.ID,
     });
 
-    // console.log(dia);
+    // Utilizando as funções para extrair dias e horários
+    const days = getAvailableDays(data);
+    const hours = getAvailableHours(data, colaboradorId);
+
+    // Atualizar o estado com days e hours
+    yield put(updateDays(days));
+    yield put(updateHours(hours));
 
     yield put(updateAgenda(data));
   } catch (err) {
-    // Lidando com o erro se necessário
     console.error("Erro ao filtrar dias disponiveis ", err);
   }
 }
+
+function* filterHorasDisponiveis(payload) {
+  yield put(updateLoading(true));
+
+  const dateToSend = payload.action.dia
+    ? moment(payload.action.dia).format("YYYY-MM-DDTHH:mm:ssZ")
+    : moment().format("YYYY-MM-DDTHH:mm:ssZ");
+
+  const colaboradorId = payload.action.colaboradorId || null;
+  const dia = payload.action.data; // Data a ser comparada
+  const { _id } = payload.action;
+
+  try {
+    const { data } = yield call(api.post, "agendamento/horas-disponiveis", {
+      salaoId: localStorage.getItem("_dSlun"),
+      data: dia,
+      servicoId: _id,
+      colaboradorId: colaboradorId,
+    });
+    
+    // Extrai os horários disponíveis para o colaborador específico
+    const horariosFiltrados = data.agenda[dia]?.[colaboradorId]?.map((slot) => slot.time) || [];
+    
+    // Se precisar de um log para verificar os horários filtrados
+    console.log(horariosFiltrados);
+    
+
+    // Atualiza o estado com os horários filtrados
+    yield put(updateHours(horariosFiltrados));
+    yield put(updateLoading(false));
+  } catch (err) {
+    console.error("Erro ao filtrar dias disponiveis ", err);
+    yield put(updateLoading(false));
+  }
+}
+
+// function* filterDiasDisponiveis(payload) {
+//   const dateToSend = payload.action.dia
+//     ? moment(payload.action.dia).format("YYYY-MM-DDTHH:mm:ssZ")
+//     : moment().format("YYYY-MM-DDTHH:mm:ssZ");
+
+//   const colaboradorId = payload.action.colaboradorId || null;
+//   const dia = dateToSend;
+//   const { _id } = payload.action;
+
+//   try {
+//     yield put(updateLoading(true));
+//     const { data } = yield call(api.post, "agendamento/dias-disponiveis", {
+//       salaoId: localStorage.getItem("_dSlun"),
+//       data: dia,
+//       servicoId: _id,
+//       colaboradorId: colaboradorId || payload.action.colaboradorId.ID,
+//     });
+//     // Utilizando as funções para extrair dias e horários
+//     const days = getAvailableDays(data);
+
+//     // Atualizar o estado com days e hours
+//     yield put(updateDays(days));
+
+//     yield put(updateAgenda(data));
+//     yield put(updateLoading(false));
+//   } catch (err) {
+//     console.error("Erro ao filtrar dias disponiveis ", err);
+//   }
+// }
+function* filterDiasDisponiveis(payload) {
+  const dateToSend = payload.action.dia
+    ? moment(payload.action.dia).format("YYYY-MM-DDTHH:mm:ssZ")
+    : moment().format("YYYY-MM-DDTHH:mm:ssZ");
+
+  const colaboradorId = payload.action.colaboradorId || null;
+  const dia = dateToSend;
+  const { _id } = payload.action;
+
+  try {
+    yield put(updateLoading(true));
+    const { data } = yield call(api.post, "agendamento/dias-disponiveis", {
+      salaoId: localStorage.getItem("_dSlun"),
+      data: dia,
+      servicoId: _id,
+      colaboradorId: colaboradorId || payload.action.colaboradorId.ID,
+    });
+    // Utilizando as funções para extrair dias e horários
+    console.log(data)
+    const days = getAvailableDays(data);
+
+    // Atualizar o estado com days e hours
+    yield put(updateDays(days));
+
+    yield put(updateAgenda(data));
+    yield put(updateLoading(false));
+  } catch (err) {
+    console.error("Erro ao filtrar dias disponiveis ", err);
+  }
+}
+
 
 function* getAgendamentos(payload) {
   const clienteId = payload.payload;
@@ -53,14 +162,11 @@ function* getAgendamentos(payload) {
 }
 
 function* filterAgendamentos({ range }) {
-  // console.log(range);
   try {
     const { data: res } = yield call(api.post, "/agendamento/filter", {
       salaoId: localStorage.getItem("_dSlun"),
       range,
     });
-
-    // console.log(res);
 
     yield put(updateAgendamento({ agendamentos: res.agendamentos }));
   } catch (err) {
@@ -70,21 +176,65 @@ function* filterAgendamentos({ range }) {
 }
 
 function* handleAddAgendamento(action) {
-  // console.log(action)
+  const { payload } = action;
+  console.log(action);
+
   try {
-    console.log(action.payload);
-    const response = yield call(api.post, "/agendamento", action.payload); // Chama a API para criar o agendamento
+    // Verifica se colaboradorId existe e se possui o primeiro item
+    const colaboradorId = payload.payload.colaboradorId.payload[0]._id;
+
+    const response = yield call(api.post, "/agendamento", {
+      ...payload.payload,
+      colaboradorId,
+    }); // Chama a API para criar o agendamento
+
     yield put(addAgendamentoSuccess(response.data)); // Dispara sucesso com a resposta da API
-    yield call(filterAgendamentos);
+
+    if (response.error) {
+      yield put(
+        setNotification({
+          type: "error",
+          description: response.error.message,
+        })
+      );
+    } else {
+      yield put(
+        setNotification({
+          type: response.data.error ? "error" : "success",
+          description: response.data.message,
+        })
+      );
+      console.log(response.data);
+      if (payload.navigate != undefined) {
+        yield call(payload.navigate, "/Agendados"); // Navega para a página "Agendados"
+      }
+      // Navega para a página "Agendados"
+      yield delay(2050);
+      yield put(
+        setNotification({
+          type: "",
+          description: "",
+        })
+      );
+    }
   } catch (error) {
-    yield put(addAgendamentoFailure(error.message)); // Dispara falha com a mensagem de erro
+    console.log(error);
+    yield put(addAgendamentoFailure(error));
+    yield put(
+      setNotification({
+        type: "error",
+        description: error.message,
+      })
+    );
   }
 }
 
 export default function* agendamentoSagas() {
   yield all([
     takeLatest("agendamento/filterAgendamentos", filterAgendamentos),
+    takeLatest("agendamento/filterDisponiveis", filterDisponiveis),
     takeLatest("agendamento/filterDiasDisponiveis", filterDiasDisponiveis),
+    takeLatest("agendamento/filterHorasDisponiveis", filterHorasDisponiveis),
     takeLatest("agendamento/getAgendamento", getAgendamentos),
     takeLatest(addAgendamento.type, handleAddAgendamento),
   ]);

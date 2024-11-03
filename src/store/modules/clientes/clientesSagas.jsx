@@ -10,9 +10,14 @@ import {
   cadastrarClienteSuccess,
   cadastrarClienteFailure,
   setLoading,
+  selectedCliente,
+  setCurrentCliente,
 } from "./clientesSlice";
-import { addAgendamento } from "../agendamento/agendamentoSlice";
-import { delay } from 'redux-saga/effects';
+import {
+  addAgendamento,
+  setNotification,
+} from "../agendamento/agendamentoSlice";
+import { delay } from "redux-saga/effects";
 
 // Saga para verificar o localStorage
 function* verificarCliente(action) {
@@ -21,18 +26,16 @@ function* verificarCliente(action) {
   const clienteId = localStorage.getItem("cl_idtor");
 
   // Verifica se clienteId é nulo, undefined ou 'undefined'
-  if (!clienteId || clienteId === "undefined") {
+  if (!clienteId || clienteId == undefined) {
     yield put(openCadastroModal()); // Abre o modal para cadastro
   } else {
-    yield put(setLoading(true))
-    yield put(addAgendamento(dados));
-    
+    yield put(setLoading(true));
+    yield put(addAgendamento({ payload: dados, navigate }));
     yield delay(2000);
-    yield put(setLoading(false))
-    // Redireciona para a rota /Agendados
-    yield call(navigate, "/Agendados"); // Usa o navigate para redirecionar
+    yield put(setLoading(false));
   }
 }
+
 function* fetchAllClientesSaga() {
   try {
     const { data } = yield call(
@@ -63,11 +66,30 @@ function* cadastrarClienteSaga(action) {
     console.log(data);
     const clienteId = data.clienteId;
     localStorage.setItem("cl_idtor", clienteId); // Armazena o cliente no localStorage
-    yield put(cadastrarClienteSuccess(data)); // Sucesso no cadastro
-    yield put(closeCadastroModal()); // Fecha o modal
-    // Continue o processo de confirmação após cadastro
+
+    if (!data.error) {
+      console.log(req)
+      yield put(setCurrentCliente(req));
+      yield put(
+        setNotification({
+          type: "success",
+          description: "Cliente salvo com sucesso!",
+        })
+      );
+      yield put(cadastrarClienteSuccess(data)); // Sucesso no cadastro
+      yield put(closeCadastroModal()); // Fecha o modal
+      // Continue o processo de confirmação após cadastro
+      // yield call(navigate, "/Agendados");
+    }
   } catch (error) {
     yield put(cadastrarClienteFailure(error.message));
+
+    yield put(
+      setNotification({
+        type: "error",
+        description: error.message,
+      })
+    );
   }
 }
 

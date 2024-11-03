@@ -21,11 +21,15 @@ const salaoSlice = createSlice({
       state.loading = false;
       state.error = action.payload; // Armazena a mensagem de erro
     },
+    setCurrentSalao: (state, action) => {
+      state.currentSalao = {...action.payload, senha:""};
+    },
   },
 });
 
 // Exportando as ações
 export const {
+  setCurrentSalao,
   fetchSalaoRequest,
   fetchSalaoSuccess,
   fetchSalaoFailure,
