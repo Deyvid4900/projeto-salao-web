@@ -89,7 +89,20 @@ export const Login = () => {
               <span className="visually-hidden">Loading...</span>
             </div>
           </div>;
+          
+          const salaoData = localStorage.getItem("u");
 
+          if (salaoData) {
+            const salao = JSON.parse(salaoData);
+            localStorage.setItem("_dSlun", salao.id);
+            console.log("ID do salão salvo em _dSlun:", salao.id);
+            dispatch({
+              type:"Salao/GetSalao"
+            })
+          } else {
+            console.log("Nenhum dado de salão encontrado no localStorage.");
+          }
+  
           navigate("/Home");
         }
       } else {

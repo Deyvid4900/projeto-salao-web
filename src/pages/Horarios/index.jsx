@@ -201,7 +201,7 @@ const HorariosAtendimento = () => {
       <Sidebar />
       <div
         className="d-flex flex-column justify-content-center align-items-center"
-        style={{ maxHeight: "calc(100vh - 95px)" }}
+        style={{ maxHeight: "calc(70px + 100vh)" }}
       >
         <div className="mt-5" style={{ width: "95%" }}>
           <div className="col p-1 overflow-auto h-100">
@@ -410,7 +410,7 @@ const HorariosAtendimento = () => {
                           })
                         );
                       }}
-                      className="btn btn-primary btn-lg"
+                      className="btn btn-primary btn-md"
                       style={{ position: "relative", zIndex: "20" }}
                     >
                       <span className="mdi mdi-plus"></span> Novo Horario

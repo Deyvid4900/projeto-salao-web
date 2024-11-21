@@ -5,7 +5,7 @@ function Header() {
   const location = useLocation();
   return (
     <div
-      className="container-fluid p-3 d-flex flex-row justify-content-between align-items-center text-white"
+      className="container-fluid p-2 d-flex flex-row justify-content-between align-items-center text-white"
       style={{ backgroundColor: "#FF5B5B", zIndex: 10, position: "relative" }}
     >
       <img src={"../../../assets/Group3.png" || "../../assets/Group3.png"} alt="" />

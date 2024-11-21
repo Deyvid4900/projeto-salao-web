@@ -128,6 +128,7 @@ function* saveColaboradorSaga(action) {
 }
 
 export function* filterColaborador({ payload }) {
+  
   const { form } = yield select((state) => state.colaborador);
 
   try {
@@ -151,7 +152,6 @@ export function* filterColaborador({ payload }) {
     if (res.colaboradores.length > 0) {
       yield put(
         updateColaborador({
-          colaborador: res.colaboradores[0],
           form: { ...form, filtering: false, disabled: true },
         })
       );

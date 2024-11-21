@@ -49,6 +49,10 @@ export function checkLocalStorageKeysFromLogin() {
 
   if (!missingKey) {
     // Se alguma chave estiver faltando, redireciona para a página inicial
-    window.location.href = '/AgendamentosMobile';
+    if (window.innerWidth < 700) {
+      window.location.href = '/AgendamentosMobile';
+    }else{
+      window.location.href = '/Home';
+    }
   }
 }

@@ -1,9 +1,12 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./HeaderMobile.css";
+import { useSelector } from "react-redux";
 
 function HeaderMobile() {
   const location = useLocation();
+  const { currentSalao } = useSelector((state) => state.salao);
+
   const { tipo } = JSON.parse(localStorage.getItem("u"));
 
   function handlelogout() {
@@ -90,7 +93,8 @@ function HeaderMobile() {
                 Horários disponíveis
               </li>
             </Link> */}
-            <Link to={"/ClientesMobile"}>
+           
+            {tipo == "Salao"?( <Link to={"/ClientesMobile"}>
               <li
                 className={
                   location.pathname === "/ClientesMobile"
@@ -101,7 +105,8 @@ function HeaderMobile() {
                 <span className="material-symbols-outlined">person</span>
                 Clientes
               </li>
-            </Link>
+            </Link>):""}
+            
             {tipo == "Salao" ? (
               <Link to={"/ColaboradoresMobile"}>
                 <li
@@ -147,8 +152,11 @@ function HeaderMobile() {
                 <span className="material-symbols-outlined">schedule</span>
                 Horários
               </li>
-            </Link>
-            <Link to={"/Salao/Deyvid-Barber"}>
+            </Link>{
+
+
+            }
+            <Link to={currentSalao ?`/Salao/${currentSalao.nome}`:'/#'}>
               <li className="dropdown-item">
                 <span className="material-symbols-outlined">Arrow_Forward</span>
                 Meu Site

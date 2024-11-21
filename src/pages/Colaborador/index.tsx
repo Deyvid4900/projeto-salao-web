@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import Header from "../../components/Header/Header";
 import Sidebar from "../../components/Sidebar/Sidebar";
 import "../../App";
-import moment, { duration } from "moment";
 import BG from "../../components/background/background";
 import {
   Table,
@@ -18,12 +17,12 @@ import {
 import "rsuite/dist/rsuite-no-reset.min.css";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  setColaboradores,
   fetchAllColaboradores,
   setColaborador,
   saveColaborador,
-  filterColaborador,
+  updateColaborador,
 } from "../../store/modules/colaborador/colaboradorSlice";
+import util from "../../services/util";
 
 const Textarea = React.forwardRef((props, ref: any) => (
   <Input {...props} as="textarea" ref={ref} />
@@ -39,7 +38,6 @@ export const Colaborador = () => {
   const [overflow, setOverflow] = useState(true);
   const [open, setOpen] = useState(false);
   const [openInformation, setOpenInformation] = useState(false);
-  const [type, setType] = useState("info");
   const toaster = useToaster();
   const [formData, setFormData] = useState({
     _id: undefined,
@@ -50,7 +48,7 @@ export const Colaborador = () => {
     email: "",
     telefone: "",
   });
-
+ 
   useEffect(() => {
     dispatch(fetchAllColaboradores());
   }, [dispatch]);
@@ -78,21 +76,10 @@ export const Colaborador = () => {
     }
   }, [components.notification, toaster]);
 
-  useEffect(() => {
-    if (colaborador) {
-      setFormData({
-        _id: colaborador._id,
-        nome: colaborador.nome || "",
-        sexo: colaborador.sexo || "",
-        dataNascimento: colaborador.dataNascimento
-          ? colaborador.dataNascimento
-          : "",
-        dataCadastro: colaborador.dataCadastro ? colaborador.dataCadastro : "",
-        email: colaborador.email || "",
-        telefone: colaborador.telefone || "",
-      });
-    }
-  }, [colaborador]);
+
+  const handleEdit = () =>{
+   
+  }
 
   const handleInputChange = (value, name) => {
     console.log(value);
@@ -196,11 +183,24 @@ export const Colaborador = () => {
                     <Button
                       appearance="primary"
                       onClick={(e) => {
-                        e.stopPropagation(); // Prevent the event from bubbling up
-                        dispatch(setColaborador(rowData)); // Usando a action de seleção
+                        dispatch(setColaborador({...rowData})); // Usando a action de seleção
+                        handleEdit();
                         // Usando a action de seleção
-                        setOpen(true);
+
+                        setFormData({
+                          _id: colaborador._id,
+                          nome: colaborador.nome || "",
+                          sexo: colaborador.sexo || "",
+                          dataNascimento: colaborador.dataNascimento
+                            ? colaborador.dataNascimento
+                            : "",
+                          dataCadastro: colaborador.dataCadastro ? colaborador.dataCadastro : "",
+                          email: colaborador.email || "",
+                          telefone: colaborador.telefone || "",
+                        });
                         setOpenInformation(false);
+                        setOpen(true);
+                        
                       }}
                     >
                       Editar
@@ -292,7 +292,10 @@ export const Colaborador = () => {
               <img
                 className="rounded-circle"
                 style={{ width: "200px", height: "200px", objectFit: "cover" }}
-                src={colaborador.foto || "default-image-url.jpg"}
+                src={
+                  `${util.AWS.bucketURL}/${colaborador.foto}` ||
+                  "default-image-url.jpg"
+                }
                 alt={`${colaborador.nome} Foto`}
               />
               <h4 className="mt-3">{colaborador.nome}</h4>
@@ -350,7 +353,7 @@ export const Colaborador = () => {
                   <Form.Control
                     name="dataNascimento"
                     type="date"
-                    value={formData.dataNascimento}
+                    value={Date.parse(formData.dataNascimento)}
                     disabled
                     style={{ fontSize: "14pt" }}
                   />

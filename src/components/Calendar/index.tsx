@@ -6,11 +6,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { filterAgendamentos } from "../../store/modules/agendamento/agendamentoActions"; // Action correta para chamar a saga
 import { Spinner } from "react-bootstrap";
 
+import { checkLocalStorageKeys } from "../../services/util";
+
 // Configura o localizador de datas com Moment.js
 const localizer = momentLocalizer(moment);
 
 const MyCalendar = () => {
   const dispatch = useDispatch();
+  
   const { agendamentos, loading } = useSelector(
     (state: any) => state.agendamento
   ); // Ajustando nome correto no slice
@@ -19,6 +22,8 @@ const MyCalendar = () => {
 
   // Busca agendamentos ao montar o componente
   useEffect(() => {
+
+    checkLocalStorageKeys();
     const periodo = {
       start: moment().startOf("M").format("YYYY-MM-DD"),
       end: moment().endOf("M").format("YYYY-MM-DD"),
@@ -89,7 +94,7 @@ const MyCalendar = () => {
   // Renderiza o calendário
   return (
     <div
-      className="myCustomHeight"
+      className="myCustomHeight p-4"
       style={{
         zIndex: 2,
         position: "relative",
@@ -97,7 +102,6 @@ const MyCalendar = () => {
         backgroundColor: "rgb(255 255 255 / 68%)",
       }}
     >
-      <h2 className="mb-4 mt-0">Agendamentos</h2>
       <Calendar
         messages={{
           next: "Próximo",
