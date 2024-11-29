@@ -190,10 +190,8 @@ function HeaderMobile() {
                 Sair
               </li>
             </Link>
-            <Link className="">
-              <li className="dropdown-item">
-                <InstallButton></InstallButton>
-              </li>
+            <Link>
+              <InstallButton></InstallButton>
             </Link>
           </ul>
         </div>

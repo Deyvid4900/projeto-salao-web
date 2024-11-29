@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 const InstallButton = () => {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -37,11 +38,15 @@ const InstallButton = () => {
   };
 
   return (
-    isInstallable &&(
-    <button className="dropdown-item" onClick={handleInstallClick}>
-      Adicionar à tela inicial
-    </button>
-  )
+    isInstallable && (
+      <Link className="">
+        <li className="dropdown-item">
+          <button className="dropdown-item" onClick={handleInstallClick}>
+            Adicionar à tela inicial
+          </button>
+        </li>
+      </Link>
+    )
   );
 };
 
