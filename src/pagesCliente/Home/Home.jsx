@@ -152,13 +152,16 @@ function HomeCliente() {
           backgroundImage: `url(${selectSalao.capa})`,
           backgroundPosition: "center",
           backgroundSize: "cover",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          height: "270px",
+          position: "relative",
         }}
-        className="hero d-flex justify-content-end align-items-end"
+        className="d-flex justify-content-end align-items-end"
       >
         <div
-          className="overlay d-flex align-items-end justify-content-end"
+          className="d-flex align-items-end justify-content-end"
           style={{
-            position: "absolute",
             top: 0,
             right: 0,
             bottom: 0,
