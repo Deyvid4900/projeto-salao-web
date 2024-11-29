@@ -148,7 +148,11 @@ function HomeCliente() {
       </Nav>
 
       <div
-        style={{ backgroundImage: `url(${selectSalao.capa})`,backgroundPosition:"center" , backgroundSize:"cover" }}
+        style={{
+          backgroundImage: `url(${selectSalao.capa})`,
+          backgroundPosition: "center",
+          backgroundSize: "cover",
+        }}
         className="hero d-flex justify-content-end align-items-end"
       >
         <div
@@ -161,6 +165,12 @@ function HomeCliente() {
             left: 0,
             backgroundColor: "rgba(0, 0, 0, 0.5)", // Escurece o overlay
             zIndex: 1,
+            background: "rgba(0, 0, 0, 0.5)",
+            position: "absolute",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
           }}
         >
           <div
@@ -173,6 +183,7 @@ function HomeCliente() {
               padding: 25,
               position: "relative",
               zIndex: 2,
+              width: "100vw",
             }}
           >
             <h2 className="pt-2" style={{ fontWeight: 500 }}>
