@@ -11,13 +11,14 @@ ul{
   }
   
   :root {
-    --color-salaoPrimary: #3064a0;       /* Cor principal */
-    --color-salaoSeccundary: #7faae2;    /* Cor principal mais clara */
-    --color-salaoBody: #224672;          /* Cor principal mais escura */
+    --color-salaoPrimary: #ff5b5b;       /* Cor principal */
+    /* --color-salaoPrimary: #c4c4c4;        */
+    --color-salaoSeccundary: #2f3243;    /* Cor principal mais clara */
+    --color-salaoBody: #ff5b5b;       
   
-    --color-studioPrimary: #ff5b5b;      /* Cor secundária */
-    --color-studioSeccundary: #2f3243;   /* Cor secundária mais clara */
-    --color-studioBody: #c4c4c4;         /* Cor secundária mais escura */
+    --color-studioPrimary: #3064a0;      /* Cor secundária */
+    --color-studioSeccundary: #7faae2;   /* Cor secundária mais clara */
+    --color-studioBody: #224672;         /* Cor secundária mais escura */
   
     /* Novas variações */
     --color-salaoAccent: #FFD700;        /* Cor de destaque */
@@ -32,7 +33,6 @@ ul{
     --border-radius: 4px;                /* Raio das bordas */
     --border-color: rgba(0, 0, 0, 0.1);  /* Cor da borda */
   }
-  
   /* Estilos dos botões */
   .btnPrimary {
     background-color: var(--color-salaoPrimary);

@@ -1,10 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./HeaderMobile.css";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 function HeaderMobile() {
+  const dispatch = useDispatch();
   const location = useLocation();
+  useEffect(() => {
+    dispatch({
+      type: "Salao/GetSalao",
+    });
+  }, []);
   const { currentSalao } = useSelector((state) => state.salao);
 
   const { tipo } = JSON.parse(localStorage.getItem("u"));
@@ -93,20 +100,24 @@ function HeaderMobile() {
                 Horários disponíveis
               </li>
             </Link> */}
-           
-            {tipo == "Salao"?( <Link to={"/ClientesMobile"}>
-              <li
-                className={
-                  location.pathname === "/ClientesMobile"
-                    ? "active dropdown-item"
-                    : "dropdown-item"
-                }
-              >
-                <span className="material-symbols-outlined">person</span>
-                Clientes
-              </li>
-            </Link>):""}
-            
+
+            {tipo == "Salao" ? (
+              <Link to={"/ClientesMobile"}>
+                <li
+                  className={
+                    location.pathname === "/ClientesMobile"
+                      ? "active dropdown-item"
+                      : "dropdown-item"
+                  }
+                >
+                  <span className="material-symbols-outlined">person</span>
+                  Clientes
+                </li>
+              </Link>
+            ) : (
+              ""
+            )}
+
             {tipo == "Salao" ? (
               <Link to={"/ColaboradoresMobile"}>
                 <li
@@ -152,11 +163,9 @@ function HeaderMobile() {
                 <span className="material-symbols-outlined">schedule</span>
                 Horários
               </li>
-            </Link>{
-
-
-            }
-            <Link to={currentSalao ?`/Salao/${currentSalao.nome}`:'/#'}>
+            </Link>
+            {}
+            <Link to={currentSalao ? `/Salao/${currentSalao.nome}` : "/#"}>
               <li className="dropdown-item">
                 <span className="material-symbols-outlined">Arrow_Forward</span>
                 Meu Site

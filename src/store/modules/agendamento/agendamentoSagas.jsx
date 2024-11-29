@@ -181,10 +181,10 @@ function* handleAddAgendamento(action) {
 
   try {
     // Verifica se colaboradorId existe e se possui o primeiro item
-    const colaboradorId = payload.payload.colaboradorId.payload[0]._id;
+    const colaboradorId = payload.colaboradorId;
 
     const response = yield call(api.post, "/agendamento", {
-      ...payload.payload,
+      ...payload,
       colaboradorId,
     }); // Chama a API para criar o agendamento
 
@@ -229,6 +229,78 @@ function* handleAddAgendamento(action) {
   }
 }
 
+function* handleUpdateAgendamento(action) {
+  console.log(action)
+  const payload  = {...action.action};
+  const agendamentoId = payload.agendamentoInfo._id; // Extrai o ID do agendamento
+
+  try {
+    // Verifica se colaboradorId existe
+    const colaboradorId = payload.colaboradorId ||payload.agendamentoInfo.colaboradorId._id  ;
+    const clienteId = payload.clienteId ||payload.agendamentoInfo.clienteId._id  ;
+    const servicoId = payload.servicoId ||payload.agendamentoInfo.servicoId._id  ;
+    const salaoId = payload.salaoId ||payload.agendamentoInfo.salaoId  ;
+
+    // Faz a chamada para atualizar o agendamento
+    const response = yield call(api.put, `/agendamento/${agendamentoId}`, {
+      ...payload,
+      agendamentoInfo: {
+        ...payload.agendamentoInfo,
+        colaboradorId,
+      },
+      colaboradorId,
+      clienteId,
+      servicoId,
+      salaoId
+    });
+
+    // Verifica a resposta da API
+    if (response.data.error) {
+      yield put(
+        setNotification({
+          type: "error",
+          description: response.data.message || "Erro ao atualizar o agendamento.",
+        })
+      );
+    } else {
+      yield put(
+        setNotification({
+          type: "success",
+          description: response.data.message || "Agendamento atualizado com sucesso.",
+        })
+      );
+      
+      // Se a atualização for bem-sucedida, você pode despachar uma ação de sucesso
+      yield put(addAgendamentoSuccess(response.data));
+
+      // Navega para a página "Agendados", se a função `navigate` estiver definida
+      if (payload.navigate) {
+        yield call(payload.navigate, "/Agendados");
+      }
+
+      // Limpa a notificação após um breve atraso
+      yield delay(2050);
+      yield put(
+        setNotification({
+          type: "",
+          description: "",
+        })
+      );
+    }
+    
+  } catch (error) {
+    console.log(error);
+    // Em caso de erro, despacha uma ação de falha e exibe a notificação de erro
+    yield put(addAgendamentoFailure(error));
+    yield put(
+      setNotification({
+        type: "error",
+        description: error.message || "Erro desconhecido ao atualizar agendamento.",
+      })
+    );
+  }
+}
+
 export default function* agendamentoSagas() {
   yield all([
     takeLatest("agendamento/filterAgendamentos", filterAgendamentos),
@@ -237,5 +309,6 @@ export default function* agendamentoSagas() {
     takeLatest("agendamento/filterHorasDisponiveis", filterHorasDisponiveis),
     takeLatest("agendamento/getAgendamento", getAgendamentos),
     takeLatest(addAgendamento.type, handleAddAgendamento),
+    takeLatest("agendamento/handleUpdateAgendamento", handleUpdateAgendamento),
   ]);
 }

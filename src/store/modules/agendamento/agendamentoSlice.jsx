@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
+  behavior:"create",
   components: {
     modal: false,
     confirmDelete: false,
@@ -11,6 +12,7 @@ const initialState = {
       description: "",
     },
   },
+  selectedAgendamento:{},
   agendamento: {},
   agendamentos: [],
   newAgendamento: {},
@@ -26,6 +28,12 @@ const agendamentoSlice = createSlice({
   name: "agendamento",
   initialState,
   reducers: {
+    updateSelectedAgendamento:(state,action)=>{
+      state.selectedAgendamento = action.payload
+    },
+    updateBehavior:(state,action)=>{
+      state.behavior = action.payload
+    },
     updateLoading: (state, action) => {
       state.loadingAgendamento = action.payload
     },
@@ -68,6 +76,8 @@ const agendamentoSlice = createSlice({
 });
 
 export const {
+  updateSelectedAgendamento,
+  updateBehavior,
   setNotification,
   updateLoading,
   updateDays,

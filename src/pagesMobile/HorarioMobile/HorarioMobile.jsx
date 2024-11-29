@@ -8,25 +8,14 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import {
   TagPicker,
   Drawer,
-  Modal,
   Checkbox,
   DatePicker,
   Button,
   Notification,
 } from "rsuite";
-import BG from "../../components/background/background";
-import Header from "../../components/Header/Header";
-import Sidebar from "../../components/Sidebar/Sidebar";
-
 import {
   updateHorario,
-  closeDrawer,
   resetHorario,
-  setColaboradores,
-  setFiltering,
-  setHorarios,
-  setSaving,
-  setServicos, // Importamos apenas as ações do slice
 } from "../../store/modules/horarios/horariosSlice";
 import util, { checkLocalStorageKeys } from "../../services/util";
 import colors from "../../data/colors.json";
@@ -37,7 +26,6 @@ moment.locale("pt-br");
 
 const HorariosAtendimentoMobile = () => {
   const dispatch = useDispatch();
-  const firstDay = getFirstDayOfWeek();
   const {
     horario,
     horarios,
@@ -46,13 +34,9 @@ const HorariosAtendimentoMobile = () => {
     behavior,
     servicos,
     colaboradores,
-    colaboradoresInfo,
   } = useSelector((state) => state.horarios); // Atualizado para utilizar o slice
 
-  const colaboradoresInfoArray = colaboradoresInfo || [];
-
   const qtnServico = horario.especialidade || [];
-  const qtnColaborador = horario.colaboradores || [];
 
   const diasDaSemana = [
     "domingo",
@@ -270,13 +254,19 @@ const HorariosAtendimentoMobile = () => {
                       block
                       format="HH:mm"
                       hideMinutes={(min) => ![0, 30].includes(min)}
-                      value={horario.inicio ? moment(horario.inicio).add(3, "hours").toDate() : null} // Adiciona 3 horas ao valor
+                      value={
+                        horario.inicio
+                          ? moment(horario.inicio).add(3, "hours").toDate()
+                          : null
+                      } // Adiciona 3 horas ao valor
                       onChange={(date) => {
                         const selectedDate = new Date(date);
                         selectedDate.setSeconds(0, 0);
-                    
+
                         // Diminui 3 horas ao horário selecionado antes de armazenar
-                        const newDateWithOffset = moment(selectedDate).subtract(3, 'hours').toISOString();
+                        const newDateWithOffset = moment(selectedDate)
+                          .subtract(3, "hours")
+                          .toISOString();
                         setHorario("inicio", newDateWithOffset);
                       }}
                     />
@@ -289,13 +279,19 @@ const HorariosAtendimentoMobile = () => {
                       block
                       format="HH:mm"
                       hideMinutes={(min) => ![0, 30].includes(min)}
-                      value={horario.fim ? moment(horario.fim).add(3, "hours").toDate() : null}
+                      value={
+                        horario.fim
+                          ? moment(horario.fim).add(3, "hours").toDate()
+                          : null
+                      }
                       onChange={(date) => {
                         const selectedDate = new Date(date);
                         selectedDate.setSeconds(0, 0);
-                    
+
                         // Diminui 3 horas ao horário selecionado antes de armazenar
-                        const newDateWithOffset = moment(selectedDate).subtract(3, 'hours').toISOString();
+                        const newDateWithOffset = moment(selectedDate)
+                          .subtract(3, "hours")
+                          .toISOString();
                         setHorario("fim", newDateWithOffset);
                       }}
                     />
@@ -305,7 +301,7 @@ const HorariosAtendimentoMobile = () => {
                   <div className="col-12 mt-3">
                     <b>Especialidades disponíveis</b>
                     <TagPicker
-                    placement="top"
+                      placement="top"
                       size="lg"
                       block
                       data={servicos}
@@ -385,6 +381,7 @@ const HorariosAtendimentoMobile = () => {
                 </div>
 
                 <Calendar
+                  
                   localizer={localizer}
                   onSelectEvent={(e) => {
                     onHorarioClick(e.resource.horario);

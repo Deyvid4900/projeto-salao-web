@@ -4,8 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import "./Home.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
 import { fetchSalaoRequest } from "../../store/modules/salao/salaoSlice";
-import { fetchAllRequest } from "../../store/modules/servicos/servicosSlice";
-import { Divider, Placeholder, Nav, Loader } from "rsuite";
+import { Nav, Loader } from "rsuite";
 import { Link } from "react-router-dom";
 import util from "../../services/util";
 import { setLoading } from "../../store/modules/clientes/clientesSlice";
@@ -18,7 +17,7 @@ function HomeCliente() {
 
   const dispatch = useDispatch();
   const { saloes, error } = useSelector((state) => state.salao);
-  const { data, servicos, loading } = useSelector((state) => state.servicos);
+  const { servicos, loading } = useSelector((state) => state.servicos);
   const selectSalao = saloes.salao || {};
 
   const handleAgendarClick = (servico) => {

@@ -88,7 +88,7 @@ const Agendados = () => {
                       <div className="d-flex justify-content-between align-items-center">
                         <div className="d-flex align-items-center">
                           <img
-                            src="../../assets/whatsapp.png"
+                            src="/assets/whatsapp.png"
                             width={20}
                             alt="WhatsApp"
                             className="me-2"
@@ -104,7 +104,7 @@ const Agendados = () => {
                           }}
                         >
                           <img
-                            src="../../assets/multiply.png"
+                            src="/assets/multiply.png"
                             width={16}
                             alt="Cancelar"
                             className="me-1"
