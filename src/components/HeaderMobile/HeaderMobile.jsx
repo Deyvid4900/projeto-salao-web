@@ -201,11 +201,16 @@ function HeaderMobile() {
             </Link>
 
             {isInstallable && (
-              <li className="dropdown-item">
-                <button className="dropdown-item" onClick={handleInstallClick}>
-                  Adicionar à tela inicial
-                </button>
-              </li>
+              <Link>
+                <li className="dropdown-item">
+                  <button
+                    className="dropdown-item"
+                    onClick={handleInstallClick}
+                  >
+                    Adicionar à tela inicial
+                  </button>
+                </li>{" "}
+              </Link>
             )}
           </ul>
         </div>
