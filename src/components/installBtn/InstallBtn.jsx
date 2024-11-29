@@ -37,11 +37,11 @@ const InstallButton = () => {
   };
 
   return (
-    // isInstallable &&(
+    isInstallable &&(
     <button className="dropdown-item" onClick={handleInstallClick}>
       Adicionar à tela inicial
     </button>
-//   )
+  )
   );
 };
 
