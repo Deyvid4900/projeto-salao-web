@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 import "./HeaderMobile.css";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
+import InstallButton from "../installBtn/InstallBtn";
 
 function HeaderMobile() {
   const dispatch = useDispatch();
@@ -187,6 +188,11 @@ function HeaderMobile() {
               <li className="dropdown-item">
                 <span className="material-symbols-outlined">logout</span>
                 Sair
+              </li>
+            </Link>
+            <Link className="">
+              <li className="dropdown-item">
+                <InstallButton></InstallButton>
               </li>
             </Link>
           </ul>
