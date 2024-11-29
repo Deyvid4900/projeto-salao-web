@@ -1,41 +1,74 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./HeaderMobile.css";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
-import InstallButton from "../installBtn/InstallBtn";
+import { useSelector, useDispatch } from "react-redux";
 
 function HeaderMobile() {
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [isInstallable, setIsInstallable] = useState(false);
+
   const dispatch = useDispatch();
   const location = useLocation();
+
+  // Efeito para escutar o evento 'beforeinstallprompt'
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (event) => {
+      event.preventDefault(); // Previne o comportamento padrão do navegador
+      setDeferredPrompt(event); // Armazena o evento para usá-lo mais tarde
+      setIsInstallable(true); // Habilita a exibição do botão de instalação
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener(
+        "beforeinstallprompt",
+        handleBeforeInstallPrompt
+      );
+    };
+  }, []);
+
+  // Função para lidar com o clique do botão de instalação
+  const handleInstallClick = () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt(); // Exibe o prompt de instalação
+      deferredPrompt.userChoice.then((choiceResult) => {
+        if (choiceResult.outcome === "accepted") {
+          console.log("Usuário aceitou o prompt de instalação");
+        } else {
+          console.log("Usuário rejeitou o prompt de instalação");
+        }
+        setDeferredPrompt(null); // Limpa o deferredPrompt após a escolha
+        setIsInstallable(false); // Esconde o botão de instalação
+      });
+    }
+  };
+
   useEffect(() => {
     dispatch({
       type: "Salao/GetSalao",
     });
-  }, []);
-  const { currentSalao } = useSelector((state) => state.salao);
+  }, [dispatch]);
 
+  const { currentSalao } = useSelector((state) => state.salao);
   const { tipo } = JSON.parse(localStorage.getItem("u"));
 
-  function handlelogout() {
+  const handleLogout = () => {
     const keysToRemove = ["u", "_dSlun"];
-
     keysToRemove.forEach((key) => {
       if (localStorage.getItem(key)) {
         localStorage.removeItem(key);
         console.log(`Chave ${key} removida do localStorage.`);
-      } else {
-        console.log(`Chave ${key} não encontrada no localStorage.`);
       }
     });
-  }
+  };
 
   return (
     <div
       className="bg container-fluid p-3 d-flex justify-content-between align-items-center text-white"
       style={{ zIndex: 50, position: "relative" }}
     >
-      <img src="/assets/Group3.png" alt="" className="logo" />
+      <img src="/assets/Group3.png" alt="Logo" className="logo" />
 
       {/* Mostrar apenas em telas grandes */}
       <div className="d-none d-md-flex flex-row align-items-center gap-4">
@@ -66,7 +99,6 @@ function HeaderMobile() {
         tabIndex="-1"
         id="offcanvasRight"
         aria-labelledby="offcanvasRightLabel"
-        // style={{backgroundColor:"rgb(47, 50, 67)"}}
       >
         <div className="offcanvas-header">
           <h5 className="offcanvas-title" id="offcanvasRightLabel">
@@ -81,7 +113,7 @@ function HeaderMobile() {
         </div>
         <div className="offcanvas-body">
           <ul className="list-unstyled ulServicesMobile">
-            <Link to={"/AgendamentosMobile"}>
+            <Link to="/AgendamentosMobile">
               <li
                 className={
                   location.pathname === "/AgendamentosMobile"
@@ -95,65 +127,53 @@ function HeaderMobile() {
                 Agendamentos
               </li>
             </Link>
-            {/* <Link to={"#"}>
-              <li className="disable dropdown-item">
-                <span className="material-symbols-outlined">event_available</span>
-                Horários disponíveis
-              </li>
-            </Link> */}
 
-            {tipo == "Salao" ? (
-              <Link to={"/ClientesMobile"}>
-                <li
-                  className={
-                    location.pathname === "/ClientesMobile"
-                      ? "active dropdown-item"
-                      : "dropdown-item"
-                  }
-                >
-                  <span className="material-symbols-outlined">person</span>
-                  Clientes
-                </li>
-              </Link>
-            ) : (
-              ""
+            {tipo === "Salao" && (
+              <>
+                <Link to="/ClientesMobile">
+                  <li
+                    className={
+                      location.pathname === "/ClientesMobile"
+                        ? "active dropdown-item"
+                        : "dropdown-item"
+                    }
+                  >
+                    <span className="material-symbols-outlined">person</span>
+                    Clientes
+                  </li>
+                </Link>
+
+                <Link to="/ColaboradoresMobile">
+                  <li
+                    className={
+                      location.pathname === "/ColaboradoresMobile"
+                        ? "active dropdown-item"
+                        : "dropdown-item"
+                    }
+                  >
+                    <span className="material-symbols-outlined">groups</span>
+                    Colaboradores
+                  </li>
+                </Link>
+
+                <Link to="/ServicosMobile">
+                  <li
+                    className={
+                      location.pathname === "/ServicosMobile"
+                        ? "active dropdown-item"
+                        : "dropdown-item"
+                    }
+                  >
+                    <span className="material-symbols-outlined">
+                      design_services
+                    </span>
+                    Serviços
+                  </li>
+                </Link>
+              </>
             )}
 
-            {tipo == "Salao" ? (
-              <Link to={"/ColaboradoresMobile"}>
-                <li
-                  className={
-                    location.pathname === "/ColaboradoresMobile"
-                      ? "active dropdown-item"
-                      : "dropdown-item"
-                  }
-                >
-                  <span className="material-symbols-outlined">groups</span>
-                  Colaboradores
-                </li>
-              </Link>
-            ) : (
-              ""
-            )}
-            {tipo == "Salao" ? (
-              <Link to={"/ServicosMobile"}>
-                <li
-                  className={
-                    location.pathname === "/ServicosMobile"
-                      ? "active dropdown-item"
-                      : "dropdown-item"
-                  }
-                >
-                  <span className="material-symbols-outlined">
-                    design_services
-                  </span>
-                  Serviços
-                </li>
-              </Link>
-            ) : (
-              ""
-            )}
-            <Link to={"/HorariosMobile"}>
+            <Link to="/HorariosMobile">
               <li
                 className={
                   location.pathname === "/HorariosMobile"
@@ -165,34 +185,28 @@ function HeaderMobile() {
                 Horários
               </li>
             </Link>
-            {}
+
             <Link to={currentSalao ? `/Salao/${currentSalao.nome}` : "/#"}>
               <li className="dropdown-item">
                 <span className="material-symbols-outlined">Arrow_Forward</span>
                 Meu Site
               </li>
             </Link>
-            {/* <Link to={"#"}>
-              <li className="disable dropdown-item " >
-                <span className="material-symbols-outlined">bar_chart_4_bars</span>
-                DashBoard
-              </li>
-            </Link> */}
 
-            <Link
-              to={"/"}
-              onClick={() => {
-                handlelogout();
-              }}
-            >
+            <Link to="/" onClick={handleLogout}>
               <li className="dropdown-item">
                 <span className="material-symbols-outlined">logout</span>
                 Sair
               </li>
             </Link>
-            <Link>
-              <InstallButton></InstallButton>
-            </Link>
+
+            {isInstallable && (
+              <li className="dropdown-item">
+                <button className="dropdown-item" onClick={handleInstallClick}>
+                  Adicionar à tela inicial
+                </button>
+              </li>
+            )}
           </ul>
         </div>
       </div>
