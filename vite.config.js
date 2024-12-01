@@ -14,7 +14,7 @@ export default defineConfig({
       registerType: 'autoUpdate', // Faz com que o PWA seja atualizado automaticamente
       manifest: {
         name: 'HoraMarcada',
-        short_name: 'HoraMar',
+        short_name: 'HoraMarcada',
         description: 'Sistema de agendamento',
         theme_color: '#ff5b5b',
         background_color: '#ffffff',
