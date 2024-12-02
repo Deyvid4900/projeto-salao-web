@@ -9,15 +9,18 @@ import {
 
 function* fetchSalaoSaga(action) {
   const { nome, coordinates } = action.payload;
-
   try {
-    const { data } = yield call(api.post, `/salao/filter/nome/${nome}`, { coordinates }); // Utilizando api configurado
+    console.log(coordinates)
+    const { data } = yield call(api.post, `/salao/filter/nome/${nome}`, {coordinates: coordinates}  ); // Utilizando api configurado
+    console.log(data)
     localStorage.setItem("_dSlun", data.salao._id);
     yield put(fetchSalaoSuccess(data));
   } catch (error) {
     yield put(fetchSalaoFailure(error.message));
   }
 }
+
+
 function* getSalao() {
   const {id} = JSON.parse(localStorage.getItem('u'))
   try {

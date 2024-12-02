@@ -16,9 +16,9 @@ function HomeCliente() {
   const [userCoordinates, setUserCoordinates] = useState(null);
 
   const dispatch = useDispatch();
-  const { saloes, error } = useSelector((state) => state.salao);
+  const { salao, error, currentSalao } = useSelector((state) => state.salao);
   const { servicos, loading } = useSelector((state) => state.servicos);
-  const selectSalao = saloes.salao || {};
+  const selectSalao = salao.salao || currentSalao || {};
 
   const handleAgendarClick = (servico) => {
     navigate("/agendamento", { state: { servico } });
@@ -96,9 +96,11 @@ function HomeCliente() {
   };
 
   useEffect(() => {
-    dispatch({
-      type: "servicos/fetchAllServicos",
-    });
+    if (servicos.length == 0) {
+      dispatch({
+        type: "servicos/fetchAllServicos",
+      });
+    }
     fetchUserLocation();
     dispatch(setLoading(false));
   }, [dispatch]);
@@ -106,10 +108,12 @@ function HomeCliente() {
   const servicosArray = servicos || [];
 
   useEffect(() => {
-    if (userCoordinates) {
+    console.log();
+    if (userCoordinates && !salao.salao) {
       const fetchData = async () => {
         dispatch(fetchSalaoRequest({ nome, coordinates: userCoordinates }));
       };
+
       fetchData();
     }
   }, [userCoordinates, dispatch, nome]);

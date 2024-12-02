@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const salaoSlice = createSlice({
   name: 'salao',
   initialState: {
-    saloes: [],
+    salao:{},
     loading: false,
     error: null,
     currentSalao:{}
@@ -15,7 +15,7 @@ const salaoSlice = createSlice({
     },
     fetchSalaoSuccess(state, action) {
       state.loading = false;
-      state.saloes = action.payload; // Armazena os salões recebidos
+      state.salao = action.payload; // Armazena os salões recebidos
     },
     fetchSalaoFailure(state, action) {
       state.loading = false;

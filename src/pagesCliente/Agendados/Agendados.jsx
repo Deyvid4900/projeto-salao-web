@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Message, Nav, Panel, FlexboxGrid } from "rsuite";
+import {  Nav, Panel, FlexboxGrid } from "rsuite";
 import { Icon } from "@rsuite/icons";
 import { Link } from "react-router-dom";
 import "./Agendados.css";
@@ -13,14 +13,16 @@ const Agendados = () => {
 
   useEffect(() => {
     setMessage(checkLocalStorageKeysClienteId());
-    dispatch({
-      type: "agendamento/getAgendamento",
-      payload: localStorage.getItem("cl_idtor"),
-    });
+    if ( agendado.length == 0) {
+      dispatch({
+        type: "agendamento/getAgendamento",
+        payload: localStorage.getItem("cl_idtor"),
+      });
+    }
   }, [dispatch]);
 
   const { agendado } = useSelector((state) => state.agendamento);
-  const agendamentosArray = agendado.agendamentos || [];
+  const agendamentosArray = agendado || [];
 
   // Função para formatar data
   const formatarData = (data) => {
@@ -53,12 +55,17 @@ const Agendados = () => {
 
       <div className="container-fluid px-3">
         <div className="mb-4">
-          <h4> {currentClient.nome?"Olá, " + currentClient.nome : "Olá"}</h4>
+          <h4> {currentClient.nome ? "Olá, " + currentClient.nome : "Olá"}</h4>
           <p className="text-muted">Bem-vindo, veja seus horários Agendados</p>
         </div>
 
         {message !== null ? (
-          <FlexboxGrid>
+          <FlexboxGrid
+            style={{
+              height: "80vh",
+              overflowX: "auto",
+            }}
+          >
             {agendamentosArray.length > 0 ? (
               agendamentosArray.map((agendamento, index) => {
                 const { dia, mes, hora } = formatarData(agendamento.data);
@@ -96,7 +103,7 @@ const Agendados = () => {
                           <span>{agendamento.salaoId.telefone}</span>
                         </div>
                         <div
-                        style={{}}
+                          style={{}}
                           className=" btn bg-danger d-flex align-items-center text-white cursor-pointer"
                           onClick={() => {
                             // Lógica de cancelamento
