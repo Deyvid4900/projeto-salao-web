@@ -44,8 +44,8 @@ li>a {
 
 .navbar-toggler-icon {
   display: inline-block;
-  width: 30px;
-  height: 2px;
+  width: 30px !important;
+  height: 2px !important;
   background-color: white;
   position: relative;
 }
@@ -54,8 +54,8 @@ li>a {
 .navbar-toggler-icon::after {
   content: '';
   display: block;
-  width: 30px;
-  height: 2px;
+  width: 30px ;
+  height: 2px ;
   background-color: white;
   position: absolute;
   left: 0;

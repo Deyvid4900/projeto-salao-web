@@ -90,7 +90,7 @@ function HeaderMobile() {
         data-bs-target="#offcanvasRight"
         aria-controls="offcanvasRight"
       >
-        <span className="navbar-toggler-icon" />
+        <span className="navbar-toggler-icon"></span>
       </button>
 
       {/* Offcanvas Menu */}

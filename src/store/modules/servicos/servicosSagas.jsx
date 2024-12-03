@@ -11,7 +11,8 @@ import {
   deleteServico,
   createServicoFailure,
   createServicoRequest,
-  createServicoSuccess, // Importando a ação de notificação
+  createServicoSuccess,
+  resetServicoState, // Importando a ação de notificação
 } from "./servicosSlice"; // Importando o slice correspondente
 import { api } from "../../../services/api"; // Importando a API
 import { setColaboradoresServico } from "../colaborador/colaboradorSlice";

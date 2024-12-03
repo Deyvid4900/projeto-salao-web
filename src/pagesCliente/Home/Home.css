@@ -88,11 +88,11 @@
 
 /* Estilos dos botões */
 .btnPrimary {
-  background-color: var(--color-salaoPrimary);
-  color: var(--color-salaoText);
-  border: 1px solid var(--border-color);
-  border-radius: var(--border-radius);
-  transition: background-color 0.3s, transform 0.3s;
+  background-color: var(--color-salaoPrimary) !important;
+  color: var(--color-salaoText) !important;
+  border: 1px solid var(--border-color) !important;
+  border-radius: var(--border-radius) ;
+  transition: background-color 0.3s, transform 0.3s !important;
 }
 
 .btnPrimary:hover {
@@ -101,11 +101,11 @@
 }
 
 .btnSeccundary {
-  background-color: var(--color-salaoSeccundary);
-  color: var(--color-salaoText);
-  border: 1px solid var(--border-color);
+  background-color: var(--color-salaoSeccundary) !important;
+  color: var(--color-salaoText) !important;
+  border: 1px solid var(--border-color) !important;
   border-radius: var(--border-radius);
-  transition: background-color 0.3s, transform 0.3s;
+  transition: background-color 0.3s, transform 0.3s !important;
 }
 
 .btnSeccundary:hover {

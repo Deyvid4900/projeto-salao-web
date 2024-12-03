@@ -6,7 +6,8 @@ const salaoSlice = createSlice({
     salao:{},
     loading: false,
     error: null,
-    currentSalao:{}
+    currentSalao:{},
+    saloes:[]
   },
   reducers: {
     fetchSalaoRequest(state) {
@@ -24,6 +25,18 @@ const salaoSlice = createSlice({
     setCurrentSalao: (state, action) => {
       state.currentSalao = {...action.payload, senha:""};
     },
+    setSaloes: (state, action) => {
+      state.saloes = {...action.payload};
+    },
+    resetSalaoState(state) {
+      return {
+        salao: {},
+        loading: false,
+        error: null,
+        currentSalao: {},
+        saloes: []
+      };
+    },
   },
 });
 
@@ -33,6 +46,8 @@ export const {
   fetchSalaoRequest,
   fetchSalaoSuccess,
   fetchSalaoFailure,
+  setSaloes,
+  resetSalaoState,
 } = salaoSlice.actions;
 
 // Exportando o reducer

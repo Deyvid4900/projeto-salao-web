@@ -1,51 +1,107 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
 const SalonForm = () => {
   const [formData, setFormData] = useState({
-    nome: '',
-    foto: '',
-    capa: '',
-    email: '',
-    senha: '',
-    telefone: '',
+    nome: "",
+    foto: "",
+    capa: "",
+    email: "",
+    senha: "",
+    telefone: "",
     endereco: {
-      cidade: '',
-      uf: '',
-      cep: '',
-      logradouro: '',
-      numero: '',
-      pais: ''
+      cidade: "",
+      uf: "",
+      cep: "",
+      logradouro: "",
+      numero: "",
+      pais: "",
     },
     geo: {
-      coordinates: [0, 0]
+      coordinates: [0, 0],
     },
-    plano: '',
-    cor: ''
+    plano: "",
+    cor: "",
   });
+
+  const [responseMessage, setResponseMessage] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name.includes('.')) {
-      const [parent, child] = name.split('.');
-      setFormData(prev => ({
+    if (name.includes(".")) {
+      const [parent, child] = name.split(".");
+      setFormData((prev) => ({
         ...prev,
         [parent]: {
           ...prev[parent],
-          [child]: value
-        }
+          [child]: value,
+        },
       }));
     } else {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        [name]: value
+        [name]: value,
       }));
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Form data:', formData);
-    // Add your submit logic here
+    setLoading(true);
+    setResponseMessage(null);
+
+    const dataToSend = {
+      ...formData,
+      geo: {
+        type: "Point",
+        coordinates: formData.geo.coordinates,
+      },
+    };
+
+    try {
+      const response = await fetch("http://localhost:8000/salao", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(dataToSend),
+      });
+
+      const result = await response.json();
+
+      if (response.ok) {
+        setResponseMessage("Salão cadastrado com sucesso!");
+        setFormData({
+          nome: "",
+          foto: "",
+          capa: "",
+          email: "",
+          senha: "",
+          telefone: "",
+          endereco: {
+            cidade: "",
+            uf: "",
+            cep: "",
+            logradouro: "",
+            numero: "",
+            pais: "",
+          },
+          geo: {
+            coordinates: [0, 0],
+          },
+          plano: "",
+          cor: "",
+        });
+      } else {
+        setResponseMessage(
+          `Erro: ${result.message || "Falha ao cadastrar salão."}`
+        );
+      }
+    } catch (error) {
+      setResponseMessage(`Erro de conexão: ${error.message}`);
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -257,8 +313,12 @@ const SalonForm = () => {
             </div>
 
             <div className="d-grid gap-2">
-              <button type="submit" className="btn btn-primary btn-lg">
-                Cadastrar Salão
+              <button
+                type="submit"
+                className="btn btn-primary btn-lg"
+                disabled={loading}
+              >
+                {loading ? "Enviando..." : "Cadastrar Salão"}
               </button>
             </div>
           </form>
@@ -267,4 +327,4 @@ const SalonForm = () => {
     </div>
   );
 };
-export default SalonForm
+export default SalonForm;

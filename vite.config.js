@@ -13,8 +13,8 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate', // Faz com que o PWA seja atualizado automaticamente
       manifest: {
-        name: 'HoraMarcada',
-        short_name: 'HoraMarcada',
+        name: 'Hora Marcada',
+        short_name: 'HMarcada',
         description: 'Sistema de agendamento',
         theme_color: '#ff5b5b',
         background_color: '#ffffff',

@@ -5,6 +5,7 @@ import {
   fetchSalaoSuccess,
   fetchSalaoFailure,
   setCurrentSalao,
+  setSaloes,
 } from './salaoSlice';
 
 function* fetchSalaoSaga(action) {
@@ -33,9 +34,20 @@ function* getSalao() {
   }
 }
 
+function* getAllSaloes() {
+  try {
+    const { data } = yield call(api.get, `/salao/saloes`); // Utilizando api configurado
+    yield put(setSaloes(data));
+
+  } catch (error) {
+    yield put(fetchSalaoFailure(error.message));
+  }
+}
+
 function* watchFetchAll() {
   yield takeLatest(fetchSalaoRequest.type, fetchSalaoSaga);
   yield takeLatest("Salao/GetSalao", getSalao);
+  yield takeLatest("Saloes/GetSaloes", getAllSaloes);
 }
 
 export default function* rootSaga() {

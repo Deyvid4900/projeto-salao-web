@@ -9,6 +9,8 @@ import { useDispatch, useSelector } from "react-redux";
 const Agendados = () => {
   const [message, setMessage] = useState(null);
   const { currentClient } = useSelector((state) => state.cliente);
+  
+  const { currentSalao } = useSelector((state) => state.salao);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -42,7 +44,7 @@ const Agendados = () => {
         justified
         appearance="pills"
         defaultActiveKey="Agendados"
-        className="p-2 mb-3"
+        className="p-2"
         style={{ zIndex: "30", width: "100%" }}
       >
         <Nav.Item as={Link} to="/Salao/Deyvid-Barber" eventKey="Home">
@@ -51,6 +53,13 @@ const Agendados = () => {
         <Nav.Item as={Link} to="/Agendados" eventKey="Agendados">
           Agendados
         </Nav.Item>
+        {currentSalao._id ? (
+          <Nav.Item  as={Link} to="/AgendamentosMobile" eventKey="app">
+            <span className="material-symbols-outlined">Home</span>
+          </Nav.Item>
+        ) : (
+          ""
+        )}
       </Nav>
 
       <div className="container-fluid px-3">

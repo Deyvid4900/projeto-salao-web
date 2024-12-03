@@ -3,11 +3,15 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import "./Home.css";
 import "@fortawesome/fontawesome-free/css/all.min.css";
-import { fetchSalaoRequest } from "../../store/modules/salao/salaoSlice";
+import {
+  fetchSalaoRequest,
+  resetSalaoState,
+} from "../../store/modules/salao/salaoSlice";
 import { Nav, Loader } from "rsuite";
 import { Link } from "react-router-dom";
 import util from "../../services/util";
 import { setLoading } from "../../store/modules/clientes/clientesSlice";
+import { resetServicoState } from "../../store/modules/servicos/servicosSlice";
 
 function HomeCliente() {
   const { nome } = useParams();
@@ -96,16 +100,17 @@ function HomeCliente() {
   };
 
   useEffect(() => {
-    if (servicos.length == 0) {
-      dispatch({
-        type: "servicos/fetchAllServicos",
-      });
-    }
+    dispatch(resetSalaoState());
+
+    dispatch({
+      type: "servicos/fetchAllServicos",
+    });
+
     fetchUserLocation();
     dispatch(setLoading(false));
-  }, [dispatch]);
+  }, []);
 
-  const servicosArray = servicos || [];
+  const servicosArray = servicos.length > 0 ? servicos : [];
 
   useEffect(() => {
     console.log();
@@ -136,15 +141,27 @@ function HomeCliente() {
         justified
         appearance="pills"
         defaultActiveKey="Home"
-        className="p-2 gap-2"
+        className="p-2 "
         style={{ zIndex: "30", width: "100%" }}
       >
         <Nav.Item as={Link} to="/Salao/Deyvid-Barber" eventKey="Home">
           Agendar
         </Nav.Item>
         {localStorage.getItem("cl_idtor") ? (
-          <Nav.Item as={Link} to="/Agendados" eventKey="Agenda">
+          <Nav.Item className="" as={Link} to="/Agendados" eventKey="Agenda">
             Agendados
+          </Nav.Item>
+        ) : (
+          ""
+        )}
+        {currentSalao._id ? (
+          <Nav.Item
+            as={Link}
+            className=""
+            to="/AgendamentosMobile"
+            eventKey="app"
+          >
+            <span className="material-symbols-outlined">Home</span>
           </Nav.Item>
         ) : (
           ""

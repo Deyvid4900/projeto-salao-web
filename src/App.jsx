@@ -18,6 +18,7 @@ import ServicosMobile from "./pagesMobile/ServicosMobile/ServicosMobile";
 import Agendados from "./pagesCliente/Agendados/Agendados";
 import ProtectedRoute from "./components/protectedRoute";
 import SalonForm  from "./pages/CreateSalao/createSalao";
+import SalonsList from "./pagesCliente/Saloes/Saloes";
 
 function App() {
   return (
@@ -27,6 +28,7 @@ function App() {
           <Routes>
             {/* Rotas que não precisam de autenticação */}
             <Route path="Salao/:nome" element={<HomeCliente />} />
+            <Route path="Salao/" element={<SalonsList/>} />
             <Route path="/Agendados" element={<Agendados />} />
             <Route path="/Admin/SalaoCreate/Adm" element={<SalonForm />} />
 

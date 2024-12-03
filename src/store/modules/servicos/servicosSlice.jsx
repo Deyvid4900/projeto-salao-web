@@ -63,6 +63,36 @@ const servicosSlice = createSlice({
         arquivos: [],
       };
     },
+    resetServicoState: (state) => {
+      state.servicos = {
+        behavior: "create",
+        components: {
+          confirmDelete: false,
+          drawer: false,
+          tab: "servicos",
+        },
+        form: {
+          filtering: false,
+          disabled: false,
+          saving: false,
+        },
+        servico: {
+          titulo: "",
+          preco: "",
+          comissao: "",
+          duracao: "",
+          recorrencia: "",
+          descricao: "",
+          status: "A",
+          arquivos: [],
+        },
+        servicos: [],
+        loading: false,
+        error: null,
+        selectedServico: [],
+      };
+    },
+
     setServicos: (state, action) => {
       state.servicos = action.payload;
     },
@@ -119,6 +149,7 @@ export const {
   updateServico,
   updateServicoBehavior,
   resetServico,
+  resetServicoState,
   setServicos,
   setServico,
   setServicoNew,
