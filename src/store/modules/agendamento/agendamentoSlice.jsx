@@ -60,6 +60,7 @@ const agendamentoSlice = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    
     updateSelectedSpecialist: (state, action) => {
       state.selectedSpecialist = action;
     },

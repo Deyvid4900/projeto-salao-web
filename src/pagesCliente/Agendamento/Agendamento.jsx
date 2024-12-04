@@ -22,7 +22,6 @@ import {
 import util from "../../services/util";
 import "./Agendamento.css";
 import {
-  setNotification,
   updateDays,
   updateHours,
   updateLoading,
@@ -66,6 +65,8 @@ const AgendamentoPage = () => {
   const agendaArray = agenda.agenda || [];
 
   useEffect(() => {
+    dispatch(updateDays(""))
+    dispatch(updateHours(""))
     dispatch(fetchAllColaboradores());
     dispatch({
       type: "servicos/findColaboradoreByServico",
@@ -129,7 +130,7 @@ const AgendamentoPage = () => {
 
   const handleCadastrarCliente = () => {
     const salao = saloes.salao || localStorage.getItem("_dSlun");
-    dispatch(cadastrarClienteRequest({ ...formData, salaoId: salao._id }));
+    dispatch(cadastrarClienteRequest({ ...formData, salaoId: salao }));
   };
 
   const getDaysAndHours = (specialist) => {
@@ -204,11 +205,6 @@ const AgendamentoPage = () => {
     }
   };
 
-  // if (loading == true) {
-  //   return (
-
-  //   );
-  // }
 
   return (
     <div className="agendamento-container">

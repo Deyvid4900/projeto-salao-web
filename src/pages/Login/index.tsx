@@ -6,7 +6,6 @@ import styles from "./styles";
 import { checkLocalStorageKeysFromLogin } from "../../services/util";
 import { useDispatch } from "react-redux";
 
-
 export const Login = () => {
   const [active, setActive] = useState(false);
   const auth = useAuth();
@@ -120,6 +119,7 @@ export const Login = () => {
       style={{
         display: "flex",
         justifyContent: "center",
+
         alignItems: "center",
         minHeight: "100vh",
         background: "linear-gradient(135deg, #ff5b5b 0%, #2f3243 100%)",
@@ -137,15 +137,18 @@ export const Login = () => {
           maxWidth: "380px",
           padding: "40px",
           borderRadius: "20px",
-          boxShadow: "0 15px 35px rgba(0,0,0,0.1)",
           background: "#FFF", // --color-studioBody
           textAlign: "center",
         }}
       >
         <div>
           <div className="">
-            <Link to={"/Salao/"}
+            <Link
+              to={"/Salao/"}
+              className="btn btnPrimary "
               style={{
+                borderRadius: "20px",
+                boxShadow: `4px 4px 4px #d9d9d9`,
                 color: "#333",
                 marginBottom: "20px",
                 fontSize: "2.2rem",
@@ -154,7 +157,11 @@ export const Login = () => {
             >
               Agendar
             </Link>
-            <hr  style={{borderTop: "1px solid #000;"}}/>
+            <div className="d-flex flex-column">
+              <hr style={{ borderTop: "1px solid #000;" }} />
+              <span>ou</span>
+              <hr style={{ borderTop: "1px solid #000;" }} />
+            </div>
             <h4
               style={{
                 color: "#333",
@@ -277,7 +284,8 @@ export const Login = () => {
             style={{
               width: "100%",
               padding: "12px",
-              background: "linear-gradient(135deg, #ff5b5b 50%, #2f3243 100%)", // --color-studioPrimary
+              boxShadow: `4px 4px 4px #d9d9d9`,
+              background: "linear-gradient(135deg, #ff5b5b 50%, #2f3243 100%)",
               color: "white",
               border: "none",
               borderRadius: "10px",

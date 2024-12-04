@@ -47,19 +47,20 @@ const Agendados = () => {
         className="p-2"
         style={{ zIndex: "30", width: "100%" }}
       >
+        {currentSalao._id ? (
+          <Nav.Item  as={Link} to="/AgendamentosMobile" eventKey="app">
+            <span className="material-symbols-outlined">arrow_back</span>
+          </Nav.Item>
+        ) : (
+          ""
+        )}
         <Nav.Item as={Link} to="/Salao/Deyvid-Barber" eventKey="Home">
           Agendar
         </Nav.Item>
         <Nav.Item as={Link} to="/Agendados" eventKey="Agendados">
           Agendados
         </Nav.Item>
-        {currentSalao._id ? (
-          <Nav.Item  as={Link} to="/AgendamentosMobile" eventKey="app">
-            <span className="material-symbols-outlined">Home</span>
-          </Nav.Item>
-        ) : (
-          ""
-        )}
+        
       </Nav>
 
       <div className="container-fluid px-3">
@@ -71,9 +72,10 @@ const Agendados = () => {
         {message !== null ? (
           <FlexboxGrid
             style={{
-              height: "80vh",
               overflowX: "auto",
+              maxHeight:"75vh"
             }}
+            className=""
           >
             {agendamentosArray.length > 0 ? (
               agendamentosArray.map((agendamento, index) => {

@@ -1,13 +1,13 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
 
 const salaoSlice = createSlice({
-  name: 'salao',
+  name: "salao",
   initialState: {
-    salao:{},
+    salao: {},
     loading: false,
     error: null,
-    currentSalao:{},
-    saloes:[]
+    currentSalao: {},
+    saloes: [],
   },
   reducers: {
     fetchSalaoRequest(state) {
@@ -23,18 +23,18 @@ const salaoSlice = createSlice({
       state.error = action.payload; // Armazena a mensagem de erro
     },
     setCurrentSalao: (state, action) => {
-      state.currentSalao = {...action.payload, senha:""};
+      state.currentSalao = { ...action.payload, senha: "" };
     },
     setSaloes: (state, action) => {
-      state.saloes = {...action.payload};
+      state.saloes = { ...action.payload };
     },
     resetSalaoState(state) {
       return {
-        salao: {},
+        ...state, // Mantém o estado atual
+        salao: {}, // Reseta apenas a propriedade desejada
         loading: false,
         error: null,
-        currentSalao: {},
-        saloes: []
+        saloes: [], // Também limpa os salões
       };
     },
   },

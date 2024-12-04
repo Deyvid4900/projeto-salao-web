@@ -144,6 +144,18 @@ function HomeCliente() {
         className="p-2 "
         style={{ zIndex: "30", width: "100%" }}
       >
+         {currentSalao._id ? (
+          <Nav.Item
+            as={Link}
+            className=""
+            to="/AgendamentosMobile"
+            eventKey="app"
+          >
+            <span className="material-symbols-outlined">arrow_back</span>
+          </Nav.Item>
+        ) : (
+          ""
+        )}
         <Nav.Item as={Link} to="/Salao/Deyvid-Barber" eventKey="Home">
           Agendar
         </Nav.Item>
@@ -154,18 +166,7 @@ function HomeCliente() {
         ) : (
           ""
         )}
-        {currentSalao._id ? (
-          <Nav.Item
-            as={Link}
-            className=""
-            to="/AgendamentosMobile"
-            eventKey="app"
-          >
-            <span className="material-symbols-outlined">Home</span>
-          </Nav.Item>
-        ) : (
-          ""
-        )}
+       
       </Nav>
 
       <div
@@ -175,7 +176,7 @@ function HomeCliente() {
           backgroundSize: "cover",
           backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
-          height: "270px",
+          height: "20vh",
           position: "relative",
         }}
         className="d-flex justify-content-end align-items-end"
@@ -269,7 +270,7 @@ function HomeCliente() {
 
         <div
           className="services-list"
-          style={{ overflowY: "auto", maxHeight: "37vh", overflowX: "clip" }}
+          style={{ overflowY: "auto", height: "auto",maxHeight:"45vh", overflowX: "clip" }}
         >
           {!loading ? (
             filteredServices.map((service, index) => (
