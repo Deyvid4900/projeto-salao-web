@@ -37,6 +37,12 @@ const agendamentoSlice = createSlice({
     updateLoading: (state, action) => {
       state.loadingAgendamento = action.payload
     },
+    deleteAgendamentoSuccess(state, action) {
+      const { agendamentoId } = action.payload;
+      state.agendado = state.agendado.filter(
+        (agendamento) => agendamento._id !== agendamentoId
+      );
+    },
     updateAgendamento: (state, action) => {
       return { ...state, ...action.payload };
     },
@@ -77,6 +83,7 @@ const agendamentoSlice = createSlice({
 });
 
 export const {
+  deleteAgendamentoSuccess,
   updateSelectedAgendamento,
   updateBehavior,
   setNotification,

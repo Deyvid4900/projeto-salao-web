@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import "./HeaderMobile.css";
 import { useSelector, useDispatch } from "react-redux";
+import { Avatar } from "rsuite";
 
 function HeaderMobile() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -51,7 +52,7 @@ function HeaderMobile() {
   }, [dispatch]);
 
   const { currentSalao } = useSelector((state) => state.salao);
-  const { tipo } = JSON.parse(localStorage.getItem("u"));
+  const { tipo } = JSON.parse(localStorage.getItem("u")) || "Salao";
 
   const handleLogout = () => {
     const keysToRemove = ["u", "_dSlun"];
@@ -101,8 +102,12 @@ function HeaderMobile() {
         aria-labelledby="offcanvasRightLabel"
       >
         <div className="offcanvas-header">
-          <h5 className="offcanvas-title" id="offcanvasRightLabel">
-            <span>Nome Empresa</span>
+          <h5
+            className="offcanvas-title d-flex align-items-center gap-1"
+            id="offcanvasRightLabel"
+          >
+            <Avatar src={currentSalao.capa} circle></Avatar>
+            <span>{currentSalao.nome}</span>
           </h5>
           <button
             type="button"
@@ -186,10 +191,38 @@ function HeaderMobile() {
               </li>
             </Link>
 
+            <Link to="/AjudaMobile">
+              <li className="dropdown-item">
+                <span className="material-symbols-outlined">Help</span>
+                Ajuda
+              </li>
+            </Link>
+
+            <Link to={"/DashBoardMobile"}>
+              <li className={
+                  location.pathname === "/DashBoardMobile"
+                    ? "active dropdown-item"
+                    : "dropdown-item"
+                }>
+                <span className="material-symbols-outlined">finance</span>
+                DashBoard
+              </li>
+            </Link>
+
             <Link to={currentSalao ? `/Salao/${currentSalao.nome}` : "/#"}>
               <li className="dropdown-item">
                 <span className="material-symbols-outlined">Arrow_Forward</span>
                 Meu Site
+              </li>
+            </Link>
+            <Link to="/settingsMobile">
+              <li className={
+                  location.pathname === "/settingsMobile"
+                    ? "active dropdown-item"
+                    : "dropdown-item"
+                }>
+                <span className="material-symbols-outlined">Settings</span>
+                Configurações
               </li>
             </Link>
 

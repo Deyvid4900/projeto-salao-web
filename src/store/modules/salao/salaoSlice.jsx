@@ -28,6 +28,10 @@ const salaoSlice = createSlice({
     setSaloes: (state, action) => {
       state.saloes = { ...action.payload };
     },
+    updateLoading: (state, action) => {
+      state.loading = action.payload;
+    },
+
     resetSalaoState(state) {
       return {
         ...state, // Mantém o estado atual
@@ -42,6 +46,7 @@ const salaoSlice = createSlice({
 
 // Exportando as ações
 export const {
+  updateLoading,
   setCurrentSalao,
   fetchSalaoRequest,
   fetchSalaoSuccess,

@@ -50,7 +50,6 @@ export const ClienteMobile = () => {
         <div
           className="d-flex flex-column justify-content-center align-items-center"
           style={{
-            maxHeight: "calc(100vh - 95px)",
             overflowY: "auto",
             padding: "0 10px", // Reduzir padding em telas menores
           }}
@@ -65,7 +64,7 @@ export const ClienteMobile = () => {
 
             {/* Aumentar a responsividade do Table em telas menores */}
             <Table
-              className="bg-white rounded"
+              className="bg-white rounded h-75"
               autoHeight
               data={clientes.clientes}
               onRowClick={(rowData) => {
@@ -75,7 +74,8 @@ export const ClienteMobile = () => {
               // Tornar o scroll horizontal mais acessível em telas menores
               style={{
                 fontSize: "0.9rem", // Tamanho menor para caber melhor em mobile
-                overflowX: "auto",
+                overflowY: "auto",
+                maxHeight:"400px"
               }}
             >
               <Column fixed flexGrow={2.5} >

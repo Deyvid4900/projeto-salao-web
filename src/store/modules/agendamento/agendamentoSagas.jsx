@@ -1,4 +1,4 @@
-import { takeLatest, all, call, put, delay,select } from "redux-saga/effects";
+import { takeLatest, all, call, put, delay, select } from "redux-saga/effects";
 import {
   updateAgendamento,
   addAgendamento,
@@ -10,10 +10,10 @@ import {
   updateHours,
   updateLoading,
   setNotification,
+  deleteAgendamentoSuccess,
 } from "./agendamentoSlice";
 import { api } from "../../../services/api";
 import moment from "moment";
-
 
 // Função que retorna os dias disponíveis
 function getAvailableDays(data) {
@@ -149,12 +149,20 @@ function* filterDiasDisponiveis(payload) {
 function* getAgendamentos(payload) {
   const clienteId = payload.payload;
   try {
+    yield put(updateLoading(true));
     const { data } = yield call(
       api.get,
       `agendamento/agendamentos/${clienteId}`
     );
+
+    if (data.error == true) {
+      yield put(updateLoading(false));
+      console.error("Erro ao encontrar agendamentos ", err);
+    }
+
     console.log(data);
     yield put(updateAgendado(data.agendamentos));
+    yield put(updateLoading(false));
   } catch (err) {
     // Lidando com o erro se necessário
     console.error("Erro ao encontrar agendamentos ", err);
@@ -310,6 +318,30 @@ function* handleUpdateAgendamento(action) {
   }
 }
 
+function* deleteAgendado({ payload }) {
+  try {
+    // Extrai o ID do agendamento da payload
+    const agendamentoId  = payload;
+
+    // Envia a requisição DELETE para a API
+    const { data: res } = yield call(api.delete, `/agendamento/`, {
+      data: { agendamentoId },
+    });
+
+    console.log(res);
+
+    if (!res.error) {
+      console.log("Agendamento deletado com sucesso!");
+      yield put(deleteAgendamentoSuccess({ agendamentoId }));
+    } else {
+      console.error("Erro ao deletar agendamento:", res.message);
+    }
+  } catch (err) {
+    console.error("Erro ao deletar agendamento:", err);
+  }
+}
+
+
 export default function* agendamentoSagas() {
   yield all([
     takeLatest("agendamento/filterAgendamentos", filterAgendamentos),
@@ -319,5 +351,6 @@ export default function* agendamentoSagas() {
     takeLatest("agendamento/getAgendamento", getAgendamentos),
     takeLatest(addAgendamento.type, handleAddAgendamento),
     takeLatest("agendamento/handleUpdateAgendamento", handleUpdateAgendamento),
+    takeLatest("agendamento/deleteAgendamento", deleteAgendado),
   ]);
 }

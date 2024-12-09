@@ -11,7 +11,6 @@ import { Nav, Loader } from "rsuite";
 import { Link } from "react-router-dom";
 import util from "../../services/util";
 import { setLoading } from "../../store/modules/clientes/clientesSlice";
-import { resetServicoState } from "../../store/modules/servicos/servicosSlice";
 
 function HomeCliente() {
   const { nome } = useParams();
@@ -174,7 +173,6 @@ function HomeCliente() {
           backgroundImage: `url(${selectSalao.capa})`,
           backgroundPosition: "center",
           backgroundSize: "cover",
-          backgroundPosition: "center",
           backgroundRepeat: "no-repeat",
           height: "20vh",
           position: "relative",
@@ -192,10 +190,6 @@ function HomeCliente() {
             zIndex: 1,
             background: "rgba(0, 0, 0, 0.5)",
             position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0,
           }}
         >
           <div

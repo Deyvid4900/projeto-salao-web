@@ -17,8 +17,11 @@ import HorariosAtendimentoMobile from "./pagesMobile/HorarioMobile/HorarioMobile
 import ServicosMobile from "./pagesMobile/ServicosMobile/ServicosMobile";
 import Agendados from "./pagesCliente/Agendados/Agendados";
 import ProtectedRoute from "./components/protectedRoute";
-import SalonForm  from "./pages/CreateSalao/createSalao";
+import SalonForm from "./pages/CreateSalao/createSalao";
 import SalonsList from "./pagesCliente/Saloes/Saloes";
+import HelpMobile from "./pagesMobile/AjudaMobile/HelpMobile";
+import DashboardMobile from "./pagesMobile/DashBoardMobile/Dashboard";
+import SettingsPage from "./pagesMobile/SettingsMobile/SettingsMobile";
 
 function App() {
   return (
@@ -28,12 +31,36 @@ function App() {
           <Routes>
             {/* Rotas que não precisam de autenticação */}
             <Route path="Salao/:nome" element={<HomeCliente />} />
-            <Route path="Salao/" element={<SalonsList/>} />
+            <Route path="Salao/" element={<SalonsList />} />
             <Route path="/Agendados" element={<Agendados />} />
             <Route path="/Admin/SalaoCreate/Adm" element={<SalonForm />} />
+            <Route path="/" element={<Login />} />
 
             {/* Rotas que precisam de autenticação */}
-            <Route path="/" element={<Login />} />
+            <Route
+              path="/settingsMobile"
+              element={
+                <ProtectedRoute>
+                  <SettingsPage />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/AjudaMobile"
+              element={
+                <ProtectedRoute>
+                  <HelpMobile />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/DashBoardMobile"
+              element={
+                <ProtectedRoute>
+                  <DashboardMobile />
+                </ProtectedRoute>
+              }
+            />
             <Route
               path="/Home"
               element={

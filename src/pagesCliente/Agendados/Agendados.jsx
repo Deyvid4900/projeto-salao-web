@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {  Nav, Panel, FlexboxGrid } from "rsuite";
+import { Nav, Panel, FlexboxGrid, Loader, Modal } from "rsuite";
 import { Icon } from "@rsuite/icons";
 import { Link } from "react-router-dom";
 import "./Agendados.css";
@@ -8,14 +8,16 @@ import { useDispatch, useSelector } from "react-redux";
 
 const Agendados = () => {
   const [message, setMessage] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedAgendamento, setSelectedAgendamento] = useState(null);
   const { currentClient } = useSelector((state) => state.cliente);
-  
+
   const { currentSalao } = useSelector((state) => state.salao);
   const dispatch = useDispatch();
 
   useEffect(() => {
     setMessage(checkLocalStorageKeysClienteId());
-    if ( agendado.length == 0) {
+    if (agendado.length == 0) {
       dispatch({
         type: "agendamento/getAgendamento",
         payload: localStorage.getItem("cl_idtor"),
@@ -23,7 +25,9 @@ const Agendados = () => {
     }
   }, [dispatch]);
 
-  const { agendado } = useSelector((state) => state.agendamento);
+  const { agendado, loadingAgendamento } = useSelector(
+    (state) => state.agendamento
+  );
   const agendamentosArray = agendado || [];
 
   // Função para formatar data
@@ -48,7 +52,7 @@ const Agendados = () => {
         style={{ zIndex: "30", width: "100%" }}
       >
         {currentSalao._id ? (
-          <Nav.Item  as={Link} to="/AgendamentosMobile" eventKey="app">
+          <Nav.Item as={Link} to="/AgendamentosMobile" eventKey="app">
             <span className="material-symbols-outlined">arrow_back</span>
           </Nav.Item>
         ) : (
@@ -60,20 +64,22 @@ const Agendados = () => {
         <Nav.Item as={Link} to="/Agendados" eventKey="Agendados">
           Agendados
         </Nav.Item>
-        
       </Nav>
 
       <div className="container-fluid px-3">
-        <div className="mb-4">
+        <div className="mb-4 mt-5">
           <h4> {currentClient.nome ? "Olá, " + currentClient.nome : "Olá"}</h4>
           <p className="text-muted">Bem-vindo, veja seus horários Agendados</p>
         </div>
-
-        {message !== null ? (
+        {loadingAgendamento == true ? (
+          <div className=" d-flex mt-5 justify-content-center align-items-center">
+            <Loader size="lg" />
+          </div>
+        ) : message !== null ? (
           <FlexboxGrid
             style={{
               overflowX: "auto",
-              maxHeight:"75vh"
+              maxHeight: "75vh",
             }}
             className=""
           >
@@ -117,8 +123,8 @@ const Agendados = () => {
                           style={{}}
                           className=" btn bg-danger d-flex align-items-center text-white cursor-pointer"
                           onClick={() => {
-                            // Lógica de cancelamento
-                            console.log("Cancelar agendamento", agendamento.id);
+                            setShowModal(true); // Exibe o modal
+                            setSelectedAgendamento(agendamento._id); // Armazena o ID do agendamento
                           }}
                         >
                           <img
@@ -151,6 +157,35 @@ const Agendados = () => {
         ) : (
           message
         )}
+        <Modal open={showModal} onClose={() => setShowModal(false)} size="xs">
+          <Modal.Header>
+            <Modal.Title>Confirmar Cancelamento</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <p>Tem certeza de que deseja cancelar este agendamento?</p>
+          </Modal.Body>
+          <Modal.Footer className=" d-flex justify-content-end gap-2">
+            <button
+              className="btn btn-danger"
+              onClick={() => {
+                // Dispatch para cancelar o agendamento
+                dispatch({
+                  type: "agendamento/deleteAgendamento",
+                  payload: selectedAgendamento,
+                });
+                setShowModal(false); // Fecha o modal
+              }}
+            >
+              Confirmar
+            </button>
+            <button
+              className="btn btn-secondary"
+              onClick={() => setShowModal(false)}
+            >
+              Cancelar
+            </button>
+          </Modal.Footer>
+        </Modal>
       </div>
     </>
   );

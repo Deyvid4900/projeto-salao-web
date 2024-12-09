@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Avatar, Panel } from "rsuite";
+import { Avatar, Loader, Panel } from "rsuite";
 import "rsuite/dist/rsuite.min.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link } from "react-router-dom";
@@ -25,7 +25,7 @@ const SalonsList = () => {
     dispatch(resetServicoState());
   };
 
-  const { saloes } = useSelector((state) => state.salao);
+  const { saloes, loading } = useSelector((state) => state.salao);
   const salons = saloes.saloes || [];
 
   // Filtrando os salões com base no nome
@@ -63,6 +63,13 @@ const SalonsList = () => {
           />
         </div>
         <div className="row">
+          {loading == true ? (
+            <div className=" d-flex justify-content-center align-items-center">
+              <Loader size="lg" />
+            </div>
+          ) : (
+            ""
+          )}
           {filteredSalons.map((salon) => (
             <div key={salon._id} className="col-md-6 mb-4">
               <Panel shaded bordered bodyFill>
