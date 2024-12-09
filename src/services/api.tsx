@@ -2,21 +2,21 @@ import axios from "axios";
 import { getUserLocalStorage } from "../context/AuthProvider/util";
 
 
-// export const api = axios.create({
-//    baseURL: "https://api-production-70cb.up.railway.app/",
-//  });
-
-// export  const Api = axios.create({
-//   baseURL: "https://api-production-70cb.up.railway.app/salao",
-// });
-
+export const api = axios.create({
+   baseURL: "https://api-production-70cb.up.railway.app/",
+ });
 
 export  const Api = axios.create({
-  baseURL: "http://localhost:8000/salao/",
+  baseURL: "https://api-production-70cb.up.railway.app/salao",
 });
-export const api = axios.create({
-  baseURL: "http://localhost:8000",
- });
+
+
+// export  const Api = axios.create({
+//   baseURL: "http://localhost:8000/salao/",
+// });
+// export const api = axios.create({
+//   baseURL: "http://localhost:8000",
+//  });
 
 
  
