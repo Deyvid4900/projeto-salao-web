@@ -20,7 +20,6 @@ const SalonsList = () => {
   }, [dispatch]);
 
   const handleSaloes = (id) => {
-    console.log(id);
     localStorage.setItem("_dSlun", id);
     dispatch(resetServicoState());
   };
@@ -36,73 +35,72 @@ const SalonsList = () => {
   return (
     <div>
       <header
-        className="container-fluid p-2 col-12 d-flex align-items-center justify-content-between"
-        style={{ backgroundColor: "var(--color-salaoPrimary)" }}
+        className="container-fluid p-2 d-flex align-items-center justify-content-between text-white"
+        style={{backgroundColor:'#ff5b5b'}}
       >
-        <Link to="/" className="btn d-flex align-items-center">
-          <span className="material-symbols-outlined text-white">
-            arrow_back
-          </span>
+        <Link to="/" className="btn d-flex align-items-center text-white">
+          <span className="material-symbols-outlined">arrow_back</span>
         </Link>
         <div className="d-flex justify-content-center flex-grow-1">
-          <img src="/assets/Group3.png" alt="" className="mx-auto" />
+          <img
+            src="/assets/Group3.png"
+            alt="Logo"
+            className="mx-auto"
+            style={{ maxWidth: "125px", height: "auto" }}
+          />
         </div>
-        <div style={{ width: "40px" }}></div>{" "}
-        {/* Espaço vazio para manter alinhamento */}
+        <div style={{ width: "40px" }}></div> {/* Espaço vazio para alinhamento */}
       </header>
 
-      <div className="container mt-5">
-        <div className="mb-5 d-flex align-items-center justify-content-center gap-2">
+      <div className="container mt-4">
+        <div className="mb-4 d-flex flex-column align-items-center gap-3">
           <h2 className="text-center">Pesquise:</h2>
           <input
             type="text"
-            className="form-control w-50"
+            className="form-control w-100 w-md-50"
             placeholder="Pesquisar salões..."
             value={filter}
             onChange={(e) => setFilter(e.target.value)} // Atualiza o estado do filtro
           />
         </div>
-        <div className="row">
-          {loading == true ? (
-            <div className=" d-flex justify-content-center align-items-center">
-              <Loader size="lg" />
-            </div>
-          ) : (
-            ""
-          )}
-          {filteredSalons.map((salon) => (
-            <div key={salon._id} className="col-md-6 mb-4">
-              <Panel shaded bordered bodyFill>
-                <div
-                  className="d-flex align-items-center justify-content-around p-3"
-                  style={{ flexWrap: "wrap" }}
-                >
-                  <Avatar
-                    circle
-                    src={salon.capa || "https://via.placeholder.com/80"}
-                    alt={salon.nome}
-                    size="lg"
-                    className="me-3"
-                  />
-                  <div>
-                    <h5 className="mb-1">{salon.nome}</h5>
-                    <p className="mb-0 text-muted">{salon.email}</p>
-                    <p className="mb-0">{salon.telefone}</p>
+
+        {loading ? (
+          <div className="d-flex justify-content-center align-items-center">
+            <Loader size="lg" />
+          </div>
+        ) : (
+          <div className="row">
+            {filteredSalons.map((salon) => (
+              <div key={salon._id} className="col-12 col-md-6 mb-4" >
+                <Panel shaded bordered bodyFill>
+                  <div className="d-flex flex-column flex-md-row align-items-center justify-content-between p-3">
+                    <Avatar
+                      circle
+                      src={salon.capa || "https://via.placeholder.com/80"}
+                      alt={salon.nome}
+                      size="lg"
+                      className="mb-3 mb-md-0 me-md-3"
+                    />
+                    <div className="text-center text-md-start">
+                      <h5 className="mb-1">{salon.nome}</h5>
+                      <p className="mb-0 text-muted">{salon.email}</p>
+                      <p className="mb-0">{salon.telefone}</p>
+                    </div>
+                    <div className="mt-3 mt-md-0">
+                      <Link
+                        onClick={() => handleSaloes(salon._id)}
+                        to={`/Salao/${salon.nome}`}
+                        className="btn btnPrimary"
+                      >
+                        Ver Serviços
+                      </Link>
+                    </div>
                   </div>
-                  <div className="p-3 text-center">
-                    <Link
-                      onClick={() => handleSaloes(salon._id)}
-                      to={`/Salao/${salon.nome}`}
-                      className="btn btnSeccundary"
-                    >
-                      Ver Serviços
-                    </Link>
-                  </div>
-                </div>
-              </Panel>
-            </div>
-          ))}
-        </div>
+                </Panel>
+              </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

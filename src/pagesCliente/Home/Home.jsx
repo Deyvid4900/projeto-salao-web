@@ -143,7 +143,7 @@ function HomeCliente() {
         className="p-2 "
         style={{ zIndex: "30", width: "100%" }}
       >
-         {currentSalao._id ? (
+        {currentSalao._id ? (
           <Nav.Item
             as={Link}
             className=""
@@ -165,7 +165,6 @@ function HomeCliente() {
         ) : (
           ""
         )}
-       
       </Nav>
 
       <div
@@ -223,22 +222,23 @@ function HomeCliente() {
       </div>
 
       {/* Action Section */}
-      <div className="d-flex gap-3 justify-content-end action py-4 px-3">
+      <div className="d-flex justify-content-end gap-3  align-items-center action py-4 px-3">
         <div
-          style={{ cursor: "pointer" }}
+          style={{ cursor: "pointer",textAlign:"center" }}
+          className=""
           onClick={() => handleLigar(selectSalao.telefone)}
         >
           <i className="fa-solid fa-phone"></i> Ligar
         </div>
         •
         <div
-          style={{ cursor: "pointer" }}
+          style={{ cursor: "pointer" ,textAlign:"center"}}
           onClick={() => handleMap(selectSalao.geo?.coordinates)}
         >
           <i className="fa-solid fa-map"></i> Visitar
         </div>
         •
-        <div style={{ cursor: "pointer" }} onClick={handleShare}>
+        <div style={{ cursor: "pointer" ,textAlign:"center"}} onClick={handleShare}>
           <i className="fa-solid fa-share-nodes"></i> Compartilhar
         </div>
       </div>
@@ -264,7 +264,12 @@ function HomeCliente() {
 
         <div
           className="services-list"
-          style={{ overflowY: "auto", height: "auto",maxHeight:"45vh", overflowX: "clip" }}
+          style={{
+            overflowY: "auto",
+            height: "auto",
+            maxHeight: "45vh",
+            overflowX: "clip",
+          }}
         >
           {!loading ? (
             filteredServices.map((service, index) => (

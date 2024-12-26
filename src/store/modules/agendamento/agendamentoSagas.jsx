@@ -11,6 +11,7 @@ import {
   updateLoading,
   setNotification,
   deleteAgendamentoSuccess,
+  updateLoadingLoading,
 } from "./agendamentoSlice";
 import { api } from "../../../services/api";
 import moment from "moment";
@@ -53,6 +54,7 @@ function* filterDisponiveis(payload) {
 
 function* filterHorasDisponiveis(payload) {
   yield put(updateLoading(true));
+  yield put(updateLoadingLoading(true));
 
   const dateToSend = payload.action.dia
     ? moment(payload.action.dia).format("YYYY-MM-DDTHH:mm:ssZ")
@@ -80,9 +82,12 @@ function* filterHorasDisponiveis(payload) {
     // Atualiza o estado com os horários filtrados
     yield put(updateHours(horariosFiltrados));
     yield put(updateLoading(false));
+    yield put(updateLoadingLoading(false));
   } catch (err) {
     console.error("Erro ao filtrar dias disponiveis ", err);
     yield put(updateLoading(false));
+    
+    yield put(updateLoadingLoading(false));
   }
 }
 

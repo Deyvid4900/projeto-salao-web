@@ -122,7 +122,7 @@ export const Login = () => {
 
         alignItems: "center",
         minHeight: "100vh",
-        background: "linear-gradient(135deg, #ff5b5b 0%, #2f3243 100%)",
+        background: " #ff5b5b ",
         margin: 0,
         padding: 0,
         fontFamily: "Arial, sans-serif",
@@ -133,7 +133,7 @@ export const Login = () => {
         onSubmit={onFinish}
         style={{
           width: "100%",
-          minHeight: "70vh",
+          minHeight: "60vh",
           maxWidth: "380px",
           padding: "40px",
           borderRadius: "20px",
@@ -285,7 +285,7 @@ export const Login = () => {
               width: "100%",
               padding: "12px",
               boxShadow: `4px 4px 4px #d9d9d9`,
-              background: "linear-gradient(135deg, #ff5b5b 50%, #2f3243 100%)",
+              background: " #ff5b5b ",
               color: "white",
               border: "none",
               borderRadius: "10px",

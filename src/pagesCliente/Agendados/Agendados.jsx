@@ -29,7 +29,6 @@ const Agendados = () => {
     (state) => state.agendamento
   );
   const agendamentosArray = agendado || [];
-
   // Função para formatar data
   const formatarData = (data) => {
     const dataObj = new Date(data);
@@ -136,8 +135,13 @@ const Agendados = () => {
                           Cancelar
                         </div>
                       </div>
-                      <div className="mt-2 text-muted small">
-                        Horário: {hora}
+                      <div className="d-flex justify-content-between">
+                        <div className="mt-2 text-muted small">
+                          Horário: {hora}
+                        </div>
+                        <div className="mt-2 text-muted small ">
+                          Valor: {agendamento.valor + ",00"}
+                        </div>
                       </div>
                     </Panel>
                   </FlexboxGrid.Item>

@@ -317,3 +317,60 @@ body {
 .btn-confirmar:active {
   transform: scale(0.95); /* Reduz o tamanho no clique */
 }
+
+
+.servico-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.servico-card__info {
+  display: flex;
+  flex-direction: column;
+}
+
+.servico-card__img {
+  width: 100%;
+  height: 150px;
+  background: #f4f4f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.servico-card__img-placeholder {
+  font-size: 14px;
+  color: #888;
+}
+
+.servico-card__detalhes {
+  padding: 16px;
+  text-align: center;
+}
+
+.servico-card__titulo {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.servico-card__descricao {
+  font-size: 14px;
+  color: #555;
+}
+
+.servico-card__preco-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.servico-card__preco {
+  font-size: 16px;
+  font-weight: bold;
+  color: #2a9d8f;
+}

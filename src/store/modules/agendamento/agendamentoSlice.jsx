@@ -21,7 +21,8 @@ const initialState = {
   selectedSpecialist: {},
   days: [],
   hours: [],
-  loadingAgendamento:false
+  loadingAgendamento:false,
+  loading:false
 };
 
 const agendamentoSlice = createSlice({
@@ -36,6 +37,9 @@ const agendamentoSlice = createSlice({
     },
     updateLoading: (state, action) => {
       state.loadingAgendamento = action.payload
+    },
+    updateLoadingLoading: (state, action) => {
+      state.loading = action.payload
     },
     deleteAgendamentoSuccess(state, action) {
       const { agendamentoId } = action.payload;
@@ -88,6 +92,7 @@ export const {
   updateBehavior,
   setNotification,
   updateLoading,
+  updateLoadingLoading,
   updateDays,
   updateHours,
   updateSelectedSpecialist,

@@ -191,14 +191,14 @@ function HeaderMobile() {
               </li>
             </Link>
 
-            <Link to="/AjudaMobile">
+            {/* <Link to="/AjudaMobile">
               <li className="dropdown-item">
                 <span className="material-symbols-outlined">Help</span>
                 Ajuda
               </li>
-            </Link>
+            </Link> */}
 
-            <Link to={"/DashBoardMobile"}>
+            {/* <Link to={"/DashBoardMobile"}>
               <li className={
                   location.pathname === "/DashBoardMobile"
                     ? "active dropdown-item"
@@ -207,7 +207,7 @@ function HeaderMobile() {
                 <span className="material-symbols-outlined">finance</span>
                 DashBoard
               </li>
-            </Link>
+            </Link> */}
 
             <Link to={currentSalao ? `/Salao/${currentSalao.nome}` : "/#"}>
               <li className="dropdown-item">
@@ -215,7 +215,7 @@ function HeaderMobile() {
                 Meu Site
               </li>
             </Link>
-            <Link to="/settingsMobile">
+            {/* <Link to="/settingsMobile">
               <li className={
                   location.pathname === "/settingsMobile"
                     ? "active dropdown-item"
@@ -224,7 +224,7 @@ function HeaderMobile() {
                 <span className="material-symbols-outlined">Settings</span>
                 Configurações
               </li>
-            </Link>
+            </Link> */}
 
             <Link to="/" onClick={handleLogout}>
               <li className="dropdown-item">

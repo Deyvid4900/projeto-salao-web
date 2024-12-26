@@ -1,117 +1,99 @@
-import React from "react";
-import {
-  Container,
-  Row,
-  Col,
-  Card,
-  Form,
-  Button,
-  InputGroup,
-  FormControl,
-} from "react-bootstrap";
+import React, { useState } from "react";
 import HeaderMobile from "../../components/HeaderMobile/HeaderMobile";
 
 const SettingsPage = () => {
+  const [openingHours, setOpeningHours] = useState({ start: "", end: "" });
+  const [themeColor, setThemeColor] = useState("#007bff");
+  const [coverImage, setCoverImage] = useState(null);
+
+  const handleSave = () => {
+    // Lógica para salvar configurações
+    console.log({ openingHours, themeColor, coverImage });
+  };
+
   return (
     <>
-    <HeaderMobile />
-      <Container fluid>
-        <Row className="my-4">
-          <Col md={12}>
-            <h2 className="text-center">Configurações de Agendamentos</h2>
-          </Col>
-        </Row>
+      <HeaderMobile />
+      <div className="container mt-4">
+        <h2 className="text-center mb-4">Configurações</h2>
 
-        <Row>
-          <Col md={4}>
-            <Card>
-              <Card.Body>
-                <Card.Title>Informações do Salão</Card.Title>
-                <Form>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Nome do Salão</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Digite o nome do salão"
-                    />
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Telefone</Form.Label>
-                    <Form.Control type="text" placeholder="Digite o telefone" />
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Email</Form.Label>
-                    <Form.Control type="email" placeholder="Digite o email" />
-                  </Form.Group>
-                  <Button variant="primary" type="submit" className="w-100">
-                    Salvar
-                  </Button>
-                </Form>
-              </Card.Body>
-            </Card>
-          </Col>
+        <div className="card mb-4">
+          <div className="card-body">
+            <h4>Horários de Funcionamento</h4>
+            <div className="d-flex flex-column flex-md-row gap-3 align-items-center">
+              <div className="form-group">
+                <label htmlFor="start">Início</label>
+                <input
+                  type="time"
+                  id="start"
+                  className="form-control"
+                  value={openingHours.start}
+                  onChange={(e) =>
+                    setOpeningHours({ ...openingHours, start: e.target.value })
+                  }
+                />
+              </div>
+              <div className="form-group">
+                <label htmlFor="end">Encerramento</label>
+                <input
+                  type="time"
+                  id="end"
+                  className="form-control"
+                  value={openingHours.end}
+                  onChange={(e) =>
+                    setOpeningHours({ ...openingHours, end: e.target.value })
+                  }
+                />
+              </div>
+            </div>
+          </div>
+        </div>
 
-          <Col md={4}>
-            <Card>
-              <Card.Body>
-                <Card.Title>Horários de Funcionamento</Card.Title>
-                <Form>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Segunda a Sexta</Form.Label>
-                    <InputGroup>
-                      <FormControl type="time" placeholder="Início" />
-                      <FormControl type="time" placeholder="Fim" />
-                    </InputGroup>
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Sábado</Form.Label>
-                    <InputGroup>
-                      <FormControl type="time" placeholder="Início" />
-                      <FormControl type="time" placeholder="Fim" />
-                    </InputGroup>
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Domingo</Form.Label>
-                    <FormControl type="text" placeholder="Fechado" disabled />
-                  </Form.Group>
-                  <Button variant="primary" type="submit" className="w-100">
-                    Atualizar Horários
-                  </Button>
-                </Form>
-              </Card.Body>
-            </Card>
-          </Col>
+        <div className="card mb-4">
+          <div className="card-body">
+            <h4>Imagem de Capa</h4>
+            <div className="form-group">
+              <input
+                type="file"
+                className="form-control-file"
+                onChange={(e) => setCoverImage(e.target.files[0])}
+              />
+            </div>
+            {coverImage && (
+              <img
+                src={URL.createObjectURL(coverImage)}
+                alt="Preview"
+                className="mt-3 img-fluid"
+              />
+            )}
+          </div>
+        </div>
 
-          <Col md={4}>
-            <Card>
-              <Card.Body>
-                <Card.Title>Configurações de Agendamento</Card.Title>
-                <Form>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Notificação de Lembrete</Form.Label>
-                    <Form.Check
-                      type="checkbox"
-                      label="Ativar lembretes de agendamento"
-                    />
-                  </Form.Group>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Intervalo de Lembrete</Form.Label>
-                    <Form.Control as="select">
-                      <option>15 minutos</option>
-                      <option>30 minutos</option>
-                      <option>1 hora</option>
-                      <option>2 horas</option>
-                    </Form.Control>
-                  </Form.Group>
-                  <Button variant="primary" type="submit" className="w-100">
-                    Salvar Configurações
-                  </Button>
-                </Form>
-              </Card.Body>
-            </Card>
-          </Col>
-        </Row>
-      </Container>
+        <div className="card mb-4">
+          <div className="card-body">
+            <h4>Cor Tema</h4>
+            <input
+              type="color"
+              className="form-control form-control-color"
+              value={themeColor}
+              onChange={(e) => setThemeColor(e.target.value)}
+            />
+            <div
+              className="mt-3"
+              style={{
+                width: "50px",
+                height: "50px",
+                backgroundColor: themeColor,
+                border: "1px solid #ccc",
+              }}
+            ></div>
+          </div>
+        </div>
+
+        <button className="btn btn-primary btn-block" onClick={handleSave}>
+          Salvar Configurações
+        </button>
+      </div>
     </>
   );
 };

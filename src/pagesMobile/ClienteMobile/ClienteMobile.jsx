@@ -63,50 +63,48 @@ export const ClienteMobile = () => {
             </h4>
 
             {/* Aumentar a responsividade do Table em telas menores */}
-            <Table
-              className="bg-white rounded h-75"
-              autoHeight
-              data={clientes.clientes}
-              onRowClick={(rowData) => {
-                dispatch(selectedCliente(rowData));
-                setOpen(true);
-              }}
-              // Tornar o scroll horizontal mais acessível em telas menores
-              style={{
-                fontSize: "0.9rem", // Tamanho menor para caber melhor em mobile
-                overflowY: "auto",
-                maxHeight:"400px"
-              }}
-            >
-              <Column fixed flexGrow={2.5} >
-                <HeaderCell>Nome</HeaderCell>
-                <Cell dataKey="nome" />
-              </Column>
-
-              <Column flexGrow={1}>
-                <HeaderCell>Email</HeaderCell>
-                <Cell dataKey="email" />
-              </Column>
-
-              {/* Colunas extras visíveis somente em telas maiores */}
-
-              <Column flexGrow={1} align="center" fixed="right">
-                <HeaderCell>Ações</HeaderCell>
-                <Cell style={{ padding: "0px" }}>
-                  {(rowData) => (
-                    <Button
-                      appearance="link"
-                      onClick={() => {
-                        dispatch(selectedCliente(rowData));
-                        setOpen(true);
-                      }}
-                    >
-                      <span className="material-symbols-outlined">info</span>
-                    </Button>
-                  )}
-                </Cell>
-              </Column>
-            </Table>
+            <div style={{height:"95vh"}}> 
+              <Table
+                className="bg-white rounded h-75"
+                autoHeight
+                data={clientes.clientes}
+                onRowClick={(rowData) => {
+                  dispatch(selectedCliente(rowData));
+                  setOpen(true);
+                }}
+                // Tornar o scroll horizontal mais acessível em telas menores
+                style={{
+                  fontSize: "0.9rem", // Tamanho menor para caber melhor em mobile
+                  overflowY: "auto",
+                }}
+              >
+                <Column fixed flexGrow={2.5} >
+                  <HeaderCell>Nome</HeaderCell>
+                  <Cell dataKey="nome" />
+                </Column>
+                <Column flexGrow={1}>
+                  <HeaderCell>Email</HeaderCell>
+                  <Cell dataKey="email" />
+                </Column>
+                {/* Colunas extras visíveis somente em telas maiores */}
+                <Column flexGrow={1} align="center" fixed="right">
+                  <HeaderCell>Ações</HeaderCell>
+                  <Cell style={{ padding: "0px" }}>
+                    {(rowData) => (
+                      <Button
+                        appearance="link"
+                        onClick={() => {
+                          dispatch(selectedCliente(rowData));
+                          setOpen(true);
+                        }}
+                      >
+                        <span className="material-symbols-outlined">info</span>
+                      </Button>
+                    )}
+                  </Cell>
+                </Column>
+              </Table>
+            </div>
           </div>
 
           {/* Drawer adaptado para mobile */}

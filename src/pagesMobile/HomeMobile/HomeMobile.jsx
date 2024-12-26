@@ -185,7 +185,7 @@ const HomeMobile = () => {
             date: "Data",
             time: "Hora",
             event: "Evento",
-            noEventsInRange: "Nada agendado",
+            noEventsInRange: "Nenhum agendamento ",
           }}
           culture="pt-br"
           onRangeChange={(range) => handleRangeChange(range)}

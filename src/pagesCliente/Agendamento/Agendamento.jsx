@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect,useRef } from "react";
 import { useLocation } from "react-router-dom";
 import {
   Modal,
@@ -29,14 +29,12 @@ import {
 } from "../../store/modules/agendamento/agendamentoSlice";
 
 const AgendamentoPage = () => {
-  // Estado para o dia, horário e especialista selecionados
-  // const [days, setDays] = useState([]);
-  // const [hours, setHours] = useState([]);
   const [selectedDay, setSelectedDay] = useState(null);
   const [selectedHour, setSelectedHour] = useState(null);
   const [specialist, setSpecialist] = useState(null);
   const [indexDay, setIndexDay] = useState(null);
   const toaster = useToaster();
+  
 
   // const [selectedSpecialist, setSelectedSpecialist] = useState(null);
   const { colaboradoresServico } = useSelector((state) => state.colaborador);
@@ -50,6 +48,7 @@ const AgendamentoPage = () => {
     loadingAgendamento,
     components,
   } = useSelector((state) => state.agendamento);
+
   const location = useLocation();
   const navigate = useNavigate();
   const { servico } = location.state || {};
@@ -65,8 +64,8 @@ const AgendamentoPage = () => {
   const agendaArray = agenda.agenda || [];
 
   useEffect(() => {
-    dispatch(updateDays(""))
-    dispatch(updateHours(""))
+    dispatch(updateDays(""));
+    dispatch(updateHours(""));
     dispatch(fetchAllColaboradores());
     dispatch({
       type: "servicos/findColaboradoreByServico",
@@ -78,6 +77,23 @@ const AgendamentoPage = () => {
   useEffect(() => {
     dispatch(updateSelectedSpecialist(colaboradoresServico));
   }, [colaboradoresServico]);
+
+  const firstDayButtonRef = useRef(null); // Referência para o primeiro botão de dia
+  const firstHourButtonRef = useRef(null); // Referência para o primeiro botão de horário
+
+  // Focar no primeiro botão de dia quando os dias forem carregados
+  useEffect(() => {
+    if (days.payload && days.payload.length > 0) {
+      firstDayButtonRef.current?.focus();
+    }
+  }, [days.payload]);
+
+  // Focar no primeiro botão de horário quando os horários forem carregados
+  useEffect(() => {
+    if (hours.payload && hours.payload.length > 0) {
+      firstHourButtonRef.current?.focus();
+    }
+  }, [hours.payload]);
 
   function mergeDateAndTimeWithOffset(dateString, timeString) {
     // Parse the date as a Moment.js object
@@ -156,6 +172,7 @@ const AgendamentoPage = () => {
 
   const handleDaySelection = (dayId) => {
     updateLoading(true);
+
     dispatch({
       type: "agendamento/filterHorasDisponiveis",
       action: {
@@ -205,48 +222,74 @@ const AgendamentoPage = () => {
     }
   };
 
-
   return (
     <div className="agendamento-container">
       {loading == true ? (
         <>
-          <div className="overlay d-flex justify-content-center align-items-center">
+          <div
+            className=" d-flex justify-content-center align-items-center "
+            style={{
+              position: "fixed",
+              display: "none",
+              width: "100%",
+              height: "100%",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(0,0,0,0.5)",
+              zIndex: 2,
+              cursor: "pointer",
+            }}
+          >
             <Loader size="lg" /> {/* Loader do rsuite */}
           </div>
-
-          
         </>
       ) : (
         ""
       )}
-      <div>
+      <div className="" style={{ overflowY: "auto", height: "90vh" }}>
         {/* Cabeçalho */}
-        <div className="agendamento-header">
+        <div className="agendamento-header w-100" style={{textAlign:"center"}}>
           <h4>Finalizar Agendamento</h4>
-          <p>Escolha o horário e a data</p>
         </div>
         {/* Serviço selecionado */}
-        <div className="servico-selecionado">
-          <div className="servico-info">
-            <div className="servico-img-placeholder">
-              <img
-                style={{
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                }}
-                key={servico.arquivos[0]?._id}
-                src={`${util.AWS.bucketURL}/${servico.arquivos[0]?.arquivo}`}
-                alt={servico.titulo}
-              />
+        <div className="servico-card mb-4">
+          <div className="servico-card__info">
+            <div className="servico-card__img">
+              {servico.arquivos?.[0]?.arquivo ? (
+                <img
+                  key={servico.arquivos[0]._id}
+                  src={`${util.AWS.bucketURL}/${servico.arquivos[0].arquivo}`}
+                  alt={servico.titulo}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                  }}
+                />
+              ) : (
+                <div className="servico-card__img-placeholder">
+                  Imagem indisponível
+                </div>
+              )}
             </div>
-            <div className="servico-detalhes">
-              <p>{servico.titulo}</p>
-              <p>{servico.descricao}</p>
-              <p className="preco">R$ {Number(servico.preco).toFixed(2)}</p>
+            <div className="servico-card__detalhes">
+              <p className="servico-card__titulo">{servico.titulo}</p>
+              <p
+                className="servico-card__descricao"
+              >
+                {servico.descricao}
+              </p>
+              <div className="servico-card__preco-container">
+                <span className="servico-card__preco">
+                  R$ {Number(servico.preco).toFixed(2)}
+                </span>
+              </div>
             </div>
           </div>
         </div>
+
         {/* Escolha de especialista */}
         {colaboradoesArray.length == 0 ? (
           <div className=" d-flex justify-content-center align-items-center">
@@ -294,12 +337,13 @@ const AgendamentoPage = () => {
         )}
 
         {days.payload && days.payload.length > 0 ? (
-          <div className="datas">
+          <div className="datas" >
             <h4>Para quando você gostaria de agendar?</h4>
             <div className="dias-semana-scroll mt-3">
-              <div className="dias-semana">
+              <div className="dias-semana" style={{}}>
                 {days.payload.map((day, index) => (
                   <button
+                  ref={index === 0 ? firstDayButtonRef : null}
                     key={index} // Usando o índice como key já que não há um `id`
                     className={`btn-dia ${selectedDay === day ? "ativo" : ""}`}
                     onClick={() => {
@@ -321,18 +365,20 @@ const AgendamentoPage = () => {
         ) : (
           ""
         )}
-        {hours.payload && hours.payload.length > 0 ? (
+        {hours.payload ? (
           <div className="horarios">
             <h4>Que horas?</h4>
             {loadingAgendamento == true ? (
               <div className=" d-flex justify-content-center align-items-center">
-                <Loader size="lg" />
+                <Loader size="md" />
               </div>
             ) : (
               <div className="horas-disponiveis-scroll mt-3">
                 <div className="horas-disponiveis">
                   {hours.payload.map((hour, index) => (
                     <button
+                    ref={index === 0 ? firstHourButtonRef : null} // Define a referência para o primeiro botão
+                    
                       key={index} // Usando o índice como key já que não há um `id`
                       className={`btn-hora ${
                         selectedHour === hour ? "ativo" : ""
