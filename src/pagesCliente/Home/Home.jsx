@@ -336,11 +336,12 @@ function HomeCliente() {
                 {/* Botão de Agendar */}
                 <div className="">
                   <button
-                    className="btn btnPrimary btn-Primary text-white"
+                    className="btn btn-Primary btnPrimary  text-white"
                     style={{
                       padding: "2px 8px",
                       borderRadius: "8px",
                       width: "90px",
+                      backgroundColor:"#ff5b5b",
                     }}
                     onClick={() => {
                       handleAgendarClick(service);
