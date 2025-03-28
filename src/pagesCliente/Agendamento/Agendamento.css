@@ -1,0 +1,376 @@
+
+.agendamento-container {
+    padding: 15px;
+    background-color: #F1F1F1;
+    height: 100vh;
+  }
+  
+  .agendamento-header {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .agendamento-header h4 {
+    background: linear-gradient(to right, #2F3243, var(--color-salaoPrimary));
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+  }
+  
+  .servico-selecionado {
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .servico-info {
+    display: flex;
+    align-items: center;
+  }
+  
+  .servico-img-placeholder {
+    width: 60px;
+    height: 60px;
+    background-color: #C4C4C4;
+    border-radius: 10px;
+    margin-right: 10px;
+  }
+  
+  .servico-detalhes {
+    flex-grow: 1;
+  }
+  
+  .preco {
+    color: green;
+  }
+  
+  .datas {
+    margin-bottom: 20px;
+  }
+  
+  .dias-semana-scroll {
+    overflow-x: scroll;
+  }
+  
+  .dias-semana {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .btn-dia {
+    min-width: 60px;
+    padding: 10px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    background-color: white;
+  }
+  
+  .btn-dia.ativo {
+    background-color: var(--color-salaoPrimary);
+    color: white;
+  }
+  
+  .horarios {
+    margin-bottom: 20px;
+  }
+  
+  .horas-disponiveis-scroll {
+    overflow-x: scroll;
+  }
+  
+  .horas-disponiveis {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .btn-hora {
+    min-width: 60px;
+    padding: 10px;
+    background-color: #ddd;
+    border-radius: 5px;
+    border: none;
+  }
+  
+  .btn-hora.ativo {
+    background-color: var(--color-salaoPrimary);
+    color: white;
+  }
+  
+  .especialista-selecao {
+    margin-bottom: 20px;
+  }
+  
+  .especialista-opcoes-scroll {
+    overflow-x: scroll;
+  }
+  
+  .especialista-opcoes {
+    display: flex;
+    gap: 20px;
+  }
+  
+  .especialista-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: white;
+    padding: 10px;
+    border-radius: 10px;
+  }
+  
+  .especialista-img-placeholder {
+    width: 50px;
+    height: 50px;
+    background-color: #C4C4C4;
+    border-radius: 50%;
+    margin-bottom: 10px;
+  }
+  
+  .btn-especialista {
+    background-color: #ddd;
+    border: none;
+    padding: 5px;
+    border-radius: 5px;
+  }
+  
+  .btn-confirmar {
+    width: 100%;
+    padding: 15px;
+    background-color: var(--color-salaoPrimary);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+  }
+  
+  /* Continuando do estilo anterior */
+.btn-dia.ativo, .btn-hora.ativo, .btn-especialista.ativo {
+  background-color: var(--color-salaoPrimary);
+  color: white;
+  border-color: var(--color-salaoPrimary);
+}
+
+.btn-dia:hover, .btn-hora:hover, .btn-especialista:hover {
+  background-color: var(--color-salaoPrimary);
+  color: white;
+}
+
+.btn-dia, .btn-hora, .btn-especialista {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Estilo adicional para botões */
+.btn-confirmar {
+  width: 100%;
+  padding: 15px;
+  background-color: var(--color-salaoPrimary);
+  color: white;
+  border: none;
+  border-radius: 10px;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+.btn-confirmar:hover {
+  background-color: var(--color-salaoPrimary);
+}
+.rs-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.enfeite{
+  width: 400px;
+  height: 370px;
+  background-color: #ffb3b338;
+  border-radius: 30%;
+  position: absolute;
+}
+
+:root {
+  --color-salaoPrimary: #3064a0;       /* Cor principal */
+  --color-salaoSeccundary: #7faae2;    /* Cor principal mais clara */
+  --color-salaoBody: #224672;          /* Cor principal mais escura */
+
+  --color-studioPrimary: #ff5b5b;      /* Cor secundária */
+  --color-studioSeccundary: #2f3243;   /* Cor secundária mais clara */
+  --color-studioBody: #c4c4c4;         /* Cor secundária mais escura */
+
+  /* Novas variações */
+  --color-salaoAccent: #FFD700;        /* Cor de destaque */
+  --color-salaoText: #FFFFFF;          /* Cor do texto claro */
+  --color-salaoBackground: #F4F4F4;    /* Cor de fundo claro */
+
+  --color-studioAccent: #32CD32;       /* Cor de destaque secundária */
+  --color-studioText: #000000;         /* Cor do texto escuro */
+  --color-studioBackground: #FAFAFA;   /* Cor de fundo secundário claro */
+  
+  /* Bordas */
+  --border-radius: 4px;                /* Raio das bordas */
+  --border-color: rgba(0, 0, 0, 0.1);  /* Cor da borda */
+}
+
+/* Estilos dos botões */
+.btnPrimary {
+  background-color: var(--color-salaoPrimary);
+  color: var(--color-salaoText);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.btnPrimary:hover {
+  background-color: var(--color-salaoSeccundary);
+  transform: scale(1.05); /* Efeito de zoom */
+}
+
+.btnSeccundary {
+  background-color: var(--color-salaoSeccundary);
+  color: var(--color-salaoText);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.btnSeccundary:hover {
+  background-color: var(--color-salaoPrimary);
+  transform: scale(1.05); /* Efeito de zoom */
+}
+
+.btnAccent {
+  background-color: var(--color-salaoAccent);
+  color: var(--color-salaoText);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.btnAccent:hover {
+  background-color: #FFC107; /* Uma cor de destaque diferente */
+  transform: scale(1.05); /* Efeito de zoom */
+}
+
+/* Adicionando botões para o estúdio */
+.btnStudioPrimary {
+  background-color: var(--color-studioPrimary);
+  color: var(--color-studioText);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.btnStudioPrimary:hover {
+  background-color: var(--color-studioSeccundary);
+  transform: scale(1.05); /* Efeito de zoom */
+}
+
+.btnStudioSeccundary {
+  background-color: var(--color-studioSeccundary);
+  color: var(--color-studioText);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.btnStudioSeccundary:hover {
+  background-color: var(--color-studioPrimary);
+  transform: scale(1.05); /* Efeito de zoom */
+}
+
+.btnStudioAccent {
+  background-color: var(--color-studioAccent);
+  color: var(--color-studioText);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+.btnStudioAccent:hover {
+  background-color: #228B22; /* Uma cor de destaque diferente */
+  transform: scale(1.05); /* Efeito de zoom */
+}
+
+/* Estilo de fundo */
+body {
+  background-color: var(--color-salaoBackground);
+}
+
+.studioBackground {
+  background-color: var(--color-studioBackground);
+}
+
+.btn-confirmar {
+  transition: all 0.3s ease; /* Transição suave para todas as propriedades */
+  
+}
+
+.btn-confirmar:hover {
+  background-color: #0056b3; /* Muda a cor do fundo no hover */
+  transform: scale(1.05); /* Aumenta levemente o tamanho */
+}
+
+.btn-confirmar:active {
+  transform: scale(0.95); /* Reduz o tamanho no clique */
+}
+
+
+.servico-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.servico-card__info {
+  display: flex;
+  flex-direction: column;
+}
+
+.servico-card__img {
+  width: 100%;
+  height: 150px;
+  background: #f4f4f4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.servico-card__img-placeholder {
+  font-size: 14px;
+  color: #888;
+}
+
+.servico-card__detalhes {
+  padding: 16px;
+  text-align: center;
+}
+
+.servico-card__titulo {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.servico-card__descricao {
+  font-size: 14px;
+  color: #555;
+}
+
+.servico-card__preco-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.servico-card__preco {
+  font-size: 16px;
+  font-weight: bold;
+  color: #2a9d8f;
+}

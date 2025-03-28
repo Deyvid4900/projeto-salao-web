@@ -20,6 +20,8 @@ export const Home = () => {
         style={{ maxHeight: "calc(100vh - 95px)", overflowY: "auto" }}
       >
         <div className="mt-5" style={{ width: "90%" }}>
+          
+      <h2 className="mb-4 mt-5">Agendamentos</h2>
           <MyCalendar />
         </div>
       </div>

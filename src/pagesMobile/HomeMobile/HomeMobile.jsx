@@ -1,0 +1,466 @@
+import React, { useEffect, useState } from "react";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import "moment/dist/locale/pt-br"; // Corrige o locale para português do Brasil
+import moment from "moment";
+import { useDispatch, useSelector } from "react-redux";
+import { filterAgendamentos } from "../../store/modules/agendamento/agendamentoActions";
+import { Drawer, Button, DatePicker, SelectPicker } from "rsuite";
+import { Spinner } from "react-bootstrap";
+import "react-big-calendar/lib/css/react-big-calendar.css";
+import "./MyCalendar.css"; // Arquivo para customizações adicionais
+import HeaderMobile from "../../components/HeaderMobile/HeaderMobile";
+import { fetchAllClientesRequest } from "../../store/modules/clientes/clientesSlice";
+import { fetchAllColaboradores } from "../../store/modules/colaborador/colaboradorSlice";
+import { setColaboradorId } from "../../store/modules/servicos/servicosSlice";
+import {
+  addAgendamento,
+  updateBehavior,
+  updateSelectedAgendamento,
+} from "../../store/modules/agendamento/agendamentoSlice";
+import { checkLocalStorageKeys } from "../../services/util";
+
+moment.locale("pt-br"); // Configura o Moment.js para usar o idioma português
+const localizer = momentLocalizer(moment);
+
+const HomeMobile = () => {
+  const dispatch = useDispatch();
+  const { agendamentos, loading, behavior, selectedAgendamento } = useSelector(
+    (state) => state.agendamento
+  );
+  const { clientes } = useSelector((state) => state.cliente);
+  const { selectedServico } = useSelector((state) => state.servicos);
+  const { colaboradores } = useSelector((state) => state.colaborador);
+  const { currentSalao } = useSelector((state) => state.salao);
+  const [events, setEvents] = useState([]);
+  const [drawerOpen, setDrawerOpen] = useState(false); // Estado do Drawer
+  const [colaboradorIdState, setColaboradorIdState] = useState(""); // Estado do Drawer
+  const [formValues, setFormValues] = useState({
+    clienteId: "",
+    salaoId: localStorage.getItem("_dSlun"),
+    servicoId: "",
+    colaboradorId: "",
+    data: new Date() || "",
+    horario: "",
+  });
+  const clientesArray = clientes.clientes || [];
+  const servicosArray = selectedServico || [];
+
+  useEffect(() => {
+    checkLocalStorageKeys();
+    const periodo = {
+      start: moment().startOf("M").format("YYYY-MM-DD"),
+      end: moment().endOf("M").format("YYYY-MM-DD"),
+    };
+    dispatch(filterAgendamentos(periodo));
+    dispatch({ type: "horarios/allHorarios" });
+    dispatch(fetchAllClientesRequest());
+    dispatch(fetchAllColaboradores());
+
+    currentSalao.type != "" ? "" : "";
+  }, [dispatch]);
+
+  useEffect(() => {
+    if (agendamentos) {
+      const mappedEvents = agendamentos.map((e) => {
+        const dataInicio = moment.utc(e.data).add("3", "h"); // Define o offset para UTC+6
+        const duracao = e.servicoId?.duracao || 0;
+        const dataFim = dataInicio.clone().add(duracao, "minutes");
+        const agendamentoInfo = e;
+        return {
+          title: `Agendamento ${e.servicoId?.titulo || "Serviço"} com ${
+            e.clienteId?.nome || "Cliente"
+          } - ${e.colaboradorId?.nome || "Colaborador"}`,
+          start: dataInicio.toDate(),
+          end: dataFim.toDate(),
+          agendamentoInfo: agendamentoInfo,
+        };
+      });
+      setEvents(mappedEvents);
+    }
+  }, [agendamentos]);
+
+  const handleRangeChange = (periodo) => {
+    if (periodo.length >= 6) {
+      console.log("Semana");
+      const fim = periodo.length - 1;
+      const range = {
+        start: moment(periodo[0] || periodo[0]).format("YYYY-MM-DD"),
+        end: moment(periodo[fim]).format("YYYY-MM-DD"),
+      };
+      console.log(range);
+      dispatch(filterAgendamentos(range));
+    } else {
+      const range = {
+        start: moment(periodo.start || periodo[0]).format("YYYY-MM-DD"),
+        end: moment(
+          periodo.end || periodo[1] || periodo[periodo.length - 1]
+        ).format("YYYY-MM-DD"),
+      };
+      dispatch(filterAgendamentos(range));
+    }
+  };
+
+  const handleAddAgendamento = () => {
+    const agendamentoData = {
+      ...formValues,
+      data: moment.utc(formValues.data).subtract("3", "h"),
+    };
+    console.log(agendamentoData);
+
+    // Dispatch para criar o agendamento
+    dispatch(addAgendamento(agendamentoData));
+
+    setDrawerOpen(false); // Fecha o Drawer após salvar
+  };
+  const handleUpdateAgendamento = () => {
+    const agendamentoData = {
+      ...formValues,
+      servicoId: formValues.servicoId,
+      colaboradorId: formValues.colaboradorId,
+      data: formValues.horario
+        ? moment
+            .utc(
+              `${moment.utc(formValues.data).format("YYYY-MM-DD")}T${
+                formValues.horario
+              }`
+            )
+            .subtract(3, "hours")
+        : moment.utc(formValues.data).subtract(3, "hours"),
+    };
+    console.log("Agora caiu no if ");
+    console.log(agendamentoData);
+
+    // Dispatch para atualizar o agendamento
+    dispatch({
+      type: "agendamento/handleUpdateAgendamento",
+      action: agendamentoData,
+    });
+
+    setDrawerOpen(false); // Fecha o Drawer após salvar
+  };
+
+  const handleEdit = (event) => {
+    setColaboradorIdState(event.agendamentoInfo.colaboradorId._id);
+    dispatch(updateBehavior("update"));
+    dispatch(updateSelectedAgendamento(event));
+    dispatch(setColaboradorId(event.agendamentoInfo.colaboradorId._id));
+    setDrawerOpen(true);
+    setFormValues({ ...event });
+  };
+
+  if (loading) {
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center"
+        style={{ height: "80vh" }}
+      >
+        <Spinner animation="border" />
+      </div>
+    );
+  }
+
+  return (
+    <>
+      <HeaderMobile />
+      <div
+        className="myCustomHeight"
+        style={{
+          zIndex: 2,
+          position: "relative",
+          height: "80vh",
+          backgroundColor: "rgb(255 255 255 / 68%)",
+          padding: "5px",
+        }}
+      >
+        <h4 className="mb-3 mt-3 text-center">Agendamentos</h4>
+        <Calendar
+          messages={{
+            next: "Próximo",
+            previous: "Anterior",
+            today: "Hoje",
+            month: "Mês",
+            week: "Semana",
+            day: "Dia",
+            agenda: "Agenda",
+            date: "Data",
+            time: "Hora",
+            event: "Evento",
+            noEventsInRange: "Nenhum agendamento ",
+          }}
+          culture="pt-br"
+          onRangeChange={(range) => handleRangeChange(range)}
+          onSelectEvent={(e) => {
+            handleEdit(e);
+          }}
+          localizer={localizer}
+          events={events}
+          defaultView="agenda"
+          popup
+          selectable
+          style={{ height: "87%", fontSize: "0.8rem" }}
+        />
+      </div>
+      {/* {console.log(events)} */}
+      {/* Botão para abrir o Drawer */}
+      <button
+        onClick={() => {
+          setDrawerOpen(true);
+          dispatch(updateBehavior("create"));
+        }}
+        className="d-flex align-items-center justify-content-center btnPrimary"
+        style={{
+          bottom: 50,
+          right: 30,
+          position: "absolute",
+          zIndex: "20",
+          borderRadius: "50%",
+          width: 70,
+          height: 70,
+          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.25)",
+        }}
+      >
+        <span className="material-symbols-outlined text-white">add</span>
+      </button>
+
+      {/* Drawer para adicionar agendamento */}
+      <Drawer
+        placement="right"
+        open={drawerOpen}
+        onClose={() => setDrawerOpen(false)}
+        size="md"
+        style={{ width: "100vw" }}
+      >
+        <Drawer.Header>
+          <Drawer.Title>
+            {behavior == "update"
+              ? "Atualizar Agendamento"
+              : "Novo Agendamento"}
+          </Drawer.Title>
+        </Drawer.Header>
+        <Drawer.Body>
+          {behavior == "update" ? (
+            <div className="col-12 ">
+              <b className="d-block">Especialista</b>
+              <SelectPicker
+                data={colaboradores}
+                labelKey="nome" // Exibe o nome do colaborador
+                valueKey="_id" // Usa o ID do colaborador como valor
+                searchable={false}
+                // value={selectedAgendamento.agendamentoInfo.colaboradorId._id}
+                value={colaboradorIdState}
+                size="lg"
+                placeholder="Selecione o colaborador"
+                onChange={(value) => {
+                  setFormValues({ ...formValues, colaboradorId: value });
+                  setColaboradorIdState(value);
+                  dispatch(setColaboradorId(value));
+                }}
+                style={{ width: "100%" }}
+              />
+            </div>
+          ) : (
+            <div className="col-12 ">
+              <b className="d-block">Especialista</b>
+              <SelectPicker
+                data={colaboradores}
+                labelKey="nome" // Exibe o nome do colaborador
+                valueKey="_id" // Usa o ID do colaborador como valor
+                searchable={false}
+                size="lg"
+                placeholder="Selecione o colaborador"
+                onChange={(value) => {
+                  setFormValues({ ...formValues, colaboradorId: value });
+                  dispatch(setColaboradorId(value));
+                }}
+                style={{ width: "100%" }}
+              />
+            </div>
+          )}
+          {behavior == "update" ? (
+            <div className="col-12 mt-3">
+              <b className="d-block">Serviço</b>
+              <SelectPicker
+                data={servicosArray}
+                labelKey="titulo"
+                valueKey="_id"
+                searchable={true}
+                size="lg"
+                value={
+                  formValues.servicoId ||
+                  selectedAgendamento.agendamentoInfo.servicoId._id
+                }
+                placeholder="Selecione o serviço"
+                onChange={(value) =>
+                  setFormValues({ ...formValues, servicoId: value })
+                }
+                style={{ width: "100%" }}
+              />
+            </div>
+          ) : (
+            <div className="col-12 mt-3">
+              <b className="d-block">Serviço</b>
+              <SelectPicker
+                data={servicosArray}
+                labelKey="titulo"
+                valueKey="_id"
+                searchable={true}
+                size="lg"
+                placeholder="Selecione o serviço"
+                value={formValues.servicoId}
+                onChange={(value) =>
+                  setFormValues({ ...formValues, servicoId: value })
+                }
+                style={{ width: "100%" }}
+              />
+            </div>
+          )}
+          {behavior == "update" ? (
+            <div className="col-12 mt-3">
+              <b className="d-block">Cliente</b>
+              <SelectPicker
+                data={clientesArray}
+                value={
+                  formValues.clienteId ||
+                  selectedAgendamento.agendamentoInfo.clienteId._id
+                }
+                labelKey="nome"
+                valueKey="_id"
+                searchable={true}
+                size="lg"
+                placeholder="Selecione o cliente"
+                onChange={(value) =>
+                  setFormValues({ ...formValues, clienteId: value })
+                }
+                style={{ width: "100%" }}
+              />
+            </div>
+          ) : (
+            <div className="col-12 mt-3">
+              <b className="d-block">Cliente</b>
+              <SelectPicker
+                data={clientesArray}
+                labelKey="nome"
+                valueKey="_id"
+                searchable={true}
+                size="lg"
+                placeholder="Selecione o cliente"
+                value={formValues.clienteId}
+                onChange={(value) =>
+                  setFormValues({ ...formValues, clienteId: value })
+                }
+                style={{ width: "100%" }}
+              />
+            </div>
+          )}
+          {behavior == "update" ? (
+            <div className="col-12 mt-3">
+              <b className="d-block">Data</b>
+              <DatePicker
+                format="MM/dd/yyyy"
+                placeholder="Selecione a data"
+                value={formValues.data || selectedAgendamento.start}
+                onChange={(value) => {
+                  console.log(value);
+                  setFormValues({ ...formValues, start: value });
+                  dispatch(
+                    updateSelectedAgendamento({
+                      ...selectedAgendamento,
+                      start: value,
+                    })
+                  );
+                }}
+                style={{ width: "100%" }}
+              />
+            </div>
+          ) : (
+            <div className="col-12 mt-3">
+              <b className="d-block">Data</b>
+              <DatePicker
+                format="MM/dd/yyyy"
+                placeholder="Selecione a data"
+                value={formValues.data}
+                onChange={(value) =>
+                  setFormValues({ ...formValues, data: value })
+                }
+                style={{ width: "100%" }}
+              />
+            </div>
+          )}
+
+          {behavior == "update" ? (
+            <div className="col-12 mt-3">
+              <b className="d-block">Horário</b>
+              <DatePicker
+                placement="top"
+                format="HH:mm"
+                hideMinutes={(min) => ![0, 30].includes(min)}
+                placeholder="Selecione o horário"
+                value={formValues.data || selectedAgendamento.start}
+                onChange={(value) => {
+                  setFormValues({
+                    ...formValues,
+                    horario: moment(value).format("HH:mm"),
+                  });
+                  dispatch(
+                    updateSelectedAgendamento({
+                      ...selectedAgendamento,
+                      start: value,
+                    })
+                  );
+                }}
+                style={{ width: "100%" }}
+              />
+            </div>
+          ) : (
+            <div className="col-12 mt-3">
+              <b className="d-block">Horário</b>
+              <DatePicker
+                placement="top"
+                format="HH:mm"
+                hideMinutes={(min) => ![0, 30].includes(min)}
+                placeholder="Selecione o horário"
+                value={formValues.data}
+                onChange={(value) =>
+                  setFormValues({ ...formValues, data: value })
+                }
+                style={{ width: "100%" }}
+              />
+            </div>
+          )}
+          {behavior == "update" ? (
+            <div className="mt-5  d-flex justify-content-between">
+              <Button
+                onClick={handleAddAgendamento}
+                appearance="primary"
+                color="red"
+              >
+                Deletar
+              </Button>
+              <div className="d-flex gap-1">
+                <Button onClick={handleUpdateAgendamento} appearance="primary">
+                  Atualizar
+                </Button>
+                <Button onClick={() => setDrawerOpen(false)} appearance="ghost">
+                  Cancelar
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <Drawer.Actions className="mt-5  d-flex justify-content-end">
+              <div className="d-flex gap-1">
+                <Button onClick={handleAddAgendamento} appearance="primary">
+                  Adicionar
+                </Button>
+                <Button onClick={() => setDrawerOpen(false)} appearance="ghost">
+                  Cancelar
+                </Button>
+              </div>
+            </Drawer.Actions>
+          )}
+        </Drawer.Body>
+      </Drawer>
+    </>
+  );
+};
+
+export default HomeMobile;

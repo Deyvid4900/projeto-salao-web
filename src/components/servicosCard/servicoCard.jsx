@@ -1,19 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAllRequest } from "../../store/modules/servicos/servicosSlice";
 import { Spinner } from "react-bootstrap";
 import moment from 'moment';
 import 'moment/locale/pt-br';
 
 export const CardServico = () => {
   const dispatch = useDispatch();
-  const { data, loading, error } = useSelector((state) => state.servicos);
+  const { servicos, loading, error } = useSelector((state) => state.servicos);
 
   const [selectedServico, setSelectedServico] = useState(null);
   const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
-    dispatch(fetchAllRequest());
+    dispatch({
+      type: "servicos/fetchAllServicos",
+    });
   }, [dispatch]);
 
   useEffect(() => {
@@ -22,7 +23,6 @@ export const CardServico = () => {
     }
   }, [selectedServico]);
 
-  const servicos = data.servicos || [];
 
   const formatDate = (dateString) => {
     return moment(dateString).format('D [de] MMMM [de] YYYY [às] HH:mm:ss');
@@ -42,7 +42,7 @@ export const CardServico = () => {
           <div className="row">
             {servicos.map((servico) => (
               <div key={servico._id} className="col-md-4 mb-3">
-                <div className="card">
+                <div className="card" style={{alignItems:"normal"}}>
                   <div className="card-body">
                     <h5 className="card-title " style={{}}>{servico.titulo}</h5>
                     <button

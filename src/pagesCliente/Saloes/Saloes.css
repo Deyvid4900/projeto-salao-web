@@ -1,0 +1,8 @@
+.panel {
+    transition: transform 0.2s;
+  }
+  
+  .panel:hover {
+    transform: translateY(-5px);
+  }
+  

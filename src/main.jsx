@@ -1,10 +1,15 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
+import "../src/App.css";
 import "./index.css";
 import App from "./App.jsx";
+import "rsuite/dist/rsuite.min.css";
+import { CustomProvider } from "rsuite";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <App></App>
+    <CustomProvider>
+      <App></App>
+    </CustomProvider>
   </React.StrictMode>
 );

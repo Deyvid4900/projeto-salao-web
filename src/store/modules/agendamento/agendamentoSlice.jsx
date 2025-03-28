@@ -1,35 +1,107 @@
-import { createSlice } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
+
+const initialState = {
+  behavior:"create",
+  components: {
+    modal: false,
+    confirmDelete: false,
+    drawer: false,
+    tab: "dados-cadastrais", // dados-cadastrais, agendamentos, arquivos
+    notification: {
+      type: "",
+      description: "",
+    },
+  },
+  selectedAgendamento:{},
+  agendamento: {},
+  agendamentos: [],
+  newAgendamento: {},
+  agenda: {},
+  agendado: [],
+  selectedSpecialist: {},
+  days: [],
+  hours: [],
+  loadingAgendamento:false,
+  loading:false
+};
 
 const agendamentoSlice = createSlice({
-  name: 'agendamento',
-  initialState: {
-    data: [],
-    loading: false,
-    error: null,
-  },
+  name: "agendamento",
+  initialState,
   reducers: {
-
-    filterAgendamentoRequest(state,payload){
+    updateSelectedAgendamento:(state,action)=>{
+      state.selectedAgendamento = action.payload
+    },
+    updateBehavior:(state,action)=>{
+      state.behavior = action.payload
+    },
+    updateLoading: (state, action) => {
+      state.loadingAgendamento = action.payload
+    },
+    updateLoadingLoading: (state, action) => {
+      state.loading = action.payload
+    },
+    deleteAgendamentoSuccess(state, action) {
+      const { agendamentoId } = action.payload;
+      state.agendado = state.agendado.filter(
+        (agendamento) => agendamento._id !== agendamentoId
+      );
+    },
+    updateAgendamento: (state, action) => {
+      return { ...state, ...action.payload };
+    },
+    updateAgenda: (state, action) => {
+      state.agenda = action.payload;
+    },
+    updateAgendado: (state, action) => {
+      state.agendado = action.payload;
+    },
+    getServicosById: (state, action) => {
+      return state;
+    },
+    addAgendamento: (state, action) => {
       state.loading = true;
-      state.error = null;
-      state = payload
     },
-    filterAgendamentoSuccess(state,action) {
+    addAgendamentoSuccess: (state, action) => {
       state.loading = false;
-      state.error = null;
-      state.data = action.payload;
+      state.agendamentos.push(action.payload);
     },
-    filterAgendamentoFailure(state, action) {
+    addAgendamentoFailure: (state, action) => {
       state.loading = false;
       state.error = action.payload;
+    },
+    
+    updateSelectedSpecialist: (state, action) => {
+      state.selectedSpecialist = action;
+    },
+    updateDays: (state, action) => {
+      state.days = action;
+    },
+    updateHours: (state, action) => {
+      state.hours = action;
+    },
+    setNotification: (state, action) => {
+      state.components.notification = action.payload;
     },
   },
 });
 
 export const {
-  filterAgendamentoRequest,
-  filterAgendamentoSuccess,
-  filterAgendamentoFailure,
+  deleteAgendamentoSuccess,
+  updateSelectedAgendamento,
+  updateBehavior,
+  setNotification,
+  updateLoading,
+  updateLoadingLoading,
+  updateDays,
+  updateHours,
+  updateSelectedSpecialist,
+  updateAgendamento,
+  getServicosById,
+  addAgendamento,
+  addAgendamentoSuccess,
+  addAgendamentoFailure,
+  updateAgenda,
+  updateAgendado,
 } = agendamentoSlice.actions;
-
 export default agendamentoSlice.reducer;

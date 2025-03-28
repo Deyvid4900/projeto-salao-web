@@ -1,0 +1,19 @@
+{
+  "name": "Hora Marcada",
+  "short_name": "HMarcada",
+  "description": "Sistema de agendamento",
+  "theme_color": "#ff5b5b",
+  "background_color": "#ffffff",
+  "icons": [{
+      "src": "/icons/SalaoIcon.png" ,
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/icons/IconSalaoG.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+  }
+  
